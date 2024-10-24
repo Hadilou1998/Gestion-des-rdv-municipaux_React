@@ -1,5 +1,5 @@
 const express = require('express');
-const { sequelize } = require('sequelize');
+const Sequelize = require('sequelize');
 const dotenv = require('dotenv');
 dotenv.config();
 
@@ -14,6 +14,12 @@ const slotRoutes = require('./routes/slots');
 app.use('/auth', authRoutes);
 app.use('/api/appointments', appointmentRoutes);
 app.use('/api/slots', slotRoutes);
+
+// Initialisation du Sequelize
+const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER, process.env.DB_PASS, {
+    host: process.env.DB_HOST,
+    dialect:'mysql',
+});
 
 // Connection à la base de données
 sequelize.authenticate().then(() => {
