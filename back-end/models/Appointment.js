@@ -1,3 +1,6 @@
+const { DataTypes } = require('sequelize');
+const { sequelize } = require('./index');
+
 module.exports = (sequelize, DataTypes) => {
     const Appointment = sequelize.define('Appointment', {
         id: {
