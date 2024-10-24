@@ -16,4 +16,4 @@ module.exports = {
         },
         timezone: "+01:00"
     }
-}
+};
