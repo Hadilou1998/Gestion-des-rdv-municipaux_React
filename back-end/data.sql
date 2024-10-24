@@ -2,7 +2,7 @@
 --  BDD base_mairie
 --  -----------------------
 
-CREATE DATABASE base_mairie IF NOT EXISTS;
+CREATE DATABASE base_mairie;
 
 USE base_mairie;
 
@@ -60,10 +60,10 @@ CREATE TABLE IF NOT EXISTS time_slots (
 --  -----------------------
 
 INSERT INTO users (first_name, last_name, email, password, role) VALUES
-('Alice', 'Dupont', 'alice.dupont@example.com', 'hashed_password1', 'citizen'),
-('Bob', 'Martin', 'bob.martin@example.com', 'hashed_password2', 'citizen'),
-('Charlie', 'Durand', 'charlie.durand@example.com', 'hashed_password3', 'admin'),
-('David', 'Lemoine', 'david.lemoine@example.com', 'hashed_password4', 'agent');
+('Alice', 'Dupont', 'alice.dupont@example.com', 'password123', 'citizen'),
+('Bob', 'Martin', 'bob.martin@example.com', 'password123', 'citizen'),
+('Charlie', 'Durand', 'charlie.durand@example.com', 'admin123', 'admin'),
+('David', 'Lemoine', 'david.lemoine@example.com', 'password123', 'agent');
 
 INSERT INTO services (name, description, duration, department, is_active) VALUES
 ('État civil - Carte d\'identité', 'Renouvellement ou création de carte d\'identité.', 30, 'État civil', true),
