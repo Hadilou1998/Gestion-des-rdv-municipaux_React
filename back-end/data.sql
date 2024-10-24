@@ -2,6 +2,7 @@
 --  BDD base_mairie
 --  -----------------------
 
+DROP DATABASE IF EXISTS base_mairie;
 CREATE DATABASE base_mairie;
 
 USE base_mairie;

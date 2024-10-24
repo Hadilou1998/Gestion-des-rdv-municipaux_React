@@ -1,5 +1,5 @@
 const express = require('express');
-const { TimeSlot } = require('./models');
+const { TimeSlot } = require('../models');
 const router = express.Router();
 
 // Ajouter un créneau horaire
