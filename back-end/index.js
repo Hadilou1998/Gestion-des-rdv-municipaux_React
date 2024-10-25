@@ -1,18 +1,17 @@
 const express = require('express');
-const Sequelize = require('sequelize');
-const dotenv = require('dotenv');
-dotenv.config();
-
 const app = express();
+const authRoutes = require('./routes/authRoutes');
+const appointmentRoutes = require('./routes/appointmentRoutes');
+const serviceRoutes = require('./routes/serviceRoutes');
+const slotRoutes = require('./routes/slotRoutes');
+
+// Middleware JSON
 app.use(express.json());
 
 // Routes
-const authRoutes = require('./routes/auth');
-const appointmentRoutes = require('./routes/appointments');
-const slotRoutes = require('./routes/slots');
-
-app.use('/auth', authRoutes);
+app.use('/api/auth', authRoutes);
 app.use('/api/appointments', appointmentRoutes);
+app.use('/api/services', serviceRoutes);
 app.use('/api/slots', slotRoutes);
 
 // Initialisation du Sequelize
