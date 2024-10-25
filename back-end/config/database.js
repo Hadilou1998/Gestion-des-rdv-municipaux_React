@@ -1,5 +1,4 @@
-const dotenv = require('dotenv');
-dotenv.config();
+require('dotenv').config();
 
 module.exports = {
     development: {
@@ -14,6 +13,6 @@ module.exports = {
             acquire: 30000,
             idle: 10000
         },
-        timezone: "+01:00"
-    }
+        timezone: "+01:00",
+    },
 };
