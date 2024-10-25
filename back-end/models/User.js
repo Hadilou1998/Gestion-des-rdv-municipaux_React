@@ -3,37 +3,30 @@ module.exports = (sequelize, DataTypes) => {
         id: {
             type: DataTypes.INTEGER,
             primaryKey: true,
-            autoIncrement: true
+            autoIncrement: true,
         },
         firstName: {
             type: DataTypes.STRING(50),
-            allowNull: false
+            allowNull: false,
         },
         lastName: {
             type: DataTypes.STRING(50),
-            allowNull: false
+            allowNull: false,
         },
         email: {
             type: DataTypes.STRING(100),
             allowNull: false,
             unique: true,
-            validate: {
-                isEmail: true
-            }
+            validate: { isEmail: true },
         },
         password: {
             type: DataTypes.STRING(255),
-            allowNull: false
+            allowNull: false,
         },
         role: {
             type: DataTypes.ENUM('citizen', 'admin', 'agent'),
-            defaultValue: 'citizen'
-        }
-    }, {
-        timestamps: true,
-        underscored: true,
-        tableName: 'users'
-    });
-
+            defaultValue: 'citizen',
+        },
+    }, { timestamps: true, underscored: true });
     return User;
 };

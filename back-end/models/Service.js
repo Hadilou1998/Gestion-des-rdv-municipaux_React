@@ -3,28 +3,27 @@ module.exports = (sequelize, DataTypes) => {
         id: {
             type: DataTypes.INTEGER,
             primaryKey: true,
-            autoIncrement: true
+            autoIncrement: true,
         },
         name: {
             type: DataTypes.STRING(100),
-            allowNull: false
+            allowNull: false,
         },
-        description: DataTypes.TEXT,
+        description: {
+            type: DataTypes.TEXT,
+        },
         duration: {
             type: DataTypes.INTEGER,
-            allowNull: false
+            allowNull: false,
         },
         department: {
             type: DataTypes.STRING(100),
-            allowNull: false
+            allowNull: false,
         },
-        is_active: {
+        isActive: {
             type: DataTypes.BOOLEAN,
-            defaultValue: true
+            defaultValue: true,
         }
-    }, {
-        timestamps: true,
-        underscored: true
-    });
+    }, { timestamps: true, underscored: true });
     return Service;
 };

@@ -3,28 +3,25 @@ module.exports = (sequelize, DataTypes) => {
         id: {
             type: DataTypes.INTEGER,
             primaryKey: true,
-            autoIncrement: true
-        },
-        serviceId: {
-            type: DataTypes.INTEGER,
-            allowNull: false
+            autoIncrement: true,
         },
         startTime: {
             type: DataTypes.DATE,
-            allowNull: false
+            allowNull: false,
         },
         endTime: {
             type: DataTypes.DATE,
-            allowNull: false
+            allowNull: false,
         },
         isAvailable: {
             type: DataTypes.BOOLEAN,
-            defaultValue: true
-        }   
-    }, {
-        timestamps: true,
-        paranoid: true
-    });
+            defaultValue: true,
+        },   
+    }, { timestamps: true, underscored: true });
+
+    TimeSlot.associate = (models) => {
+        TimeSlot.belongsTo(models.Service, { foreignKey: 'serviceId' });
+    };
 
     return TimeSlot;
 };

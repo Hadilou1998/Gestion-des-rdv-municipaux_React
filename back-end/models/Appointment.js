@@ -3,28 +3,25 @@ module.exports = (sequelize, DataTypes) => {
         id: {
             type: DataTypes.INTEGER,
             primaryKey: true,
-            autoIncrement: true
-        },
-        userId: {
-            type: DataTypes.INTEGER,
-            allowNull: false
-        },
-        serviceId: {
-            type: DataTypes.INTEGER,
-            allowNull: false
+            autoIncrement: true,
         },
         appointmentDate: {
             type: DataTypes.DATE,
-            allowNull: false
+            allowNull: false,
         },
         status: {
             type: DataTypes.ENUM('scheduled', 'completed', 'cancelled'),
-            defaultValue: 'scheduled'
+            defaultValue: 'scheduled',
         },
-        notes: DataTypes.TEXT
-    }, {
-        timestamps: true,
-        underscored: true
-    });
+        notes: {
+            type: DataTypes.TEXT,
+        },
+    }, { timestamps: true, underscored: true });
+
+    Appointment.associate = (models) => {
+        Appointment.belongsTo(models.User, { foreignKey: 'userId' });
+        Appointment.belongsTo(models.Service, { foreignKey: 'serviceId' });
+    };
+
     return Appointment;
 };
