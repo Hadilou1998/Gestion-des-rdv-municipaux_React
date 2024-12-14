@@ -1,8 +1,15 @@
+:root {
+  --bs-primary: #0056b3;
+  --bs-secondary: #6c757d;
+  --bs-danger: #dc3545;
+  --bs-light: #f8f9fa;
+  --bs-dark: #343a40;
+}
+
 body {
-    background-color: #f8f9fa;
-  }
-  
-  h1, h2 {
-    color: #343a40;
-  }
-  
+  background-color: var(--bs-light);
+}
+
+.navbar {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
