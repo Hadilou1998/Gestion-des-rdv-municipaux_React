@@ -22,5 +22,7 @@ const Appointment = sequelize.define('Appointment', {
     },
 }, { timestamps: true });
 
-Appointment.belongsTo(models.User, { foreignKey: 'userId', onDelete: 'CASCADE' });
-Appointment.belongsTo(models.Service, { foreignKey: 'serviceId', onDelete: 'RESTRICT' });
+Appointment.belongsTo(User, { foreignKey: 'userId', onDelete: 'CASCADE' });
+Appointment.belongsTo(Service, { foreignKey: 'serviceId', onDelete: 'RESTRICT' });
+
+module.exports = Appointment;
