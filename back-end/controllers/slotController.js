@@ -1,4 +1,4 @@
-const { TimeSlot } = require('../models');
+const TimeSlot = require('../models/TimeSlot');
 
 // Liste des créneaux
 exports.getAllSlots = async (req, res) => {
