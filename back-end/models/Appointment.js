@@ -4,9 +4,6 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.INTEGER,
             primaryKey: true,
             autoIncrement: true,
-            allowNull: true,
-            onUpdate: 'CASCADE',
-            onDelete: 'SET NULL',
         },
         appointmentDate: {
             type: DataTypes.DATE,
@@ -19,11 +16,31 @@ module.exports = (sequelize, DataTypes) => {
         notes: {
             type: DataTypes.TEXT,
         },
+        user_id: {
+            type: DataTypes.INTEGER,
+            allowNull: true, 
+            references: {
+              model: 'users',
+              key: 'id'
+            },
+            onUpdate: 'CASCADE',
+            onDelete: 'SET NULL'
+        },
+        service_id: {
+            type: DataTypes.INTEGER,
+            allowNull: true, 
+            references: {
+              model: 'services',
+              key: 'id'
+            },
+            onUpdate: 'CASCADE',
+            onDelete: 'SET NULL'
+        },
     }, { timestamps: true, underscored: true });
 
     Appointment.associate = (models) => {
-        Appointment.belongsTo(models.User, { foreignKey: 'userId' });
-        Appointment.belongsTo(models.Service, { foreignKey: 'serviceId' });
+        Appointment.belongsTo(models.User, { foreignKey: 'user_id' });
+        Appointment.belongsTo(models.Service, { foreignKey: 'service_id' });
     };
 
     return Appointment;

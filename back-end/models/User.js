@@ -4,9 +4,6 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.INTEGER,
             primaryKey: true,
             autoIncrement: true,
-            allowNull: true,
-            onUpdate: 'CASCADE',
-            onDelete: 'SET NULL',
         },
         firstName: {
             type: DataTypes.STRING(50),
