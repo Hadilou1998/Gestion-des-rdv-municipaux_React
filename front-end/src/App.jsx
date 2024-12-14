@@ -1,21 +1,24 @@
 import React from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import NavigationBar from "./components/Navbar";
+import Footer from "./components/Footer";
+import Home from "./pages/Home";
+import Services from "./pages/Services";
+import Appointments from "./pages/Appointments";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
-import Dashboard from "./pages/Dashboard";
-import Appointment from "./pages/Appointment";
 
 const App = () => {
   <Router>
     <NavigationBar />
     <Routes>
-      <Route path="/login" component={Login} />
-      <Route path="/signup" component={Signup} />
-      <Route path="/appointment" component={Appointment} />
-      <Route path="/dashboard" component={Dashboard} />
-      <Route path="/" exact component={Dashboard} />
+      <Route path="" element={<Home />} />
+      <Route path="/services" element={<Services />} />
+      <Route path="/appointments" element={<Appointments />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/signup" element={<Signup />} />
     </Routes>
+    <Footer />
   </Router>
 };
 
