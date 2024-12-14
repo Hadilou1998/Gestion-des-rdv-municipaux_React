@@ -1,21 +1,21 @@
 const express = require('express');
 const router = express.Router();
 const appointmentController = require('../controllers/appointmentController');
-const authMiddleware = require('../middleware/auth');
+const auth = require('../middleware/auth');
 
 // Liste des rendez-vous (tous ou pour un utilisateur spécifique)
-router.get('/', authMiddleware, appointmentController.getAllAppointments);
+router.get('/', auth, appointmentController.getAllAppointments);
 
 // Création de rendez-vous
-router.post('/', authMiddleware, appointmentController.createAppointment);
+router.post('/', auth, appointmentController.createAppointment);
 
 // Consultation d'un rendez-vous par son ID
-router.get('/:id', authMiddleware, appointmentController.getAppointmentById);
+router.get('/:id', auth, appointmentController.getAppointmentById);
 
 // Modification d'un rendez-vous par son ID
-router.put('/:id', authMiddleware, appointmentController.updateAppointment);
+router.put('/:id', auth, appointmentController.updateAppointment);
 
 // Suppression d'un rendez-vous par son ID
-router.delete('/:id', authMiddleware, appointmentController.deleteAppointment);
+router.delete('/:id', auth, appointmentController.deleteAppointment);
 
 module.exports = router;
