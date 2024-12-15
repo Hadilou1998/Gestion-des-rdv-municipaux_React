@@ -31,7 +31,7 @@ const Signup = () => {
 
         try {
             // Appel API pour l'inscription
-            const response = await fetch("/register", {
+            const response = await fetch("api/auth/register", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(formData),
@@ -39,7 +39,7 @@ const Signup = () => {
             
             if (response.ok) {
                 setSuccess("Inscription réussie ! Vous pouvez maintenant vous connecter.");
-                setTimeout(() => navigate("/login"), 2000);
+                setTimeout(() => navigate("api/auth/login"), 2000);
             } else {
                 const { message } = await response.json();
                 setError(message || "Une erreur est survenue.");
