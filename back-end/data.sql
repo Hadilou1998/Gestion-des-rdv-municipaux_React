@@ -35,15 +35,15 @@ CREATE TABLE IF NOT EXISTS services (
 
 CREATE TABLE IF NOT EXISTS appointments (
     id INT PRIMARY KEY AUTO_INCREMENT,
-    user_id INT NOT NULL,
-    service_id INT NOT NULL,
+    user_id INT,
+    service_id INT,
     appointment_date DATETIME NOT NULL,
     status ENUM('scheduled', 'completed', 'cancelled') DEFAULT 'scheduled',
     notes TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-    FOREIGN KEY (service_id) REFERENCES services(id) ON DELETE RESTRICT
+    FOREIGN KEY (service_id) REFERENCES services(id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS time_slots (
@@ -73,14 +73,14 @@ INSERT INTO services (name, description, duration, department, is_active) VALUES
 ('Autres - Demandes générales', 'Prise de rendez-vous pour diverses demandes administratives.', 20, 'Administration générale', true);
 
 INSERT INTO appointments (user_id, service_id, appointment_date, status, notes) VALUES
-(1, 1, '2024-10-25 10:00:00', 'scheduled', 'Première demande de carte d\'identité.'),
-(2, 2, '2024-10-26 14:00:00', 'scheduled', 'Consultation pour un permis de construire.'),
-(3, 3, '2024-10-27 09:30:00', 'completed', 'Rendez-vous pour une aide sociale.'),
-(1, 4, '2024-11-01 16:00:00', 'cancelled', 'Demande annulée par l\'utilisateur.');
+(1, 1, '2025-10-25 10:00:00', 'scheduled', 'Première demande de carte d\'identité.'),
+(2, 2, '2025-10-26 14:00:00', 'scheduled', 'Consultation pour un permis de construire.'),
+(3, 3, '2025-10-27 09:30:00', 'completed', 'Rendez-vous pour une aide sociale.'),
+(1, 4, '2025-11-01 16:00:00', 'cancelled', 'Demande annulée par l\'utilisateur.');
 
 INSERT INTO time_slots (service_id, start_time, end_time, is_available) VALUES
-(1, '2024-10-25 09:00:00', '2024-10-25 09:30:00', true),
-(1, '2024-10-25 10:00:00', '2024-10-25 10:30:00', false),
-(2, '2024-10-26 14:00:00', '2024-10-26 15:00:00', false),
-(3, '2024-10-27 09:30:00', '2024-10-27 10:15:00', false),
-(4, '2024-11-01 16:00:00', '2024-11-01 16:20:00', false); 
+(1, '2025-10-25 09:00:00', '2025-10-25 09:30:00', true),
+(1, '2025-10-25 10:00:00', '2025-10-25 10:30:00', false),
+(2, '2025-10-26 14:00:00', '2025-10-26 15:00:00', false),
+(3, '2025-10-27 09:30:00', '2025-10-27 10:15:00', false),
+(4, '2025-11-01 16:00:00', '2025-11-01 16:20:00', false); 
