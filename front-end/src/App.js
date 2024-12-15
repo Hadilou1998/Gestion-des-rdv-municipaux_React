@@ -10,20 +10,24 @@ import Appointments from "./pages/Appointments";
 import Services from "./pages/Services";
 import TimeSlots from "./pages/TimeSlots";
 
-const App = () => {
-  <Router>
-    <Navbar />
-    <Routes>
-      <Route path="" element={<Home />} />
-      <Route path="/login" element={<Login />} />
-      <Route path="/register" element={<Register />} />
-      <Route path="/dashboard" element={<Dashboard />} />
-      <Route path="/appointments" element={<Appointments />} />
-      <Route path="/services" element={<Services />} />
-      <Route path="/admin/timeslots" element={<TimeSlots />} />
-    </Routes>
-    <Footer />
-  </Router>
-};
+function App() {
+  return (
+    <>
+      <Router>
+        <Navbar />
+        <Routes>
+          <Route path="" element={<Home />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/appointments" element={<Appointments />} />
+          <Route path="/services" element={<Services />} />
+          <Route path="/admin/timeslots" element={<TimeSlots />} />
+        </Routes>
+        <Footer />
+      </Router> 
+    </>
+  )
+}
 
 export default App;
