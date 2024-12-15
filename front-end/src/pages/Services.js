@@ -7,7 +7,7 @@ function Services() {
     useEffect(() => {
         const fetchServices = async () => {
             try {
-                const res = await axios.get("/services");
+                const res = await axios.get("/api/services");
                 setServices(res.data);
             } catch (error) {
                 console.error(error);

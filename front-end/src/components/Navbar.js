@@ -23,10 +23,10 @@ function Navbar() {
                     </ul>
                     <ul className="navbar-nav">
                         <li className="nav-item">
-                            <Link className="nav-link" to="/login">Connexion</Link>
+                            <Link className="nav-link" to="/api/auth/login">Connexion</Link>
                         </li>
                         <li className="nav-item">
-                            <Link className="nav-link" to="/register">Inscription</Link>
+                            <Link className="nav-link" to="/api/auth/register">Inscription</Link>
                         </li>
                     </ul>
                 </div>
