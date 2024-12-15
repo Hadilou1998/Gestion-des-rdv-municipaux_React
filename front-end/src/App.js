@@ -8,6 +8,7 @@ import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
 import Appointments from "./pages/Appointments";
 import Services from "./pages/Services";
+import TimeSlots from "./pages/TimeSlots";
 
 const App = () => {
   <Router>
@@ -19,6 +20,7 @@ const App = () => {
       <Route path="/dashboard" element={<Dashboard />} />
       <Route path="/appointments" element={<Appointments />} />
       <Route path="/services" element={<Services />} />
+      <Route path="/admin/timeslots" element={<TimeSlots />} />
     </Routes>
     <Footer />
   </Router>
