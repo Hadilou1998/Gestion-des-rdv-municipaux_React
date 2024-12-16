@@ -10,28 +10,27 @@ function Login() {
 
     const handleLogin = async (e) => {
         e.preventDefault();
-
-        // Exemple d'appel à une API
-        // Si la connexion réussie, mettre l'utilisateur dans le contexte
-        // Sinon, afficher un message d'erreur
-
-        // Appel à une API pour se connecter
-        const response = await fetch("http://localhost:3000/api/login", {
+    
+        // Appel à l'API pour se connecter
+        const response = await fetch("http://localhost:5000/api/login", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
             body: JSON.stringify({ email, password }),
         });
-
-        const data = await response.json();
+    
+        // Vérifier que la réponse est au format JSON
         if (response.ok) {
+            const data = await response.json();
             setUser(data.user);
             navigate("/home");
         } else {
-            alert("Echec de la connexion");
+            // Si la réponse n'est pas au format JSON, gérer l'erreur de manière appropriée
+            const errorMessage = await response.text();
+            alert("Erreur de connexion : " + errorMessage);
         }
-    };
+    };    
 
     return (
         <div className="row justify-content-center">
