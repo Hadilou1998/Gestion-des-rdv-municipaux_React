@@ -1,33 +1,31 @@
 import React from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import Navbar from "./components/Navbar";
-import Footer from "./components/Footer";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
 import Appointments from "./pages/Appointments";
 import Services from "./pages/Services";
-import TimeSlots from "./pages/TimeSlots";
+import Header from "./components/Header";
+import Footer from "./components/Footer";
 
 function App() {
   return (
-    <>
-      <Router>
-        <Navbar />
+    <Router>
+      <Header />
+      <div className="container mt-4">
         <Routes>
           <Route path="" element={<Home />} />
-          <Route path="/api/auth/login" element={<Login />} />
-          <Route path="/api/auth/register" element={<Register />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/appointments" element={<Appointments />} />
           <Route path="/services" element={<Services />} />
-          <Route path="/admin/timeslots" element={<TimeSlots />} />
         </Routes>
         <Footer />
-      </Router> 
-    </>
-  )
-}
+      </div>
+    </Router> 
+  );
+};
 
 export default App;

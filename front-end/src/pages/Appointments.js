@@ -2,90 +2,54 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 
 function Appointments() {
-    const [services, setServices] = useState([]);
-    const [timeSlots, setTimeSlots] = useState([]);
-    const [selectedService, setSelectedService] = useState(null);
-    const [selectedSlot, setSelectedSlot] = useState(null);
+    const [appointments, setAppointments] = useState([]);
     
     useEffect(() => {
-        // Charger la liste des services
-        const fetchServices = async () => {
+        // Récupération des rendez-vous via l'API
+        const fetchAppointments = async () => {
             try {
-                const res = await axios.get("/api/services");
-                setServices(res.data);
+                const response = await axios.get("/api/appointments");
+                setAppointments(response.data);
             } catch (error) {
-                console.error(error);
+                console.error("Erreur lors de la récupération des rendez-vous:", error);
             }
         };
-        fetchServices();
+
+        fetchAppointments();
     }, []);
 
-    const fetchTimeSlots = async (serviceId) => {
-        try {
-            const res = await axios.get(`/api/slots?service_id${serviceId}`);
-            setTimeSlots(res.data);
-        } catch (error) {
-            console.error(error);
-        }
-    };
-
-    const handleServiceSelect = (e) => {
-        const serviceId = e.target.value;
-        setSelectedService(serviceId);
-        fetchTimeSlots(serviceId);
-    };
-
-    const handleAppointmentBooking = async () => {
-        if (!selectedService || !selectedSlot) {
-            alert("Veuillez selectionner un service et un créneau.");
-            return;
-        }
-        try {
-            await axios.post("/api/appointments", {
-                service_id: selectedService,
-                time_slot_id: selectedSlot,
-            });
-            alert("Rendez-vous pris avec succès !");
-        } catch (error) {
-            console.error(error);
-            alert("Erreur lors de la prise de rendez-vous.");
-        }
-    };
-
     return (
-        <div className="container mt-5">
-            <h2>Prise de rendez-vous</h2>
-            <div className="mb-3">
-                <label className="form-label">Service</label>
-                <select className="form-select" onChange={handleServiceSelect}>
-                    <option value="">-- Sélectionnez un service --</option>
-                    {services.map((service) => (
-                        <option key={service.id} value={service.id}>
-                            {service.name}
-                        </option>
-                    ))}
-                </select>
-            </div>
-            {timeSlots.length > 0 && (
-                <div className="mb-3">
-                    <label className="form-label">Créneaux disponibles</label>
-                    <select
-                        className="form-select"
-                        onChange={(e) => setSelectedSlot(e.target.value)}
-                    >
-                        <option value="">-- Sélectionnez un créneau --</option>
-                        {timeSlots.map((slot) => (
-                            <option key={slot.id} value={slot.id}>
-                                {new Date(slot.start_time).toLocaleString()} -{' '}
-                                {new Date(slot.end_time).toLocaleString()}
-                            </option>
+        <div>
+            <h2>Mes Rendez-vous</h2>
+            {appointments.length > 0 ? (
+                <table className="table mt-4">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Date</th>
+                            <th>Service</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {appointments.map((appointment, index) => (
+                            <tr key={appointment.id}>
+                                <td>{index + 1}</td>
+                                <td>{new Date(appointment.appointment_date).toLocaleString()}</td>
+                                <td>{appointment.service_name}</td>
+                                <td>{appointment.status}</td>
+                                <td>
+                                    <button className="btn btn-warning btn-sm me-2">Réserver</button>
+                                    <button className="btn btn-danger btn-sm">Supprimer</button>
+                                </td>
+                            </tr>
                         ))}
-                    </select>
-                </div>
+                    </tbody>
+                </table>
+            ) : (
+                <p>Aucun rendez-vous à afficher.</p>
             )}
-            <button className="btn btn-primary" onClick={handleAppointmentBooking}>
-                Prendre rendez-vous
-            </button>
         </div>
     );
 };

@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import axios from "axios";
 
 function Login() {
     const [email, setEmail] = useState("");
@@ -7,30 +6,26 @@ function Login() {
 
     const handleLogin = async (e) => {
         e.preventDefault();
-        try {
-            const res = await axios.post("/login", { email, password });
-            alert("Connexion réussie");
-            console.log(res.data);           
-        } catch (error) {
-            console.log(error);
-            alert("Erreur lors de la connexion");
-        }
+        // Appel à l'API pour se connecter
+        console.log("Connexion en cours", { email, password });
     };
 
     return (
-        <div className="container mt-5">
-            <h2>Connexion</h2>
-            <form onSubmit={handleLogin}>
-                <div className="mb-3">
-                    <label className="form-label">Email</label>
-                    <input type="email" className="form-control" value={email} onChange={(e) => setEmail(e.target.value)} required />
-                </div>
-                <div className="mb-3">
-                    <label className="form-label">Mot de passe</label>
-                    <input type="password" className="form-control" value={password} onChange={(e) => setPassword(e.target.value)} required />
-                </div>
-                <button type="submit" className="btn btn-primary">Connexion</button>
-            </form>
+        <div className="row justify-content-center">
+            <div className="col-md-6">
+                <h2>Connexion</h2>
+                <form onSubmit={handleLogin}>
+                    <div className="mb-3">
+                        <label htmlFor="email" className="form-label">Email</label>
+                        <input type="email" className="form-control" id="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+                    </div>
+                    <div className="mb-3">
+                        <label htmlFor="password" className="form-label">Mot de passe</label>
+                        <input type="password" className="form-control" id="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+                    </div>
+                    <button type="submit" className="btn btn-primary">Se connecter</button>
+                </form>
+            </div> 
         </div>           
     );
 };

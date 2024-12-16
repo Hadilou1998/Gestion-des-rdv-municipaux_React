@@ -7,38 +7,37 @@ function Services() {
     useEffect(() => {
         const fetchServices = async () => {
             try {
-                const res = await axios.get("/api/services");
-                setServices(res.data);
+                const response = await axios.get("/api/services");
+                setServices(response.data);
             } catch (error) {
-                console.error(error);
+                console.error("Erreur lors de la récupération des services:", error);
             }
         };
         fetchServices();
     }, []);
 
     return (
-        <div className="container mt-5">
+        <div>
             <h2>Services</h2>
-            <table className="table table-striped">
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Nom</th>
-                        <th>Description</th>
-                    </tr>
-                </thead>
-                <tbody>
+            {services.length > 0 ? (
+                <div className="row">
                     {services.map((service) => (
-                        <tr key={service.id}>
-                            <td>{service.id}</td>
-                            <td>{service.name}</td>
-                            <td>{service.description}</td>
-                        </tr>
+                        <div key={service.id} className="col-md-4">
+                            <div className="card mb-4">
+                                <div className="card-body">
+                                    <h5 className="card-title">{service.name}</h5>
+                                    <p className="card-text">{service.description}</p>
+                                    <p className="card-text"><strong>Durée : </strong>{service.duration} minutes</p>
+                                </div>
+                            </div>
+                        </div>
                     ))}
-                </tbody>
-            </table>
+                </div>
+            ) : (
+                <p>Aucun service à afficher.</p>
+            )}
         </div>
     );
-}
+};
 
 export default Services;
