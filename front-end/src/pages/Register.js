@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
+import { UserContext } from "../contexts/UserContext";
 
 function Register() {
     const [form, setForm] = useState({
@@ -6,16 +7,35 @@ function Register() {
         lastname: "",
         email: "",
         password: "",
+        role: "",
     });
+    const { setUser } = useContext(UserContext);
 
     const handleChange = (e) => {
         setForm({...form, [e.target.name]: e.target.value });
     };
 
-    const handleRegister = (e) => {
+    const handleRegister = async (e) => {
         e.preventDefault();
         // Appel à l'API pour s'inscrire
-        console.log("Inscription en cours", form);
+        const response = await fetch("http://localhost:5000/api/auth/register", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(form),
+        });
+        
+        // Vérifier que la réponse est au format JSON
+        if (response.ok) {
+            const data = await response.json();
+            setUser(data.user);
+            alert("Inscription réussie !");
+        } else {
+            // Si la réponse n'est pas au format JSON, gérer l'erreur de manière appropriée
+            const errorMessage = await response.text();
+            alert("Erreur d'inscription : " + errorMessage);
+        }
     };
 
     return (
@@ -38,6 +58,14 @@ function Register() {
                     <div className="mb-3">
                         <label htmlFor="password" className="form-label">Mot de passe</label>
                         <input type="password" className="form-control" id="password" value={form.password} onChange={handleChange} required />
+                    </div>
+                    <div className="mb-3">
+                        <label htmlFor="role" className="form-label">Rôle</label>
+                        <select className="form-select" id="role" value={form.role} onChange={handleChange} required>
+                            <option value="">-- Sélectionnez un rôle --</option>
+                            <option value="admin">Administrateur</option>
+                            <option value="user">Utilisateur</option>
+                        </select>
                     </div>
                     <button type="submit" className="btn btn-primary">S'inscrire</button>
                 </form>
