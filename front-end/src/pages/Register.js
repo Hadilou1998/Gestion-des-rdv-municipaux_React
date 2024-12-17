@@ -17,6 +17,7 @@ function Register() {
 
     const handleRegister = async (e) => {
         e.preventDefault();
+
         // Appel à l'API pour s'inscrire
         const response = await fetch("http://localhost:5000/api/auth/register", {
             method: "POST",
@@ -63,8 +64,9 @@ function Register() {
                         <label htmlFor="role" className="form-label">Rôle</label>
                         <select className="form-select" id="role" value={form.role} onChange={handleChange} required>
                             <option value="">-- Sélectionnez un rôle --</option>
-                            <option value="admin">Administrateur</option>
-                            <option value="user">Utilisateur</option>
+                            <option value="admin">Admin</option>
+                            <option value="citizen">Citoyen</option>
+                            <option value="agent">Agent</option>
                         </select>
                     </div>
                     <button type="submit" className="btn btn-primary">S'inscrire</button>
