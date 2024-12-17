@@ -5,9 +5,11 @@ function Profile() {
     const { user, setUser } = useContext(UserContext);
     const [editable, setEditable] = useState(false);
     const [formData, setFormData] = useState({
-        name: user?.name || "", 
-        email: user?.email || "",
-        phone: user?.phone || "",
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        password: user.password,
+        role: user.role,
     });
 
     const handleInputChange = (e) => {
@@ -34,13 +36,25 @@ function Profile() {
             <h1>Mon Profil</h1>
             <form>
                 <div className="mb-3">
-                    <label htmlFor="name" className="form-label">Nom</label>
+                    <label htmlFor="lastName" className="form-label">Nom</label>
                     <input
                         type="text"
                         className="form-control"
-                        id="name"
-                        name="name"
-                        value={formData.name}
+                        id="lastName"
+                        name="lastName"
+                        value={formData.lastName}
+                        onChange={handleInputChange}
+                        disabled={!editable}
+                    />
+                </div>
+                <div className="mb-3">
+                    <label htmlFor="firstName" className="form-label">Prénom</label>
+                    <input
+                        type="text"
+                        className="form-control"
+                        id="firstName"
+                        name="firstName"
+                        value={formData.firstName}
                         onChange={handleInputChange}
                         disabled={!editable}
                     />
@@ -58,13 +72,25 @@ function Profile() {
                     />
                 </div>
                 <div className="mb-3">
-                    <label htmlFor="phone" className="form-label">Téléphone</label>
+                    <label htmlFor="password" className="form-label">Mot de passe</label>
                     <input
-                        type="tel"
+                        type="password"
                         className="form-control"
-                        id="phone"
-                        name="phone"
-                        value={formData.phone}
+                        id="password"
+                        name="password"
+                        value={formData.password}
+                        onChange={handleInputChange}
+                        disabled={!editable}
+                    />
+                </div>
+                <div className="mb-3">
+                    <label htmlFor="role" className="form-label">Rôle</label>
+                    <input
+                        type="text"
+                        className="form-control"
+                        id="role"
+                        name="role"
+                        value={formData.role}
                         onChange={handleInputChange}
                         disabled={!editable}
                     />
