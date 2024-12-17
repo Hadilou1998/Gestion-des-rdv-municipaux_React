@@ -64,7 +64,7 @@ INSERT INTO users (first_name, last_name, email, password, role) VALUES
 ('Alice', 'Dupont', 'alice.dupont@example.com', 'password123', 'citizen'),
 ('Bob', 'Martin', 'bob.martin@example.com', 'password123', 'citizen'),
 ('Charlie', 'Durand', 'charlie.durand@example.com', 'admin123', 'admin'),
-('David', 'Lemoine', 'david.lemoine@example.com', 'password123', 'agent');
+('David', 'Lemoine', 'david.lemoine@example.com', 'agent123', 'agent');
 
 INSERT INTO services (name, description, duration, department, is_active) VALUES
 ('État civil - Carte d\'identité', 'Renouvellement ou création de carte d\'identité.', 30, 'État civil', true),
