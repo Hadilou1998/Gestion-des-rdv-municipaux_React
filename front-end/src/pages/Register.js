@@ -9,9 +9,9 @@ function Register() {
 
     const handleRegister = async (e) => {
         e.preventDefault();
-        
+
         // Appel à l'API pour s'inscrire
-        const response = await fetch("/api/auth/register", {
+        const response = await fetch("http://localhost:3000/api/auth/register", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
