@@ -9,24 +9,25 @@ function Register() {
 
     const handleRegister = async (e) => {
         e.preventDefault();
-
-        // Appel à l'API pour s'inscrire
-        const response = await fetch("http://localhost:3000/api/auth/register", {
+        const payload = { firstName, lastName, email, password, role };
+        console.log("Payload being sent:", payload);
+    
+        const response = await fetch("http://localhost:5000/api/auth/register", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify({ firstName, lastName, email, password, role }),
+            body: JSON.stringify(payload),
         });
-        
-        // Vérifier que la réponse est au format JSON
+    
         if (response.ok) {
-            await response.json();
+            const data = await response.json();
+            console.log("Success:", data);
             alert("Inscription réussie !");
         } else {
-            // Si la réponse n'est pas au format JSON, gérer l'erreur de manière appropriée
-            const errorMessage = await response.text();
-            alert("Erreur d'inscription : " + errorMessage);
+            const errorData = await response.text();
+            console.error("Error:", errorData);
+            alert("Erreur d'inscription : " + errorData);
         }
     };
 

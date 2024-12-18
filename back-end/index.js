@@ -8,7 +8,7 @@ dotenv.config();
 
 const app = express();
 app.use(express.json());
-app.use(cors({ origin: 'http://localhost:3000' }));
+app.use(cors());
 
 // Importer les routes
 const authRoutes = require('./routes/authRoutes');
