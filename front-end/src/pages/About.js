@@ -5,7 +5,7 @@ function About() {
         <div className="container mt-5">
             <h1>À propos</h1>
             <p>
-                Bienvenue sur l'application Rendez-Vous Municipaux. Cette plateforme est conçue pour vous aider
+                Bienvenue sur l'application de la ville d'Argenteuil. Cette plateforme est conçue pour vous aider
                 à gérer facilement vos rendez-vous avec les services municipaux de votre ville.
             </p>
             <p>
