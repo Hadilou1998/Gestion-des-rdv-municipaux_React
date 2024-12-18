@@ -21,27 +21,30 @@ exports.login = async (req, res) => {
     try {
         const { email, password } = req.body;
 
-        // Exécuter une requête brute pour récupérer l'utilisateur
-        const [users] = await sequelize.query(
-            'SELECT * FROM Users WHERE email = :email LIMIT 1',
-            {
-                replacements: { email },
-                type: QueryTypes.SELECT,
-            }
-        );
+        // Récupérer l'utilisateur via `sequelize.model` et en accédant au modèle d'utilisateur
+        const user = await User.findAll({
+            where: { email },
+            limit: 1  // Limiter à un seul utilisateur (équivalent à `LIMIT 1`)
+        });
 
-        if (users.length === 0) {
+        // Vérifier si l'utilisateur existe
+        if (user.length === 0) {
             return res.status(401).json({ error: 'Utilisateur non trouvé' });
         }
 
-        const user = users[0];
+        // Récupérer l'utilisateur du tableau retourné
+        const foundUser = user[0];
 
-        if (!await bcrypt.compare(password, user.password)) {
+        // Comparer le mot de passe hashé avec le mot de passe envoyé
+        const passwordMatch = await bcrypt.compare(password, foundUser.password);
+        if (!passwordMatch) {
             return res.status(401).json({ error: 'Mot de passe incorrect' });
         }
 
-        const token = jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '1h' });
-        res.json({ message: 'Connexion réussie', user, token });
+        // Générer un token JWT
+        const token = jwt.sign({ id: foundUser.id, role: foundUser.role }, process.env.JWT_SECRET, { expiresIn: '1h' });
+
+        res.json({ message: 'Connexion réussie', user: foundUser, token });
     } catch (error) {
         res.status(500).json({ error: 'Erreur lors de la connexion', details: error.message });
     }
