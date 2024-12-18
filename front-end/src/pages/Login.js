@@ -11,26 +11,30 @@ function Login() {
     const handleLogin = async (e) => {
         e.preventDefault();
     
-        // Appel à l'API pour se connecter
-        const response = await fetch("http://localhost:5000/api/auth/login", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ email, password }),
-        });
+        try {
+            const response = await fetch("http://localhost:5000/api/auth/login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ email, password }),
+            });
     
-        // Vérifier que la réponse est au format JSON
-        if (response.ok) {
-            const data = await response.json();
-            setUser(data.user);
-            navigate("/home");
-        } else {
-            // Si la réponse n'est pas au format JSON, gérer l'erreur de manière appropriée
-            const errorMessage = await response.text();
-            alert("Erreur de connexion : " + errorMessage);
+            if (response.ok) {
+                const data = await response.json();
+                setUser(data.user);
+                navigate("/home");
+            } else if (response.status === 401) {
+                alert("Identifiants incorrects");
+            } else {
+                const errorMessage = await response.text();
+                alert("Erreur lors de la connexion : " + errorMessage);
+            }
+        } catch (error) {
+            console.error("Erreur réseau ou autre :", error);
+            alert("Impossible de se connecter pour le moment. Veuillez réessayer plus tard.");
         }
-    };
+    };    
     
     const handleLogout = async () => {
         setUser(null);

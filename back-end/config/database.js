@@ -1,18 +1,21 @@
 require('dotenv').config();
+const { Sequelize } = require('sequelize');
 
-module.exports = {
-    development: {
-        username: process.env.DB_USER,
-        password: process.env.DB_PASSWORD,
-        database: process.env.DB_NAME,
-        host: process.env.DB_HOST,
-        dialect: 'mysql',
-        pool: {
-            max: 5,
-            min: 0,
-            acquire: 30000,
-            idle: 10000
-        },
-        timezone: "+01:00",
-    },
-};
+// Charger la configuration en fonction de l'environnement
+const config = require('./config')[process.env.NODE_ENV || 'development'];
+
+// Initialiser Sequelize
+const sequelize = new Sequelize(
+    config.database,
+    config.username,
+    config.password,
+    {
+        host: config.host,
+        dialect: config.dialect,
+        pool: config.pool,
+        timezone: config.timezone,
+        logging: false, // Désactiver les logs SQL pour éviter la pollution de la console
+    }
+);
+
+module.exports = sequelize;
