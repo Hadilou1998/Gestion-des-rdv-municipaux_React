@@ -3,12 +3,12 @@ const router = express.Router();
 const authController = require('../controllers/authController');
 
 // Inscription
-router.post('/api/auth/register', authController.register);
+router.post('/register', authController.register);
 
 // Connexion
-router.post('/api/auth/login', authController.login);
+router.post('/login', authController.login);
 
 // Déconnexion
-router.post('/api/auth/logout', authController.logout);
+router.post('/logout', authController.logout);
 
 module.exports = router;
