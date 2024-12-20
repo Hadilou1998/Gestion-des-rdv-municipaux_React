@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const serviceController = require('../controllers/serviceController');
-const auth = require('../middleware/auth');
+const auth = require('../middlewares/authMiddleware');
 
 // Liste des services
 router.get('/', serviceController.getAllServices);

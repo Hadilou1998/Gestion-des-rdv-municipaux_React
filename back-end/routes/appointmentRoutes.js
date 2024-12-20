@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const appointmentController = require('../controllers/appointmentController');
-const auth = require('../middleware/auth');
+const auth = require('../middlewares/authMiddleware');
 
 // Liste des rendez-vous (tous ou pour un utilisateur spécifique)
 router.get('/', auth, appointmentController.getAllAppointments);

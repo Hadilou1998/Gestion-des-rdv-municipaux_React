@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const slotController = require('../controllers/slotController');
-const auth = require('../middleware/auth');
+const auth = require('../middlewares/authMiddleware');
 
 // Liste des créneaux disponibles
 router.get('/', slotController.getAllSlots);

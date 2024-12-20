@@ -1,11 +1,10 @@
-const jwt = require('jsonwebtoken');
+const jwt = require("jsonwebtoken");
+require("dotenv").config();
 
 module.exports = (req, res, next) => {
   const authHeader = req.headers.authorization;
 
-  if (!authHeader) {
-    return res.status(401).json({ message: 'Accès non autorisé, token manquant' });
-  }
+  if (!authHeader) return res.status(403).send({ message: "Accès non autorisé, token manquant" });
 
   const token = authHeader.split(' ')[1];
 
@@ -14,6 +13,6 @@ module.exports = (req, res, next) => {
     req.user = decoded;
     next();
   } catch (error) {
-    return res.status(401).json({ message: 'Token invalide' });
+    return res.status(401).json({ message: "Token invalide" });
   }
 };
