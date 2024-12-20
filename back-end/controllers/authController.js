@@ -17,37 +17,33 @@ exports.register = async (req, res) => {
 };
 
 // Connexion
-exports.login = async (req, res) => {
-    try {
-        const { email, password } = req.body;
+exports.login = async (req, res) => {  
+    try {  
+        const { email, password } = req.body;  
+        console.log("Email:", email);  
+        console.log("Password:", password);  
 
-        // Récupérer l'utilisateur via `sequelize.model` et en accédant au modèle d'utilisateur
-        const user = await User.findAll({
-            where: { email },
-            limit: 1  // Limiter à un seul utilisateur (équivalent à `LIMIT 1`)
-        });
+        const user = await User.findOne({ where: { email } });  
+        if (!user) {  
+            console.log("Utilisateur non trouvé");  
+            return res.status(401).json({ error: 'Identifiants incorrects' });  
+        }  
+        
+        const isPasswordValid = await bcrypt.compare(password, user.password);  
+        if (!isPasswordValid) {  
+            console.log("Mot de passe invalide");  
+            return res.status(401).json({ error: 'Identifiants incorrects' });  
+        }  
 
-        // Vérifier si l'utilisateur existe
-        if (user.length === 0) {
-            return res.status(401).json({ error: 'Utilisateur non trouvé' });
-        }
+        // Vérifiez que JWT_SECRET est défini  
+        console.log("JWT Secret:", process.env.JWT_SECRET);  
 
-        // Récupérer l'utilisateur du tableau retourné
-        const foundUser = user[0];
-
-        // Comparer le mot de passe hashé avec le mot de passe envoyé
-        const passwordMatch = await bcrypt.compare(password, foundUser.password);
-        if (!passwordMatch) {
-            return res.status(401).json({ error: 'Mot de passe incorrect' });
-        }
-
-        // Générer un token JWT
-        const token = jwt.sign({ id: foundUser.id, role: foundUser.role }, process.env.JWT_SECRET, { expiresIn: '1h' });
-
-        res.json({ message: 'Connexion réussie', user: foundUser, token });
-    } catch (error) {
-        res.status(500).json({ error: 'Erreur lors de la connexion', details: error.message });
-    }
+        const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, { expiresIn: '1h' });  
+        res.status(200).json({ message: 'Connexion réussie', token, user });  
+    } catch (error) {  
+        console.error("Erreur de connexion:", error);  
+        res.status(500).json({ error: 'Erreur lors de la connexion', details: error.message });  
+    }  
 };
 
 // Déconnexion (si nécessaire)
