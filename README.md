@@ -40,6 +40,7 @@ Application web permettant aux citoyens de prendre rendez-vous en ligne pour dif
 - Frontend : React.js
 - Backend : Node.js avec Express
 - Base de données : MySQL 8.0
+- ORM : Sequelize
 - API REST
 - Authentication : JWT
 
