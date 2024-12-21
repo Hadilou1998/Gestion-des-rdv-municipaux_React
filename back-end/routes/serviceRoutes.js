@@ -1,21 +1,22 @@
 const express = require('express');
 const router = express.Router();
 const serviceController = require('../controllers/serviceController');
-const auth = require('../middlewares/authMiddleware');
+const authMiddleware = require('../middleware/authMiddleware');
+const roleMiddleware = require('../middleware/roleMiddleware');
 
-// Liste des services
-router.get('/', serviceController.getAllServices);
+// Créer un service (accessible uniquement par les administrateurs)
+router.post('/', authMiddleware, roleMiddleware(['admin']), serviceController.createService);
 
-// Création d'un service
-router.post('/', auth, serviceController.createService);
+// Obtenir tous les services
+router.get('/', authMiddleware, serviceController.getAllServices);
 
-// Consultation d'un service par son ID
+// Consulter un service
 router.get('/:id', serviceController.getServiceById);
 
-// Modification d'un service par son ID
-router.put('/:id', auth, serviceController.updateService);
+// Modifier un service (accessible uniquement par les administrateurs)
+router.put('/:id', authMiddleware, roleMiddleware(['admin']), serviceController.updateService);
 
-// Suppression d'un service par son ID
-router.delete('/:id', auth, serviceController.deleteService);
+// Supprimer un service (accessible uniquement par les administrateurs)
+router.delete('/:id', authMiddleware, roleMiddleware(['admin']), serviceController.deleteService);
 
 module.exports = router;

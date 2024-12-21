@@ -10,13 +10,13 @@ router.post('/', authMiddleware, validateMiddleware.validationAppointment, appoi
 // Obtenir tous les rendez-vous (accessible par les administrateurs)
 router.get('/', authMiddleware, appointmentController.getAllAppointments);
 
-// Consultation d'un rendez-vous (accessible pour tous)
+// Consulter un rendez-vous
 router.get('/:id', authMiddleware, appointmentController.getAppointmentById);
 
 // Mettre à jour un rendez-vous (accessible par les administrateurs ou agents)
 router.put('/:id', authMiddleware, appointmentController.updateAppointment);
 
-// Suppression d'un rendez-vous par son ID
+// Supprimer un rendez-vous
 router.delete('/:id', authMiddleware, appointmentController.deleteAppointment);
 
 module.exports = router;
