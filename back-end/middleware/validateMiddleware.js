@@ -11,4 +11,4 @@ exports.validationAppointment = [
         }
         next();
     },
-]
+];
