@@ -1,4 +1,15 @@
-const Service = require('../models/Service');
+const { Service } = require('../models');
+
+// Création d'un service
+exports.createService = async (req, res) => {
+    try {
+        const { name, description, duration, department, isActive } = req.body;
+        const service = await Service.create({ name, description, duration, department, isActive });
+        res.status(201).json({ message: 'Service créé', service });
+    } catch (error) {
+        res.status(400).json({ error: 'Erreur lors de la création du service', details: error.message });
+    }
+};
 
 // Liste des services
 exports.getAllServices = async (req, res) => {
@@ -7,17 +18,6 @@ exports.getAllServices = async (req, res) => {
         res.json(services);
     } catch (error) {
         res.status(500).json({ error: 'Erreur lors de la récupération des services', details: error.message });
-    }
-};
-
-// Création d'un service
-exports.createService = async (req, res) => {
-    try {
-        const { name, description, duration, department } = req.body;
-        const service = await Service.create({ name, description, duration, department });
-        res.status(201).json({ message: 'Service créé', service });
-    } catch (error) {
-        res.status(400).json({ error: 'Erreur lors de la création du service', details: error.message });
     }
 };
 
