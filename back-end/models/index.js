@@ -5,26 +5,19 @@ const sequelize = new Sequelize('database', 'username', 'password', {
 });
 
 // Définir les modèles
-const User = require('./User')(sequelize, DataTypes);
-const Service = require('./Service')(sequelize, DataTypes);
-const Appointment = require('./Appointment')(sequelize, DataTypes);
-const TimeSlot = require('./TimeSlot')(sequelize, DataTypes);
+const User = require('./User');
+const Service = require('./Service');
+const Appointment = require('./Appointment');
+const TimeSlot = require('./TimeSlot');
 
-// Configurer les relations si nécessaire
-User.hasMany(Appointment);
-Appointment.belongsTo(User);
+// Ajout des modèles à `db`
+const db = {};
+db.Sequelize = Sequelize;
+db.sequelize = sequelize;
 
-Service.hasMany(Appointment);
-Appointment.belongsTo(Service);
+db.User = User(sequelize, Sequelize.DataTypes);
+db.Service = Service(sequelize, Sequelize.DataTypes);
+db.Appointment = Appointment(sequelize, Sequelize.DataTypes);
+db.TimeSlot = TimeSlot(sequelize, Sequelize.DataTypes);
 
-TimeSlot.hasMany(Appointment);
-Appointment.belongsTo(TimeSlot);
-
-module.exports = {
-    sequelize,
-    Sequelize,
-    User,
-    Service,
-    Appointment,
-    TimeSlot,
-};
+module.exports = db;

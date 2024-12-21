@@ -7,6 +7,7 @@ const authRoutes = require("./routes/authRoutes");
 const appointmentRoutes = require('./routes/appointmentRoutes');
 const serviceRoutes = require('./routes/serviceRoutes');
 const slotRoutes = require('./routes/slotRoutes');
+const db = require("./models");
 
 // Initialisation
 dotenv.config();
@@ -15,9 +16,7 @@ const PORT = process.env.PORT || 5000;
 
 // Middlewares
 app.use(cors());
-app.use(express.json());
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
 
 // Routes
 app.use('/api/auth', authRoutes);
@@ -26,15 +25,13 @@ app.use('/api/services', serviceRoutes);
 app.use('/api/slots', slotRoutes);
 
 // Connexion à la base de données
-sequelize.authenticate().then(() => {
+db.sequelize.sync({ alter: true }).then(() => {
     console.log('Connexion à la base de données réussie.');
 }).catch((error) => {
     console.error('Erreur de connexion à la base de données :', error);
 });
 
-// Démarrage du serveur
+// Lancement du serveur
 app.listen(PORT, () => {
-    console.log(`Serveur démarré sur le port ${PORT}`);
+    console.log(`Serveur en écoute sur le port ${PORT}`);
 });
-
-module.exports = app;
