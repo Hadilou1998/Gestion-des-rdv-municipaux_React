@@ -1,17 +1,17 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const User = require("../models");
+const { User } = require("../models");
 require("dotenv").config();
 
 // Inscription
 exports.register = async (req, res) => {
     try {
-        const { firstName, lastName, email, password } = req.body;
+        const { firstName, lastName, email, password, role } = req.body;
         const hashedPassword = await bcrypt.hash(password, 10);
-        const user = await User.create({ firstName, lastName, email, password: hashedPassword });
+        const user = await User.create({ firstName, lastName, email, password: hashedPassword, role, });
         res.status(201).json({ message: "Utilisateur crée avec succès", user });
     } catch (error) {
-        res.status(400).json({ error: "Erreur lors de l'inscription", details: error.message });
+        res.status(400).json({ error: "Erreur lors de l'inscription", error: error.message });
     }
 };
 

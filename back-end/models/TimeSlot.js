@@ -16,11 +16,11 @@ module.exports = (sequelize, DataTypes) => {
         isAvailable: {
             type: DataTypes.BOOLEAN,
             defaultValue: true,
-        },   
+        }  
     }, { timestamps: true, underscored: true });
 
     TimeSlot.associate = (models) => {
-        TimeSlot.belongsTo(models.Service, { foreignKey: 'serviceId' });
+        TimeSlot.belongsTo(models.Service, { foreignKey: 'service_id', as: 'service', });
     };
 
     return TimeSlot;
