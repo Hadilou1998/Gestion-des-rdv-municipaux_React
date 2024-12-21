@@ -5,10 +5,10 @@ require("dotenv").config();
 
 // Inscription
 exports.register = async (req, res) => {
+    const { firstName, lastName, email, password, role } = req.body;
     try {
-        const { firstName, lastName, email, password, role } = req.body;
         const hashedPassword = await bcrypt.hash(password, 10);
-        const user = await User.create({ firstName, lastName, email, password: hashedPassword, role, });
+        const user = await User.create({ firstName, lastName, email, password: hashedPassword, role });
         res.status(201).json({ message: "Utilisateur crée avec succès", user });
     } catch (error) {
         res.status(400).json({ error: "Erreur lors de l'inscription", error: error.message });
@@ -16,16 +16,13 @@ exports.register = async (req, res) => {
 };
 
 // Connexion
-exports.login = async (req, res) => {  
+exports.login = async (req, res) => {
+    const { email, password } = req.body;   
     try {  
-        const { email, password } = req.body;  
         console.log("Email:", email);  
         console.log("Password:", password);  
-
         const user = await User.findOne({ where: { email } });  
-        if (!user || !(await bcrypt.compare(password, user.password))) {  
-            return res.status(401).json({ error: "Identifiants incorrects" });  
-        } 
+        if (!user) return res.status(401).json({ error: "Identifiants incorrects" });
 
         // Vérifiez que JWT_SECRET est défini  
         console.log("JWT Secret:", process.env.JWT_SECRET);  
