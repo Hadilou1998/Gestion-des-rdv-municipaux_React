@@ -9,6 +9,6 @@ router.post('/register', authController.register);
 router.post('/login', authController.login);
 
 // Déconnexion
-router.post('/logout', authController.logout);
+router.delete('/logout', authController.logout);
 
 module.exports = router;
