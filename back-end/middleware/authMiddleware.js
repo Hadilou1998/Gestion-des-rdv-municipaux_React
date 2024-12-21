@@ -1,10 +1,11 @@
 const jwt = require("jsonwebtoken");
-require("dotenv").config();
 
 module.exports = (req, res, next) => {
-  const authHeader = req.headers.authorization;
+  const authHeader = req.headers["authorization"]?.split(" ")[1];
 
-  if (!authHeader) return res.status(403).send({ message: "Accès non autorisé, token manquant" });
+  if (!authHeader) {
+    return res.status(403).send({ message: "Accès non autorisé, token manquant" });
+  }
 
   const token = authHeader.split(' ')[1];
 
