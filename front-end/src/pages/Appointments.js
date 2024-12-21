@@ -8,7 +8,7 @@ function Appointments() {
         // Récupération des rendez-vous via l'API
         const fetchAppointments = async () => {
             try {
-                const response = await axios.get("/api/appointments");
+                const response = await axios.get("http://localhost:5000/api/appointments");
                 setAppointments(response.data);
             } catch (error) {
                 console.error("Erreur lors de la récupération des rendez-vous:", error);

@@ -23,7 +23,7 @@ function Login() {
             if (response.ok) {
                 const data = await response.json();
                 setUser(data.user);
-                navigate("/home");
+                navigate("/dashboard");
             } else if (response.status === 401) {
                 alert("Identifiants incorrects");
             } else {
