@@ -29,7 +29,7 @@ function Navbar() {
                             <Link className="nav-link" to="/services">Services</Link>
                         </li>
 
-                        {/* Liens conditionnels en fonction de l'état de connexion */}
+                        {/* Liens conditionnels pour utilisateurs non connectés */}
                         {!user ? (
                             <>
                                 <li className="nav-item">
@@ -41,11 +41,24 @@ function Navbar() {
                             </>
                         ) : (
                             <>
+                                {/* Liens pour utilisateurs connectés */}
                                 <li className="nav-item">
                                     <Link className="nav-link" to="/appointments">Mes Rendez-Vous</Link>
                                 </li>
                                 <li className="nav-item">
                                     <Link className="nav-link" to="/profile">Mon Profil</Link>
+                                </li>
+                                <li className="nav-item">
+                                    <Link className="nav-link" to="/dashboard">Tableau de bord</Link>
+                                </li>
+                                <li className="nav-item">
+                                    <Link className="nav-link" to="/notifications">Notifications</Link>
+                                </li>
+                                <li className="nav-item">
+                                    <Link className="nav-link" to="/calendar">Calendrier</Link>
+                                </li>
+                                <li className="nav-item">
+                                    <Link className="nav-link" to="/settings">Paramètres</Link>
                                 </li>
                                 <li className="nav-item">
                                     <Logout />
@@ -57,6 +70,6 @@ function Navbar() {
             </div>
         </nav>
     );
-};
+}
 
 export default Navbar;
