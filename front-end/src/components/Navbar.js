@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { UserContext } from "../contexts/UserContext";
 import Logout from "../pages/Logout";
 
-function Header() {
+function Navbar() {
     const { user } = useContext(UserContext); // Accès à l'utilisateur connecté
 
     return (
@@ -59,4 +59,4 @@ function Header() {
     );
 };
 
-export default Header;
+export default Navbar;
