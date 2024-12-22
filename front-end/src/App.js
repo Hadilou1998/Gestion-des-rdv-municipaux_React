@@ -4,6 +4,10 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 // Import des composants globaux
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
+import AppointmentList from './components/AppointmentList';
+import AppointmentForm from './components/AppointmentForm';
+import ServiceList from './components/ServiceList';
+import TimeSlotPicker from './components/TimeSlotPicker';
 
 // Import des pages
 import Home from './pages/Home';
@@ -14,8 +18,6 @@ import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import Profile from './pages/Profile';
 import Logout from './pages/Logout';
-import Services from './pages/Services';
-import Appointments from './pages/Appointments';
 import Notifications from './pages/Notifications';
 import CalendarPage from './pages/Calendar';
 import Settings from './pages/Settings';
@@ -32,14 +34,16 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
-            <Route path="/services" element={<Services />} />
+            <Route path="/services" element={<ServiceList />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
 
             {/* Routes protégées pour les utilisateurs connectés */}
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/profile" element={<Profile />} />
-            <Route path="/appointments" element={<Appointments />} />
+            <Route path="/appointments" element={<AppointmentList />} />
+            <Route path="/appointments/create" element={<AppointmentForm />} />
+            <Route path="/slots/:serviceId" element={<TimeSlotPicker />} />
             <Route path="/notifications" element={<Notifications />} />
             <Route path="/calendar" element={<CalendarPage />} />
             <Route path="/settings" element={<Settings />} />
