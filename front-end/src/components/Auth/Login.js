@@ -11,13 +11,19 @@ function Login() {
 
     const handleLogin = async (e) => {
         e.preventDefault();
-        try {
-            const response = await axios.post("http://localhost:5000/api/auth/login", { email, password });
-            console.log("Utilisateur connecté avec succès:", response.data.user);
-            localStorage.setItem("token", response.data.token);
-        } catch (error) {
-            console.error("Erreur lors de la connexion", error);
+        const payload = { email, password };
+        const response = await axios.post("http://localhost:5000/api/auth/login", { payload });
+        if (response.ok) {
+            const data = await response.json();
+            setUser(data);
+            localStorage.setItem("token", data.token);
+            navigate("/dashboard");
+        } else {
+            const errorData = await response.text();
+            console.error("Error:", errorData);
+            alert("Erreur de connexion : " + errorData);
         }
+            
     };    
     
     const handleLogout = async () => {
