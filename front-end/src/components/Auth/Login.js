@@ -1,4 +1,5 @@
 import React, { useState, useContext } from "react";
+import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../contexts/UserContext";
 
@@ -10,15 +11,9 @@ function Login() {
 
     const handleLogin = async (e) => {
         e.preventDefault();
-    
         try {
-            const response = await fetch("http://localhost:5000/api/auth/login", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ email, password }),
-            });
+            const response = await axios.post("api/auth/login", { email, password });
+            console.log("Utilisateur connecté avec succès:", response.data.user);
     
             if (response.ok) {
                 const data = await response.json();
