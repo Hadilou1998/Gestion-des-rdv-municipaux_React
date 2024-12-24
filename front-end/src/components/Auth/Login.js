@@ -12,22 +12,11 @@ function Login() {
     const handleLogin = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post("api/auth/login", { email, password });
+            const response = await axios.post("http://localhost:5000/api/auth/login", { email, password });
             console.log("Utilisateur connecté avec succès:", response.data.user);
-    
-            if (response.ok) {
-                const data = await response.json();
-                setUser(data.user);
-                navigate("/dashboard");
-            } else if (response.status === 401) {
-                alert("Identifiants incorrects");
-            } else {
-                const errorMessage = await response.text();
-                alert("Erreur lors de la connexion : " + errorMessage);
-            }
+            localStorage.setItem("token", response.data.token);
         } catch (error) {
-            console.error("Erreur réseau ou autre :", error);
-            alert("Impossible de se connecter pour le moment. Veuillez réessayer plus tard.");
+            console.error("Erreur lors de la connexion", error);
         }
     };    
     

@@ -1,6 +1,7 @@
 import React, { useContext } from "react";
 import { Link } from "react-router-dom";
 import { UserContext } from "../context/UserContext";
+import Logout from "./Auth/Logout";
 
 function Navbar() {
     const { user } = useContext(UserContext); // Accès à l'utilisateur connecté
@@ -42,7 +43,10 @@ function Navbar() {
                                     <Link className="nav-link" to="/profile">Profile</Link>
                                 </li>
                                 <li className="nav-item">
-                                    <Link className="nav-link" to="/logout">Déconnexion</Link>
+                                    <Link className="nav-link" to="/dashboard">Tableau de bord</Link>
+                                </li>
+                                <li className="nav-item">
+                                    <Logout />
                                 </li>
                             </>
                         ) : (

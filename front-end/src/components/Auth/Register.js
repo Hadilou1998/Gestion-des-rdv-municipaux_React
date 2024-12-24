@@ -13,7 +13,7 @@ function Register() {
         const payload = { firstName, lastName, email, password, role };
         console.log("Payload being sent:", payload);
     
-        const response = await axios.post("/api/auth/register", { payload });
+        const response = await axios.post("http://localhost:5000/api/auth/register", { payload });
     
         if (response.ok) {
             const data = await response.json();
