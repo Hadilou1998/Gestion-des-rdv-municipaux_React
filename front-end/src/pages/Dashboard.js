@@ -1,32 +1,45 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useContext, useEffect, useState } from "react";
+import { UserContext } from "../context/UserContext";
+import axios from "axios";
 
 function Dashboard() {
-    return (
-        <div>
-            <h2>Tableau de bord</h2>
-            <p>Bienvenue sur votre tableau de bord ! Accédez rapidement à vos rendez-vous et services.</p>
-            
-            <div className="row mt-4">
-                <div className="col-md-6">
-                    <div className="card">
-                        <div className="card-body">
-                            <h5 className="card-title">Vos rendez-vous</h5>
-                            <p className="card-text">Consultez vos rendez-vous à venir ou prenez-en un nouveau.</p>
-                            <Link to="/appointments" className="btn btn-primary">Gérer mes rendez-vous</Link>
-                        </div>
-                    </div>
-                </div>
-                <div className="col-md-6">
-                    <div className="card">
-                        <div className="card-body">
-                            <h5 className="card-title">Services municipaux</h5>
-                            <p className="card-text">Découvrez les services proposés par votre mairie.</p>
-                            <Link to="/services" className="btn btn-primary">Voir les services</Link>
-                        </div>
-                    </div>
-                </div>
+    const { user } = useContext(UserContext);
+    const [appointments, setAppointments] = useState([]);
+
+    useEffect(() => {
+        if (user) {
+            axios.get("/api/appointments")
+            .then(response => setAppointments(response.data))
+            .catch(error => console.error("Erreur lors du chargement des rendez-vous"));
+        }
+    }, [user]);
+
+    if (!user) {
+        return (
+            <div className="container mt-5">
+                <h2>Tableau de bord</h2>
+                <p>Vous devez vous connecter pour accéder à votre tableau de bord.</p>
             </div>
+        );
+    }
+
+    return (
+        <div className="container mt-5">
+            <h2>Bienvenue, {user.firstName} {user.lastName}</h2>
+            <p>Voici un aperçu de vos rendez-vous :</p>
+            {appointments.length > 0 ? (
+                <ul className="list-group mt-4">
+                    {appointments.map(appointment => (
+                        <li key={appointment.id} className="list-group-item">
+                            <strong>Service : </strong> {appointment.serviceName} <br />
+                            <strong>Date : </strong> {new Date(appointment.date).toLocaleDateString()} <br />
+                            <strong>Statut : </strong> {appointment.status}
+                        </li>
+                    ))}
+                </ul>
+            ) : (
+                <p className="mt-4">Vous n'avez aucun rendez-vous pour le moment.</p>
+            )}
         </div>
     );
 };
