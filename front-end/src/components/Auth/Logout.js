@@ -7,6 +7,7 @@ function Logout() {
     const navigate = useNavigate();
 
     const handleLogout = () => {
+        localStorage.removeItem("token"); // Supprime le token du localStorage
         setUser(null); // Supprime les informations utilisateur
         navigate("/login"); // Redirige vers la page de connexion
     };
