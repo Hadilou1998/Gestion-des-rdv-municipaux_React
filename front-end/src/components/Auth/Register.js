@@ -1,85 +1,65 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 function Register() {
-    const [formData, setFormData] = useState({
-        firstName: "",
-        lastName: "",
-        email: "",
-        password: "",
-        role: "",
-    });
+    const [firstName, setFirstName] = useState("");
+    const [lastName, setLastName] = useState("");
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [role, setRole] = useState("");
 
-    const [error, setError] = useState("");
-    const [success, setSuccess] = useState(false);
-    const navigate = useNavigate();
-
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData((prev) => ({ ...prev, [name]: value }));
-    };
-
-    const handleSubmit = async (e) => {
+    const handleRegister = async (e) => {
         e.preventDefault();
-
-        if (!formData.firstName || !formData.lastName || !formData.email || !formData.password || !formData.role) {
-            setError("Veuillez remplir tous les champs.");
-            return;
-        }
-
-        try {
-            const response = await axios.post("http://localhost:5000/api/auth/register", {
-                firstName: formData.firstName,
-                lastName: formData.lastName,
-                email: formData.email,
-                password: formData.password,
-                role: formData.role,
-            });
-
-            if (response.status === 201) {
-                setSuccess(true);
-                setTimeout(() => navigate("/login"), 2000);
-            }
-        } catch (error) {
-            setError("Une erreur est survenue lors de l'inscription.");
+        const payload = { firstName, lastName, email, password, role };
+        console.log("Payload being sent:", payload);
+    
+        const response = await axios.post("/api/auth/register", { payload });
+    
+        if (response.ok) {
+            const data = await response.json();
+            console.log("Success:", data);
+            alert("Inscription réussie !");
+        } else {
+            const errorData = await response.text();
+            console.error("Error:", errorData);
+            alert("Erreur d'inscription : " + errorData);
         }
     };
 
     return (
-        <div className="container">
-            <h2 className="my-4">Inscription</h2>
-            {error && <div className="alert alert-danger">{error}</div>}
-            {success && <div className="alert alert-success">Inscription réussie ! Vous allez être redirigé vers la page de connexion.</div>}
-            <form onSubmit={handleSubmit} className="mt-4">
-                <div className="mb-3">
-                    <label htmlFor="firstName" className="form-label">Prénom</label>
-                    <input type="text" className="form-control" id="firstName" name="firstName" value={formData.firstName} onChange={handleChange} required />
-                </div>
-                <div className="mb-3">
-                    <label htmlFor="lastName" className="form-label">Nom</label>
-                    <input type="text" className="form-control" id="lastName" name="lastName" value={formData.lastName} onChange={handleChange} required />
-                </div>
-                <div className="mb-3">
-                    <label htmlFor="email" className="form-label">Email</label>
-                    <input type="email" className="form-control" id="email" name="email" value={formData.email} onChange={handleChange} required />
-                </div>
-                <div className="mb-3">
-                    <label htmlFor="password" className="form-label">Mot de passe</label>
-                    <input type="password" className="form-control" id="password" name="password" value={formData.password} onChange={handleChange} required />
-                </div>
-                <div className="mb-3">
-                    <label htmlFor="role" className="form-label">Rôle</label>
-                    <select className="form-select" id="role" name="role" value={formData.role} onChange={handleChange} required>
-                        <option value="">-- Sélectionnez un rôle --</option>
-                        <option value="citizen">Citoyen</option>
-                        <option value="agent">Agent</option>
-                        <option value="admin">Administrateur</option>
-                    </select>
-                </div>
-                <button type="submit" className="btn btn-primary">S'inscrire</button>
-                <p>Déjà inscrit? <a href="/login">Connectez-vous ici</a></p>
-            </form>
+        <div className="row justify-content-center">
+            <div className="col-md-6">
+                <h2>Inscription</h2>
+                <form onSubmit={handleRegister}>
+                    <div className="mb-3">
+                        <label htmlFor="lastName" className="form-label">Nom</label>
+                        <input type="text" className="form-control" id="lastName" value={lastName} onChange={(e) => setLastName(e.target.value)} required />
+                    </div>
+                    <div className="mb-3">
+                        <label htmlFor="firstName" className="form-label">Prénom</label>
+                        <input type="text" className="form-control" id="firstName" value={firstName} onChange={(e) => setFirstName(e.target.value)} required />
+                    </div>
+                    <div className="mb-3">
+                        <label htmlFor="email" className="form-label">Email</label>
+                        <input type="email" className="form-control" id="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+                    </div>
+                    <div className="mb-3">
+                        <label htmlFor="password" className="form-label">Mot de passe</label>
+                        <input type="password" className="form-control" id="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+                    </div>
+                    <div className="mb-3">
+                        <label htmlFor="role" className="form-label">Rôle</label>
+                        <select className="form-select" id="role" value={role} onChange={(e) => setRole(e.target.value)} required>
+                            <option value="">-- Sélectionnez un rôle --</option>
+                            <option value="admin">Admin</option>
+                            <option value="citizen">Citoyen</option>
+                            <option value="agent">Agent</option>
+                        </select>
+                    </div>
+                    <button type="submit" className="btn btn-primary">S'inscrire</button>
+                    <p>Déjà inscrit? <a href="/login">Connectez-vous ici</a></p>
+                </form>
+            </div>
         </div>
     );
 };
