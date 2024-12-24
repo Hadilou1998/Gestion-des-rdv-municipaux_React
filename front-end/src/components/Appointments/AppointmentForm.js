@@ -12,7 +12,7 @@ function AppointmentForm({ onSubmitSuccess, appointmentToEdit}) {
 
     // Charger les services disponibles au montage
     useEffect(() => {
-        axios.get("/api/services")
+        axios.get("http://localhost:5000/api/services")
         .then((response) => setServices(response.data))
         .catch((error) => console.error("Erreur lors du chargement des services :", error));
     }, []);
@@ -41,8 +41,8 @@ function AppointmentForm({ onSubmitSuccess, appointmentToEdit}) {
     const handleSubmit = (e) => {
         e.preventDefault();
         const apiEndpoint = appointmentToEdit 
-            ? `/api/appointments/${appointmentToEdit.id}` 
-            : "/api/appointments";
+            ? `http://localhost:5000/api/appointments/${appointmentToEdit.id}` 
+            : "http://localhost:5000/api/appointments";
         const apiMethod = appointmentToEdit ? "put" : "post";
 
         axios[apiMethod](apiEndpoint, formData)
