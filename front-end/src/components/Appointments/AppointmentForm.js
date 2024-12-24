@@ -1,84 +1,108 @@
 import React, { useState, useEffect } from "react";
-import api from "../../services/api";
+import axios from "axios";
 
-function AppointmentForm() {
+function AppointmentForm({ onSubmitSuccess, appointmentToEdit}) {
     const [services, setServices] = useState([]);
-    const [selectedService, setSelectedService] = useState("");
-    const [date, setDate] = useState("");
-    const [timeSlots, setTimeSlots] = useState([]);
-    const [selectedSlot, setSelectedSlot] = useState("");
+    const [formData, setFormData] = useState({
+        serviceId: "",
+        appointmentDate: "",
+        notes: "",
+    });
+    const [error, setError] = useState(null);
 
+    // Charger les services disponibles au montage
     useEffect(() => {
-        api.get("/services").then((response) => {
-            setServices(response.data);
-        });
+        axios.get("/api/services")
+        .then((response) => setServices(response.data))
+        .catch((error) => console.error("Erreur lors du chargement des services :", error));
     }, []);
 
-    const handleServiceChange = (serviceId) => {
-        setSelectedService(serviceId);
-        api.get(`/slots?service_id=${serviceId}`).then((response) => {
-            setTimeSlots(response.data);
+    // Préremplir le formulaire si un rendez-vous est à modifier
+    useEffect(() => {
+        if (appointmentToEdit) {
+            setFormData({
+                serviceId: appointmentToEdit.serviceId,
+                appointmentDate: appointmentToEdit.appointmentDate,
+                notes: appointmentToEdit.notes,
+            });
+        }
+    }, [appointmentToEdit]);
+
+    // Gérer les changements dans le formulaire
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData({ 
+            ...formData, 
+            [name]: value, 
         });
     };
-    
+
+    // Gérer la soumission du formulaire
     const handleSubmit = (e) => {
         e.preventDefault();
-        const appointmentData = {
-            service_id: selectedService,
-            appointment_date: `${date} ${selectedSlot}`,
-        };
-        api.post("/appointments", appointmentData).then((response) => {
-            console.log("Rendez-vous créé avec succès:", response.data);
+        const apiEndpoint = appointmentToEdit 
+            ? `/api/appointments/${appointmentToEdit.id}` 
+            : "/api/appointments";
+        const apiMethod = appointmentToEdit ? "put" : "post";
+
+        axios[apiMethod](apiEndpoint, formData)
+        .then(() => {
+            onSubmitSuccess();
+            setFormData({ serviceId: "", appointmentDate: "", notes: "" });
+        })
+        .catch((error) => {
+            setError("Erreur lors de la soumission du formulaire.");
         });
     };
 
     return (
-        <form onSubmit={handleSubmit}>
-            <div className="form-group">
-                <label>Service</label>
-                <select
-                    className="form-control"
-                    value={selectedService}
-                    onChange={(e) => handleServiceChange(e.target.value)}
-                    required
-                >
-                    <option value="">Sélectionnez un service</option>
-                    {services.map((service) => (
-                        <option key={service.id} value={service.id}>
-                            {service.name}
-                        </option>
-                    ))}
-                </select>
-            </div>
-            <div className="form-group">
-                <label>Date</label>
-                <input
-                    type="date"
-                    className="form-control"
-                    value={date}
-                    onChange={(e) => setDate(e.target.value)}
-                    required
-                />
-            </div>
-            <div className="form-group">
-                <label>Créneau horaire</label>
-                <select
-                    className="form-control"
-                    value={selectedSlot}
-                    onChange={(e) => setSelectedSlot(e.target.value)}
-                    required
-                >
-                    <option value="">Sélectionnez un créneau</option>
-                    {timeSlots.map((slot) => (
-                        <option key={slot.id} value={slot.start_time}>
-                            {new Date(slot.start_time).toLocaleTimeString()} - {new Date(slot.end_time).toLocaleTimeString()}
-                        </option>
-                    ))}
-                </select>
-            </div>
-
-            <button type="submit" className="btn btn-primary btn-block mt-3">Valider</button>
-        </form>
+        <div className="container">
+            <h3 className="my-4">{appointmentToEdit ? "Modifier le rendez-vous" : "Prendre un rendez-vous"}</h3>
+            {error && <div className="alert alert-danger">{error}</div>}
+            <form onSubmit={handleSubmit}>
+                <div className="mb-3">
+                    <label className="form-label">Service</label>
+                    <select
+                        className="form-select"
+                        name="serviceId"
+                        value={formData.serviceId}
+                        onChange={handleChange}
+                        required
+                    >
+                        <option value="">-- Sélectionnez un service --</option>
+                        {services.map((service) => (
+                            <option key={service.id} value={service.id}>
+                                {service.name} ({service.duration} minutes)
+                            </option>
+                        ))}
+                    </select>
+                </div>
+                <div className="mb-3">
+                    <label className="form-label">Date et heure</label>
+                    <input
+                        type="datetime-local"
+                        className="form-control"
+                        name="appointmentDate"
+                        value={formData.appointmentDate}
+                        onChange={handleChange}
+                        required
+                    />
+                </div>
+                <div className="mb-3">
+                    <label className="form-label">Notes</label>
+                    <textarea
+                        className="form-control"
+                        name="notes"
+                        value={formData.notes}
+                        onChange={handleChange}
+                        rows="3"
+                    ></textarea>
+                </div>
+                <button type="submit" className="btn btn-primary">
+                    {appointmentToEdit ? "Modifier le rendez-vous" : "Prendre un rendez-vous"}
+                </button>
+            </form>
+        </div>
     );
 };
 

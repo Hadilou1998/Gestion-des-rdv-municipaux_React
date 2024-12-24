@@ -9,13 +9,18 @@ function Logout() {
     const handleLogout = () => {
         localStorage.removeItem("token"); // Supprime le token du localStorage
         setUser(null); // Supprime les informations utilisateur
+        alert("Vous êtes déconnecté"); // Affiche un message de déconnexion
         navigate("/login"); // Redirige vers la page de connexion
     };
 
     return (
-        <button onClick={handleLogout} className="btn btn-danger">
-            Déconnexion
-        </button>
+        <div className="container">
+            <h2 className="my-4">Déconnexion</h2>
+            <button className="btn btn-danger" onClick={handleLogout}>
+                Déconnexion
+            </button>
+        </div>
+        
     );
 }
 

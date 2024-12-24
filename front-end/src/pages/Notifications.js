@@ -1,24 +1,30 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 
 function Notifications() {
-    const notifications = [
-        { id: 1, message: "Votre rendez-vous pour le passeport est confirmé pour le 10 janvier à 10h00." },
-        { id: 2, message: "Un nouveau créneau est disponible pour le service d'état civil." },
-        { id: 3, message: "Votre rendez-vous pour la carte d'identité a été annulé." },
-    ];
+    const [notifications, setNotifications] = useState([]);
+
+    useEffect(() => {
+        // Simuler une requête pour obtenir les notifications
+        setNotifications([
+            { id: 1, message: "Nouveau message de support" },
+            { id: 2, message: "Nouvelle réservation" },
+            { id: 3, message: "Nouvelle demande de rendez-vous" },
+        ]);
+    }, []);
     return (
-        <div className="container mt-5">
-            <h1>Notifications</h1>
+        <div className="container">
+            <h2 className="my-4">Notifications</h2>
             {notifications.length > 0 ? (
-                <ul className="list-group mt-4">
-                    {notifications.map(notification => (
-                        <li key={notification.id} className="list-group-item">
-                            {notification.message}
+                <ul className="list-group">
+                    {notifications.map(notif => (
+                        <li key={notif.id} className="list-group-item">
+                            <p>{notif.message}</p>
+                            <small className="text-muted">{notif.date}</small>
                         </li>
                     ))}
                 </ul>
             ) : (
-                <p className="mt-4">Aucune notification pour le moment.</p>
+                <p>Aucune notification pour le moment.</p>
             )}
         </div>
     );
