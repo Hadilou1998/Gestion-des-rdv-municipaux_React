@@ -1,58 +1,43 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-
-// Import des composants globaux
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
-import AppointmentList from './components/AppointmentList';
-import AppointmentForm from './components/AppointmentForm';
-import ServiceList from './components/ServiceList';
-import TimeSlotPicker from './components/TimeSlotPicker';
-
-// Import des pages
 import Home from './pages/Home';
-import About from './pages/About';
-import Contact from './pages/Contact';
-import Login from './pages/Login';
-import Register from './pages/Register';
-import Dashboard from './pages/Dashboard';
+import Login from './components/Auth/Login';
+import Register from './components/Auth/Register';
+import Logout from './components/Auth/Logout';
 import Profile from './pages/Profile';
-import Logout from './pages/Logout';
+import About from './pages/About';
+import Calendar from './pages/Calendar';
+import Contact from './pages/Contact';
 import Notifications from './pages/Notifications';
-import CalendarPage from './pages/Calendar';
-import Settings from './pages/Settings';
+import AppointmentList from './components/Appointments/AppointmentList';
+import { UserProvider } from './context/UserContext';
 
 function App() {
   return (
-    <Router>
-      <div>
-        {/* Navbar affichée sur toutes les pages */}
-        <Navbar />
-        <div className="container mt-4">
-          <Routes>
-            {/* Routes publiques */}
-            <Route path="/" element={<Home />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/contact" element={<Contact />} />
-            <Route path="/services" element={<ServiceList />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-
-            {/* Routes protégées pour les utilisateurs connectés */}
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/appointments" element={<AppointmentList />} />
-            <Route path="/appointments/create" element={<AppointmentForm />} />
-            <Route path="/slots/:serviceId" element={<TimeSlotPicker />} />
-            <Route path="/notifications" element={<Notifications />} />
-            <Route path="/calendar" element={<CalendarPage />} />
-            <Route path="/settings" element={<Settings />} />
-            <Route path="/logout" element={<Logout />} />
-          </Routes>
+    <UserProvider>
+      <Router>
+        <div className="d-flex flex-column min-vh-100">
+          <Navbar />
+          <div className="flex-grow-1">
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="/logout" element={<Logout />} />
+              <Route path="/profile" element={<Profile />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/calendar" element={<Calendar />} />
+              <Route path="/contact" element={<Contact />} />
+              <Route path="/notifications" element={<Notifications />} />
+              <Route path="/appointments" element={<AppointmentList />} />
+            </Routes>
+          </div>
           <Footer />
         </div>
-      </div>
-    </Router>
+      </Router>
+    </UserProvider>
   );
 }
 
