@@ -7,7 +7,7 @@ function AppointmentList() {
     useEffect(() => {
         const fetchAppointments = async () => {
             try {
-                const response = await axios.get("/api/appointments", {
+                const response = await axios.get("http://localhost:5000/api/appointments", {
                     headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
                 });
                 setAppointments(response.data);
@@ -20,7 +20,7 @@ function AppointmentList() {
 
     const handleCancel = (appointmentId) => {
         if (window.confirm("Voulez-vous annuler ce rendez-vous?")) {
-            axios.delete(`/appointments/${appointmentId}`)
+            axios.delete(`http://localhost:5000/api/appointments/${appointmentId}`)
             .then((response) => {
                 console.log("Rendez-vous annulé avec succès:", response.data);
                 setAppointments(appointments.filter((appointment) => appointment.id!== appointmentId));

@@ -11,19 +11,34 @@ function Login() {
 
     const handleLogin = async (e) => {
         e.preventDefault();
-        const payload = { email, password };
-        const response = await axios.post("http://localhost:5000/api/auth/login", { payload });
-        if (response.ok) {
-            const data = await response.json();
-            setUser(data);
-            localStorage.setItem("token", data.token);
-            navigate("/dashboard");
-        } else {
-            const errorData = await response.text();
-            console.error("Error:", errorData);
-            alert("Erreur de connexion : " + errorData);
+        try {
+            // Envoyer la requête de connexion
+            const response = await axios.post("http://localhost:5000/api/auth/login", { email, password });
+    
+            console.log("Utilisateur connecté avec succès:", response.data.user);
+    
+            if (response.status === 200) { // Vérifie si le statut est "200 OK"
+                setUser(response.data.user); // Utilise directement les données déjà parsées
+                navigate("/dashboard");
+            } else if (response.status === 401) { // Mauvais identifiants
+                alert("Identifiants incorrects");
+            } else { // Autres erreurs
+                alert("Erreur lors de la connexion : " + response.data.message || "Erreur inconnue");
+            }
+        } catch (error) {
+            // Gestion des erreurs réseau ou autres
+            console.error("Erreur réseau ou autre :", error);
+            if (error.response) {
+                // Le serveur a répondu avec un statut différent de 2xx
+                alert("Erreur serveur : " + error.response.data.message || "Erreur inconnue");
+            } else if (error.request) {
+                // La requête a été envoyée mais aucune réponse reçue
+                alert("Aucune réponse du serveur. Veuillez réessayer plus tard.");
+            } else {
+                // Une erreur s'est produite lors de la configuration de la requête
+                alert("Une erreur s'est produite : " + error.message);
+            }
         }
-            
     };    
     
     const handleLogout = async () => {

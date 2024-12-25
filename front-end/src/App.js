@@ -12,6 +12,7 @@ import Calendar from './pages/Calendar';
 import Contact from './pages/Contact';
 import Notifications from './pages/Notifications';
 import AppointmentList from './components/Appointments/AppointmentList';
+import Dashboard from './pages/Dashboard';
 import { UserProvider } from './context/UserContext';
 
 function App() {
@@ -32,6 +33,7 @@ function App() {
               <Route path="/contact" element={<Contact />} />
               <Route path="/notifications" element={<Notifications />} />
               <Route path="/appointments" element={<AppointmentList />} />
+              <Route path="/dashboard" element={<Dashboard />} />
             </Routes>
           </div>
           <Footer />

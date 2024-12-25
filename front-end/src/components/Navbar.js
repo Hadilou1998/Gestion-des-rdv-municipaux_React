@@ -34,10 +34,13 @@ function Navbar() {
                         <li className="nav-item">
                             <Link className="nav-link" to="/appointments">Rendez-vous</Link>
                         </li>
+                        <li className="nav-item">
+                            <Link className="nav-link" to="/services">Services</Link>
+                        </li>
                     </ul>
                     <ul className="navbar-nav">
                         {/* Liens pour utilisateurs connectés */} 
-                        {!user ? (
+                        {user ? (
                             <>
                                 <li className="nav-item">
                                     <Link className="nav-link" to="/profile">Profile</Link>

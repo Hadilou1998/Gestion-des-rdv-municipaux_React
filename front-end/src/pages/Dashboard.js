@@ -8,7 +8,12 @@ function Dashboard() {
 
     useEffect(() => {
         if (user) {
-            axios.get("/api/appointments")
+            const token = localStorage.getItem("token");
+            axios.get("http://localhost:5000/api/appointments", {
+                headers: { 
+                    Authorization: `Bearer ${token}` 
+                },
+            })
             .then(response => setAppointments(response.data))
             .catch(error => console.error("Erreur lors du chargement des rendez-vous"));
         }
