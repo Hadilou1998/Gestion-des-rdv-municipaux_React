@@ -1,5 +1,6 @@
-import React, { useState } from "react";
-import axios from "axios";
+import React, { useState, useContext } from "react";
+import { useNavigate } from "react-router-dom";
+import { UserContext } from "../context/UserContext";
 
 function Register() {
     const [firstName, setFirstName] = useState("");
@@ -7,22 +8,14 @@ function Register() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [role, setRole] = useState("");
+    const { register } = useContext(UserContext);
+    const navigate = useNavigate();
 
-    const handleRegister = async (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        const payload = { firstName, lastName, email, password, role };
-        console.log("Payload being sent:", payload);
-    
-        const response = await axios.post("http://localhost:5000/api/auth/register", { payload });
-    
+        const response = await register(firstName, lastName, email, password, role);
         if (response.ok) {
-            const data = await response.json();
-            console.log("Success:", data);
-            alert("Inscription réussie !");
-        } else {
-            const errorData = await response.text();
-            console.error("Error:", errorData);
-            alert("Erreur d'inscription : " + errorData);
+            navigate("/login");
         }
     };
 
@@ -30,14 +23,14 @@ function Register() {
         <div className="row justify-content-center">
             <div className="col-md-6">
                 <h2>Inscription</h2>
-                <form onSubmit={handleRegister}>
-                    <div className="mb-3">
-                        <label htmlFor="lastName" className="form-label">Nom</label>
-                        <input type="text" className="form-control" id="lastName" value={lastName} onChange={(e) => setLastName(e.target.value)} required />
-                    </div>
+                <form onSubmit={handleSubmit}>
                     <div className="mb-3">
                         <label htmlFor="firstName" className="form-label">Prénom</label>
                         <input type="text" className="form-control" id="firstName" value={firstName} onChange={(e) => setFirstName(e.target.value)} required />
+                    </div>
+                    <div className="mb-3">
+                        <label htmlFor="lastName" className="form-label">Nom</label>
+                        <input type="text" className="form-control" id="lastName" value={lastName} onChange={(e) => setLastName(e.target.value)} required />
                     </div>
                     <div className="mb-3">
                         <label htmlFor="email" className="form-label">Email</label>
