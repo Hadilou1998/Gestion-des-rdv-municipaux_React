@@ -1,10 +1,9 @@
 import React, { useContext } from "react";
 import { Link } from "react-router-dom";
 import { UserContext } from "../../context/UserContext";
-import Logout from "../Citizen/Logout";
 
 function Navbar() {
-    const { user } = useContext(UserContext); // Accès à l'utilisateur connecté
+    const { user, logout } = useContext(UserContext); // Accès à l'utilisateur connecté
 
     return (
         <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -29,13 +28,7 @@ function Navbar() {
                             <Link className="nav-link" to="/contact">Contact</Link>
                         </li>
                         <li className="nav-item">
-                            <Link className="nav-link" to="/notifications">Notifications</Link>
-                        </li>
-                        <li className="nav-item">
                             <Link className="nav-link" to="/appointments">Rendez-vous</Link>
-                        </li>
-                        <li className="nav-item">
-                            <Link className="nav-link" to="/services">Services</Link>
                         </li>
                     </ul>
                     <ul className="navbar-nav">
@@ -49,7 +42,7 @@ function Navbar() {
                                     <Link className="nav-link" to="/dashboard">Tableau de bord</Link>
                                 </li>
                                 <li className="nav-item">
-                                    <Logout />
+                                    <button className="btn btn-link nav-link" onClick={logout}>Déconnexion</button>
                                 </li>
                             </>
                         ) : (
