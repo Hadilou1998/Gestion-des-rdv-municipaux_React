@@ -9,14 +9,14 @@ export const UserProvider = ({ children }) => {
     const [user, setUser] = useState(null); // Utilisateur connecté
 
     const register = async (userData) => {
-        const response = await axios.post("/api/auth/register", userData);
+        const response = await axios.post("http://localhost:5000/api/auth/register", userData);
         setUser(response.data.user);
     };
 
-    const login = async (userData) => {
-        const response = await axios.post("/api/auth/login", userData);
+    const login = async (credentials) => {
+        const response = await axios.post("http://localhost:5000/api/auth/login", credentials);
         setUser(response.data.user);
-        localStorage.setItem("user", JSON.stringify(response.data.token));
+        localStorage.setItem("user", response.data.token);
     };
 
     const logout = () => {
