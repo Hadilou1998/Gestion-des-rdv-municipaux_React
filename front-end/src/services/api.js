@@ -9,6 +9,7 @@ const api = {
 
     // Rendez-vous
     getAppointments: () => axios.get(`${API_URL}/appointments`),
+    getAppointment: (id) => axios.get(`${API_URL}/appointments/${id}`),
     createAppointment: (appointmentData) => axios.post(`${API_URL}/appointments`, appointmentData),
     updateAppointment: (id, appointmentData) => axios.put(`${API_URL}/appointments/${id}`, appointmentData),
     deleteAppointment: (id) => axios.delete(`${API_URL}/appointments/${id}`),
@@ -19,6 +20,13 @@ const api = {
     createService: (serviceData) => axios.post(`${API_URL}/services`, serviceData),
     updateService: (id, serviceData) => axios.put(`${API_URL}/services/${id}`, serviceData),
     deleteService: (id) => axios.delete(`${API_URL}/services/${id}`),
+
+    // Time slots
+    getTimeslots: () => axios.get(`${API_URL}/timeslots`),
+    getTimeslot: (id) => axios.get(`${API_URL}/timeslots/${id}`),
+    createTimeslot: (timeslotData) => axios.post(`${API_URL}/timeslots`, timeslotData),
+    updateTimeslot: (id, timeslotData) => axios.put(`${API_URL}/timeslots/${id}`, timeslotData),
+    deleteTimeslot: (id) => axios.delete(`${API_URL}/timeslots/${id}`),
 }
 
 export default api;
