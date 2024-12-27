@@ -6,6 +6,7 @@ const api = {
     // Authentification
     register: (userData) => axios.post(`${API_URL}/auth/register`, userData),
     login: (credentials) => axios.post(`${API_URL}/auth/login`, credentials),
+    logout: () => axios.delete(`${API_URL}/auth/logout`),
 
     // Rendez-vous
     getAppointments: () => axios.get(`${API_URL}/appointments`),
