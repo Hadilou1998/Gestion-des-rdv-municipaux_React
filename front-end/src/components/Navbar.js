@@ -27,14 +27,15 @@ function Navbar() {
                         <li className="nav-item">
                             <Link className="nav-link" to="/contact">Contact</Link>
                         </li>
-                        <li className="nav-item">
-                            <Link className="nav-link" to="/appointments">Rendez-vous</Link>
-                        </li>
+                        
                     </ul>
                     <ul className="navbar-nav">
                         {/* Liens pour utilisateurs connectés */} 
                         {user ? (
                             <>
+                                <li className="nav-item">
+                                    <Link className="nav-link" to="/appointments">Mes Rendez-vous</Link>
+                                </li>
                                 <li className="nav-item">
                                     <Link className="nav-link" to="/profile">Profile</Link>
                                 </li>
