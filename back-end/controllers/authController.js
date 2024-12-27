@@ -21,12 +21,8 @@ exports.login = async (req, res) => {
     try {  
         console.log("Email:", email);  
         console.log("Password:", password);  
-        
         const user = await User.findOne({ where: { email } });  
-        if (!user) return res.status(404).json({ error: "Utilisateur introuvable" });
-        
-        const isMatch = await bcrypt.compare(password, user.password);
-        if (!isMatch) return res.status(401).json({ error: "Mot de passe incorrect" }); 
+        if (!user) return res.status(401).json({ error: "Identifiants incorrects" });
 
         // Vérifiez que JWT_SECRET est défini  
         console.log("JWT Secret:", process.env.JWT_SECRET);  

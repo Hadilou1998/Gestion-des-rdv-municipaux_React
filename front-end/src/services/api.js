@@ -6,12 +6,12 @@ const api = axios.create({
 
 // Authentification
 export const register = async (userData) => {
-    const response = await api.post(`${api.baseURL}/auth/register`, userData);
+    const response = await api.post(`/auth/register`, userData);
     return response.data;
 };
 
 export const login = async (userData) => {
-    const response = await api.post(`${api.baseURL}/auth/login`, userData);
+    const response = await api.post(`/auth/login`, userData);
     return response.data;
 };
 
@@ -21,29 +21,29 @@ export const logout = () => {
 
 // Services
 export const getServices = async () => {
-    const response = await api.get(`${api.baseURL}/services`);
+    const response = await api.get(`/services`);
     return response.data;
 };
 
 export const getServiceById = async (id) => {
-    const response = await api.get(`${api.baseURL}/services/${id}`);
+    const response = await api.get(`/services/${id}`);
     return response.data;
 };
 
 // Rendez-vous
 export const createAppointment = async (appointmentData) => {
-    const response = await api.post(`${api.baseURL}/appointments`, appointmentData);
+    const response = await api.post(`/appointments`, appointmentData);
     return response.data;
 };
 
 export const getAppointmentsByServiceId = async (serviceId) => {
-    const response = await api.get(`${api.baseURL}/appointments?serviceId=${serviceId}`);
+    const response = await api.get(`/appointments?serviceId=${serviceId}`);
     return response.data;
 };
 
 // Créneaux
 export const getTimeSlots = async (serviceId) => {
-    const response = await api.get(`${api.baseURL}/slots?serviceId=${serviceId}`);
+    const response = await api.get(`/slots?serviceId=${serviceId}`);
     return response.data;
 };
 

@@ -13,8 +13,8 @@ export const UserProvider = ({ children }) => {
         setUser(response.data.user);
     };
 
-    const login = async (credentials) => {
-        const response = await axios.post("http://localhost:5000/api/auth/login", credentials);
+    const login = async (userData) => {
+        const response = await axios.post("http://localhost:5000/api/auth/login", userData);
         setUser(response.data.user);
         localStorage.setItem("user", response.data.token);
     };

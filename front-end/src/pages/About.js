@@ -10,17 +10,17 @@ function About() {
             </p>
             <p>
                 <strong>Fonctionnalités principales :</strong>
-                <ul>
-                    <li>Création de rendez-vous avec des agents et les administrateurs</li>
-                    <li>Gestion des rendez-vous et des notifications</li>
-                    <li>Visualisation et suivi des rendez-vous</li>
-                    <li>Historique des rendez-vous</li>
-                    <li>Gestion du calendrier et des agendas</li>
-                    <li>Droits d'accès et de gestion des utilisateurs</li>
-                    <li>Gestion des paramètres et des options de l'application</li>
-                    <li>Et plus encore...</li>
-                </ul>
             </p>
+            <ul>
+                <li>Création de rendez-vous avec des agents et les administrateurs</li>
+                <li>Gestion des rendez-vous et des notifications</li>
+                <li>Visualisation et suivi des rendez-vous</li>
+                <li>Historique des rendez-vous</li>
+                <li>Gestion du calendrier et des agendas</li>
+                <li>Droits d'accès et de gestion des utilisateurs</li>
+                <li>Gestion des paramètres et des options de l'application</li>
+                <li>Et plus encore...</li>
+            </ul>
         </div>
     );
 };
