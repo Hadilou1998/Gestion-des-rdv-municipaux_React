@@ -4,7 +4,7 @@ import TimeSlotList from "../components/TimeSlotList";
 import AppointmentForm from "../components/AppointmentForm";
 import axios from "axios";
 
-function Appointments() {
+function Appointment() {
     const [selectedServiceId, setSelectedServiceId] = useState(null);
 
     const handleServiceSelect = (serviceId) => {
@@ -30,4 +30,4 @@ function Appointments() {
     );   
 };
 
-export default Appointments;
+export default Appointment;
