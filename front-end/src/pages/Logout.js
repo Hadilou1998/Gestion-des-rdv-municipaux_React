@@ -3,14 +3,12 @@ import { UserContext } from "../context/UserContext";
 import { useNavigate } from "react-router-dom";
 
 function Logout() {
-    const { setUser } = useContext(UserContext);
+    const { logout } = useContext(UserContext);
     const navigate = useNavigate();
 
     const handleLogout = () => {
-        localStorage.removeItem("token"); // Supprime le token du localStorage
-        setUser(null); // Supprime les informations utilisateur
-        alert("Vous êtes déconnecté"); // Affiche un message de déconnexion
-        navigate("/login"); // Redirige vers la page de connexion
+        logout();
+        navigate("/login");
     };
 
     return (

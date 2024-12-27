@@ -15,6 +15,10 @@ const api = {
 
     // Services
     getServices: () => axios.get(`${API_URL}/services`),
+    getService: (id) => axios.get(`${API_URL}/services/${id}`),
+    createService: (serviceData) => axios.post(`${API_URL}/services`, serviceData),
+    updateService: (id, serviceData) => axios.put(`${API_URL}/services/${id}`, serviceData),
+    deleteService: (id) => axios.delete(`${API_URL}/services/${id}`),
 }
 
 export default api;
