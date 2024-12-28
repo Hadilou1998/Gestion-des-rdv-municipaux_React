@@ -17,6 +17,7 @@ export const UserProvider = ({ children }) => {
         const response = await axios.post("http://localhost:5000/api/auth/login", userData);
         setUser(response.data.user);
         localStorage.setItem("user", response.data.token);
+        axios.defaults.headers.common["Authorization"] = `Bearer ${response.data.token}`;
     };
 
     const logout = () => {
