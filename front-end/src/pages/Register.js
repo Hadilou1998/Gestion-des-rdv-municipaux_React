@@ -1,6 +1,7 @@
 import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../context/UserContext";
+import axios from "axios";
 
 function Register() {
     const [firstName, setFirstName] = useState("");
@@ -13,9 +14,17 @@ function Register() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const response = await register(firstName, lastName, email, password, role);
-        if (response.ok) {
+        try {
+            const response = await axios.post("http://localhost:5000/api/auth/register", { firstName, lastName, email, password, role });
+            register(response.data.user);
             navigate("/login");
+        } catch (error) {
+            console.error(error);
+            if (error.response && error.response.status === 400) {
+                alert("Email déjà utilisé");
+            } else {
+                alert("Erreur lors de l'inscription");
+            }
         }
     };
 
