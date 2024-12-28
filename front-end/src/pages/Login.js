@@ -1,6 +1,7 @@
 import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../context/UserContext";
+import axios from "axios";
 
 function Login() {
     const [email, setEmail] = useState("");
@@ -11,15 +12,16 @@ function Login() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await login(email, password);
-            if (response.ok) {
-                navigate("/dashboard");
-            } else {
-                navigate("");
-            }
+            const response = await axios.post("http://localhost:5000/api/auth/login", { email, password });
+            login(response.data.token);
+            navigate("/dashboard");
         } catch (error) {
             console.error(error);
-            alert("Erreur lors de la connexion");
+            if (error.response && error.response.status === 401) {
+                alert("Email ou mot de passe incorrect");
+            } else {
+                alert("Erreur lors de la connexion");
+            }
         }
     };
 
@@ -43,5 +45,4 @@ function Login() {
         </div>           
     );
 };
-
 export default Login;
