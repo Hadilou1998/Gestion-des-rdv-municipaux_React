@@ -10,9 +10,16 @@ function Login() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const response = await login(email, password);
-        if (response.ok) {
-            navigate("/dashboard");
+        try {
+            const response = await login(email, password);
+            if (response.ok) {
+                navigate("/dashboard");
+            } else {
+                navigate("");
+            }
+        } catch (error) {
+            console.error(error);
+            alert("Erreur lors de la connexion");
         }
     };
 

@@ -1,7 +1,6 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { User } = require("../models");
-require("dotenv").config();
 
 // Inscription
 exports.register = async (req, res) => {
@@ -22,7 +21,9 @@ exports.login = async (req, res) => {
         console.log("Email:", email);  
         console.log("Password:", password);  
         const user = await User.findOne({ where: { email } });  
-        if (!user) return res.status(401).json({ error: "Identifiants incorrects" });
+        if (!user) {
+            return res.status(404).json({ error: "Utilisateur introuvable" });
+        }
 
         // Vérifiez que JWT_SECRET est défini  
         console.log("JWT Secret:", process.env.JWT_SECRET);  
