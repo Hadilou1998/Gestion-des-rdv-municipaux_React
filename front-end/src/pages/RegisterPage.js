@@ -108,7 +108,7 @@ function RegisterPage() {
                         required
                     >
                         <option value="">-- Choisir un rôle --</option>
-                        <option value="citizen">Citoyen</option>
+                        <option value="citizen">Utilisateur</option>
                         <option value="agent">Agent</option>
                         <option value="admin">Administrateur</option>
                     </select>
