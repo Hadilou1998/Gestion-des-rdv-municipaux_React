@@ -12,7 +12,7 @@ import Calendar from './pages/Calendar';
 import Contact from './pages/Contact';
 import DashboardPage from './pages/DashboardPage';
 import Profile from './pages/Profile';
-import Service from './pages/Service';
+import Services from './pages/Services';
 
 function App() {
   return (
@@ -31,7 +31,7 @@ function App() {
             <Route path="/contact" element={<Contact />} />
             <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/profile" element={<Profile />} />
-            <Route path="/services" element={<Service />} />
+            <Route path="/services" element={<Services />} />
           </Routes>
         </div>
         <Footer />
