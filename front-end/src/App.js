@@ -11,7 +11,7 @@ import Logout from './pages/Logout';
 import About from './pages/About';
 import Calendar from './pages/Calendar';
 import Contact from './pages/Contact';
-import Dashboard from './pages/Dashboard';
+import DashboardPage from './pages/DashboardPage';
 import Profile from './pages/Profile';
 import Service from './pages/Service';
 
@@ -31,7 +31,7 @@ function App() {
               <Route path="/about" element={<About />} />
               <Route path="/calendar" element={<Calendar />} />
               <Route path="/contact" element={<Contact />} />
-              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/dashboard" element={<DashboardPage />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/services/:id" element={<Service />} />
             </Routes>
