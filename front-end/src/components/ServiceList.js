@@ -15,7 +15,7 @@ function ServiceList() {
 
   return (
     <div className="container">
-        <h2 className="mt-4">Services Disponibles</h2>
+        <h2 className="mt-4">Services Municipaux</h2>
         <div className="list-group mt-4">
           {services.map((service) => (
             <div key={service.id} className="list-group-item">
