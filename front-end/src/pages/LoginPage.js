@@ -1,11 +1,11 @@
 import React, { useState } from "react";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 function LoginPage() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
-    const history = useHistory();
+    const navigate = useNavigate();
 
     const handleLogin = async (e) => {
         e.preventDefault();
@@ -19,7 +19,7 @@ function LoginPage() {
 
             if (response.ok) {
                 localStorage.setItem("authToken", data.token);
-                history.push("/appointments");
+                navigate("/appointments");
             } else {
                 setError(data.message || "Erreur lors de la connexion.");
             }

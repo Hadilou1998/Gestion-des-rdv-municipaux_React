@@ -1,18 +1,18 @@
 import React, { useEffect } from "react";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 function Logout() {
-    const history = useHistory();
+    const navigate = useNavigate();
 
     useEffect(() => {
         const logout = () => {
             localStorage.removeItem("authToken");
             alert("Vous avez été déconnecté.");
-            history.push("/login");
+            navigate("/login");
         };
 
         logout();
-    }, [history]);
+    }, [navigate]);
 
     return (
         <div className="container">

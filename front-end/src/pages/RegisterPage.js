@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 function RegisterPage() {
     const [firstName, setFirstName] = useState("");
@@ -8,7 +8,7 @@ function RegisterPage() {
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [role, setRole] = useState("");
-    const history = useHistory();
+    const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -33,7 +33,7 @@ function RegisterPage() {
         });
 
         if (response.ok) {
-            history.push("/login");
+            navigate("/login");
         } else {
             alert("Erreur lors de la création de compte.");
         }
