@@ -6,7 +6,7 @@ import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import AppointmentPage from './pages/AppointmentPage';
-import Logout from './pages/Logout';
+import LogoutPage from './pages/LogoutPage';
 import About from './pages/About';
 import Calendar from './pages/Calendar';
 import Contact from './pages/Contact';
@@ -25,7 +25,7 @@ function App() {
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
             <Route path="/appointments" element={<AppointmentPage />} />
-            <Route path="/logout" element={<Logout />} />
+            <Route path="/logout" element={<LogoutPage />} />
             <Route path="/about" element={<About />} />
             <Route path="/calendar" element={<Calendar />} />
             <Route path="/contact" element={<Contact />} />
