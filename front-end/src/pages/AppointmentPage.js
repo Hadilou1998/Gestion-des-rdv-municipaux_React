@@ -5,16 +5,26 @@ function AppointmentPage() {
 
     useEffect(() => {
         const fetchAppointments = async () => {
-            const response = await fetch("/api/appointments");
-            const data = await response.json();
-            setAppointments(data);
+            try {
+                const response = await fetch("http://localhost:5000/api/appointments");
+                const data = await response.json();
+
+                if (Array.isArray(data)) {
+                    setAppointments(data); // Assurez-vous que `data` est un tableau
+                } else {
+                    console.error("La réponse de l'API n'est pas un tableau :", data);
+                    setAppointments([]);
+                }
+            } catch (error) {
+                console.error("Erreur lors de la récupération des rendez-vous :", error);
+            }
         };
 
         fetchAppointments();
     }, []);
 
     const cancelAppointment = async (id) => {
-        const response = await fetch(`/api/appointments/${id}`, {
+        const response = await fetch(`http://localhost:5000/api/appointments/${id}`, {
             method: "DELETE",
         });
 
@@ -39,21 +49,29 @@ function AppointmentPage() {
                         </tr>
                     </thead>
                     <tbody>
-                        {appointments.map((appointment) => (
-                            <tr key={appointment.id}>
-                                <td>{appointment.service.name}</td>
-                                <td>{new Date(appointment.appointment_date).toLocaleString()}</td>
-                                <td>{appointment.status}</td>
-                                <td>
-                                    <button
-                                        className="btn btn-danger btn-sm"
-                                        onClick={() => cancelAppointment(appointment.id)}
-                                    >
-                                        Annuler
-                                    </button>
+                        {Array.isArray(appointments) && appointments.length > 0 ? (
+                            appointments.map((appointment) => (
+                                <tr key={appointment.id}>
+                                    <td>{appointment.service.name}</td>
+                                    <td>{new Date(appointment.appointment_date).toLocaleString()}</td>
+                                    <td>{appointment.status}</td>
+                                    <td>
+                                        <button
+                                            className="btn btn-danger btn-sm"
+                                            onClick={() => cancelAppointment(appointment.id)}
+                                        >
+                                            Annuler
+                                        </button>
+                                    </td>
+                                </tr>
+                            ))
+                        ) : (
+                            <tr>
+                                <td colSpan="4" className="text-center">
+                                    Aucun rendez-vous disponible.
                                 </td>
                             </tr>
-                        ))}
+                        )}
                     </tbody>
                 </table>
             </div>

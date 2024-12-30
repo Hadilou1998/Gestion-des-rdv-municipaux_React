@@ -9,7 +9,7 @@ function Services() {
   useEffect(() => {
     const fetchService = async () => {
       try {
-        const response = await axios.get("/api/services");
+        const response = await axios.get("http://localhost:5000/api/services");
         setServices(response.data);
       } catch (error) {
         setError("Erreur lors de la récupération du service.");

@@ -5,7 +5,7 @@ function DashboardPage() {
 
     useEffect(() => {
         const fetchAppointments = async () => {
-            const response = await fetch("/api/appointments");
+            const response = await fetch("http://localhost:5000/api/appointments");
             const data = await response.json();
             setAppointments(data);
         };
