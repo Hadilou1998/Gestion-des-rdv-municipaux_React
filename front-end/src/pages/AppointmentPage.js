@@ -8,7 +8,7 @@ function AppointmentPage() {
         const fetchAppointments = async () => {
             try {
                 const token = localStorage.getItem("authToken"); // Récupère le jeton du localStorage
-                console.log("Jeton récupéré:", token); // Ajout du log pour déboguer
+                console.log("Jeton récupéré:", token); // Affiche le jeton pour débogage
                 if (!token) {
                     setError("Jeton d'authentification manquant.");
                     return;
@@ -22,9 +22,6 @@ function AppointmentPage() {
                 });
 
                 const data = await response.json(); // Récupère la réponse au format JSON
-
-                // Affiche la réponse pour débogage
-                console.log("Réponse API:", data);
 
                 if (!response.ok) {
                     throw new Error(`Erreur ${response.status}: ${data.message || response.statusText}`);
