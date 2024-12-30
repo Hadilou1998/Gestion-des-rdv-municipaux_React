@@ -5,7 +5,7 @@ function ServiceList() {
 
   useEffect(() => {
     const fetchServices = async () => {
-      const response = await fetch("/api/services");
+      const response = await fetch("http://localhost:5000/api/services");
       const data = await response.json();
       setServices(data);
     };

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import Logout from "../pages/LogoutPage";
 
 function Navbar() {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -56,7 +57,7 @@ function Navbar() {
                                     <Link className="nav-link" to="/dashboard">Tableau de bord</Link>
                                 </li>
                                 <li className="nav-item">
-                                    <button className="btn btn-link nav-link" onClick={handleLogout}>Déconnexion</button>
+                                    <Logout handleLogout={handleLogout} />
                                 </li>
                             </>
                         ) : (

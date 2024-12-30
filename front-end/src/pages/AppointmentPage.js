@@ -2,74 +2,81 @@ import React, { useState, useEffect } from "react";
 
 function AppointmentPage() {
     const [appointments, setAppointments] = useState([]);
+    const [error, setError] = useState(null);
 
     useEffect(() => {
         const fetchAppointments = async () => {
             try {
-                const response = await fetch("http://localhost:5000/api/appointments");
-                const data = await response.json();
+                const token = localStorage.getItem("authToken"); // Récupère le jeton du localStorage
+                if (!token) {
+                    setError("Jeton d'authentification manquant.");
+                    return;
+                }
+
+                const response = await fetch("http://localhost:5000/api/appointments", {
+                    method: "GET",
+                    headers: {
+                        Authorization: `Bearer ${token}`, // Ajoute le jeton dans l'en-tête Authorization
+                    },
+                });
+
+                const data = await response.json(); // Récupère la réponse au format JSON
+
+                // Affiche la réponse pour débogage
+                console.log(data);
+
+                if (!response.ok) {
+                    throw new Error(`Erreur ${response.status}: ${data.message || response.statusText}`);
+                }
 
                 if (Array.isArray(data)) {
-                    setAppointments(data); // Assurez-vous que `data` est un tableau
+                    setAppointments(data);
                 } else {
-                    console.error("La réponse de l'API n'est pas un tableau :", data);
-                    setAppointments([]);
+                    setError("La réponse de l'API n'est pas un tableau");
                 }
-            } catch (error) {
-                console.error("Erreur lors de la récupération des rendez-vous :", error);
+            } catch (err) {
+                setError(err.message);
             }
         };
 
         fetchAppointments();
     }, []);
 
-    const cancelAppointment = async (id) => {
-        const response = await fetch(`http://localhost:5000/api/appointments/${id}`, {
-            method: "DELETE",
-        });
-
-        if (response.ok) {
-            setAppointments(appointments.filter((appointment) => appointment.id !== id));
-        } else {
-            alert("Erreur lors de la suppression du rendez-vous.");
-        }
-    };
+    if (error) {
+        return (
+            <div className="container">
+                <h2 className="mt-4">Erreur</h2>
+                <p>{error}</p>
+            </div>
+        );
+    }
 
     return (
         <div className="container">
-            <h2 className="mt-4">Mes Rendez-vous</h2>
+            <h2 className="mt-4">Tableau de bord des rendez-vous</h2>
             <div className="mt-4">
                 <table className="table">
                     <thead>
                         <tr>
+                            <th scope="col">Nom</th>
                             <th scope="col">Service</th>
                             <th scope="col">Date</th>
                             <th scope="col">Statut</th>
-                            <th scope="col">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {Array.isArray(appointments) && appointments.length > 0 ? (
+                        {appointments.length > 0 ? (
                             appointments.map((appointment) => (
                                 <tr key={appointment.id}>
+                                    <td>{appointment.user.first_name} {appointment.user.last_name}</td>
                                     <td>{appointment.service.name}</td>
                                     <td>{new Date(appointment.appointment_date).toLocaleString()}</td>
                                     <td>{appointment.status}</td>
-                                    <td>
-                                        <button
-                                            className="btn btn-danger btn-sm"
-                                            onClick={() => cancelAppointment(appointment.id)}
-                                        >
-                                            Annuler
-                                        </button>
-                                    </td>
                                 </tr>
                             ))
                         ) : (
                             <tr>
-                                <td colSpan="4" className="text-center">
-                                    Aucun rendez-vous disponible.
-                                </td>
+                                <td colSpan="4">Aucun rendez-vous trouvé</td>
                             </tr>
                         )}
                     </tbody>
@@ -77,6 +84,6 @@ function AppointmentPage() {
             </div>
         </div>
     );
-};
+}
 
 export default AppointmentPage;
