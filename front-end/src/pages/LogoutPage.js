@@ -7,7 +7,6 @@ function Logout() {
     useEffect(() => {
         const logout = () => {
             localStorage.removeItem("authToken");
-            alert("Vous avez été déconnecté.");
             navigate("/login");
         };
 
