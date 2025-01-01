@@ -1,6 +1,6 @@
 import React from "react";
 
-function HomePage() {
+function Home() {
     return (
         <div className="container mt-5">
             <h1 className="mt-4">Bienvenue sur la plateforme municipale</h1>
@@ -9,4 +9,4 @@ function HomePage() {
     );
 };
 
-export default HomePage;
+export default Home;
