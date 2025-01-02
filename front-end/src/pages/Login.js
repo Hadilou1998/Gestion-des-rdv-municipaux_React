@@ -8,7 +8,7 @@ function Login() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post("/api/auth/login", { email, password });
+            const response = await axios.post("http://localhost:5000/api/auth/login", { email, password });
             console.log("Connexion réussie : ", response.data);
         } catch (error) {
             console.error("Erreur lors de la connexion : ", error);
