@@ -1,16 +1,24 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 function Logout() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        const logout = () => {
-            localStorage.removeItem("authToken");
-            navigate("/login");
+        const handleLogout = async () => {
+            try {
+                const response = await axios.post("http://localhost:5000/api/auth/logout");
+                console.log("Déconnexion réussie : ", response.data);
+            } catch (error) {
+                console.error("Erreur lors de la déconnexion : ", error);
+            } finally {
+                localStorage.removeItem("user");
+                navigate("/login");
+            }
         };
 
-        logout();
+        handleLogout();
     }, [navigate]);
 
     return (

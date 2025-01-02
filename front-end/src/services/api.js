@@ -31,7 +31,7 @@ api.interceptors.response.use(
             // Utilisateur non connecté, redirection vers la page de connexion
             window.location.href = "/login";
         }
-        throw error.response;
+        return Promise.reject(error);
     }
 );
 
@@ -41,6 +41,10 @@ api.interceptors.response.use(
 export const login = (credentials) => api.post(`${api.baseURL}/auth/login`, credentials);
 export const register = (userData) => api.post(`${api.baseURL}/auth/register`, userData);
 export const logout = () => api.post(`${api.baseURL}/auth/logout`);
+
+// Profil utilisateur
+export const getUserProfile = () => api.get(`${api.baseURL}/user/profile`);
+export const updateUserProfile = (data) => api.put(`${api.baseURL}/user/profile`, data);
 
 // Gestion des rendez-vous
 export const getAppointments = () => api.get(`${api.baseURL}/appointments`);
@@ -61,5 +65,11 @@ export const getSlotById = (id) => api.get(`${api.baseURL}/slots/${id}`);
 export const createTimeSlot = (data) => api.post(`${api.baseURL}/slots`, data);
 export const updateTimeSlot = (id, data) => api.put(`${api.baseURL}/slots/${id}`, data);
 export const deleteTimeSlot = (id) => api.delete(`${api.baseURL}/slots/${id}`);
+
+// Contact
+export const sendContactMessage = (data) => api.post(`${api.baseURL}/contact`, data);
+
+// Statistiques dashboard
+export const getDashboardStats = () => api.get(`${api.baseURL}/dashboard/stats`);
 
 export default api;

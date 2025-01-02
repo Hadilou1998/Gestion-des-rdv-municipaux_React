@@ -1,68 +1,111 @@
 import React, { useState, useEffect } from "react";
-import { Form, Button, Container } from "react-bootstrap";
+import { getAppointments, createAppointment, updateAppointment, deleteAppointment } from "../services/api";
 
 function Appointment() {
-    const [services, setServices] = useState([]);
-    const [selectedService, setSelectedService] = useState("");
-    const [date, setDate] = useState("");
+    const [appointments, setAppointments] = useState([]);
+    const [newAppointment, setNewAppointment] = useState({ 
+        service_id: "", 
+        appointment_date: "",
+        notes: "",
+    });
 
     useEffect(() => {
-        // Appel l'API pour récupérer les services
-        fetch("http://localhost:5000/api/services")
-            .then(response => response.json())
-            .then(data => setServices(data));
+        const fetchAppointments = async () => {
+            try {
+                const response = await getAppointments();
+                setAppointments(response.data);
+            } catch (error) {
+                console.error("Erreur lors de la récupération des rendez-vous : ", error);
+            }
+        };
+        fetchAppointments();
     }, []);
 
-    const handleSubmit = (e) => {
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setNewAppointment({...newAppointment, [name]: value });
+    };
+
+    const handleCreateAppointment = async (e) => {
         e.preventDefault();
-        // Appel l'API pour enregistrer le rendez-vous
-        fetch("http://localhost:5000/api/appointments", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ service_id: selectedService, appointment_date: date }),
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
+        try {
+            const response = await createAppointment(newAppointment);
+            if (response.data.success) {
                 alert("Rendez-vous enregistré avec succès!");
-                setDate("");
-                setSelectedService("");
+                setAppointments([...appointments, response.data.appointment]);
+                setNewAppointment({ service_id: "", appointment_date: "", notes: "" });
             } else {
-                alert(data.message);
+                alert(response.data.message);
             }
-        });
+        } catch (error) {
+            console.error("Erreur lors de l'enregistrement du rendez-vous : ", error);
+        }
+    };
+
+    const handleUpdateAppointment = async (id, updatedAppointment) => {
+        try {
+            const response = await updateAppointment(id, updatedAppointment);
+            if (response.data.success) {
+                alert("Rendez-vous mis à jour avec succès!");
+                setAppointments(appointments.map(appointment => appointment.id === id ? response.data.appointment : appointment));
+            } else {
+                alert(response.data.message);
+            }
+        } catch (error) {
+            console.error("Erreur lors de la mise à jour du rendez-vous : ", error);
+        }
+    };
+
+    const handleDeleteAppointment = async (id) => {
+        try {
+            const response = await deleteAppointment(id);
+            if (response.data.success) {
+                alert("Rendez-vous supprimé avec succès!");
+                setAppointments(appointments.filter(appointment => appointment.id !== id));
+            } else {
+                alert(response.data.message);
+            }
+        } catch (error) {
+            console.error("Erreur lors de la suppression du rendez-vous : ", error);
+        }
     };
 
     return (
-        <Container className="mt-5">
-            <h2 className="mt-4">Rendez-vous</h2>
-            <Form onSubmit={handleSubmit} className="mt-3">
+        <div>
+            <h2 className="mb-4">Rendez-vous</h2>
+            <form onSubmit={handleCreateAppointment} className="mb-4">
                 <div className="mb-3">
-                    <label htmlFor="service" className="form-label">Service</label>
-                    <select
-                        className="form-select"
-                        id="service"
-                        value={selectedService}
-                        onChange={(e) => setSelectedService(e.target.value)}
-                        required
-                    >
-                        <option value="">-- Sélectionnez un service --</option>
-                        {services.map(service => (
-                            <option key={service.id} value={service.id}>{service.name}</option>
-                        ))}
-                    </select>
+                    <label className="form-label">Service ID</label>
+                    <input type="text" className="form-control" name="service_id" value={newAppointment.service_id} onChange={handleChange} required />
                 </div>
                 <div className="mb-3">
-                    <label htmlFor="date" className="form-label">Date et Heure</label>
-                    <input
-                        type="datetime-local"
-                        value={date}
-                        onChange={(e) => setDate(e.target.value)}
-                    />
+                    <label className="form-label">Date et heure</label>
+                    <input type="datetime-local" className="form-control" name="appointment_date" value={newAppointment.appointment_date} onChange={handleChange} required />
                 </div>
-                <Button type="submit" className="btn btn-primary">Enregistrer</Button>
-            </Form>
-        </Container>
+                <div className="mb-3">
+                    <label className="form-label">Notes</label>
+                    <textarea className="form-control" name="notes" value={newAppointment.notes} onChange={handleChange}></textarea>
+                </div>
+                <button type="submit" className="btn btn-primary">Créer un rendez-vous</button>
+            </form>
+
+            <h3>Liste des rendez-vous</h3>
+            <ul className="list-group">
+                {appointments.map(appointment => (
+                    <li key={appointment.id} className="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <strong>Service ID:</strong> {appointment.service_id}<br />
+                            <strong>Date et heure:</strong> {appointment.appointment_date}<br />
+                            <strong>Notes:</strong> {appointment.notes}
+                        </div>
+                        <div>
+                            <button className="btn btn-primary btn-sm me-2" onClick={() => handleUpdateAppointment(appointment.id, { ...appointment, notes: "Nouvelles notes" })}>Modifier</button>
+                            <button className="btn btn-danger btn-sm" onClick={() => handleDeleteAppointment(appointment.id)}>Supprimer</button>
+                        </div>
+                    </li>
+                ))}
+            </ul>
+        </div>
     );
 };
 

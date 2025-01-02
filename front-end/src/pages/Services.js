@@ -1,52 +1,143 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import { getServices, createService, updateService, deleteService } from "../services/api";
 
 function Services() {
   const [services, setServices] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [newService, setNewService] = useState({
+    name: "",
+    description: "",
+    duration: "",
+    department: "",
+  });
 
   useEffect(() => {
-    const fetchService = async () => {
+    const fetchServices = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/services");
+        const response = await getServices();
         setServices(response.data);
       } catch (error) {
-        setError("Erreur lors de la récupération du service.");
-      } finally {
-        setLoading(false);
+        console.error("Erreur lors de la récupération du service :", error);
       }
     };
-    fetchService();
+    fetchServices();
   }, []);
 
-  if (loading) {
-    return <div>Chargement des services...</div>;
-  }
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setNewService({ ...newService, [name]: value });
+  };
 
-  if (error) {
-    return <div className="text-danger">{error}</div>;
-  }
+  const handleCreateService = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await createService(newService);
+      if (response.data.success) {
+        alert("Service créé avec succès!");
+        setServices([...services, response.data.service]);
+        setNewService({ name: "", description: "", duration: "", department: "" });
+      } else {
+        alert(response.data.message);
+      }
+    } catch (error) {
+      console.error("Erreur lors de la création du service : ", error);
+    }
+  };
+
+  const handleUpdateService = async (id, updatedService) => {
+    try {
+      const response = await updateService(id, updatedService);
+      if (response.data.success) {
+        alert("Service mis à jour avec succès!");
+        setServices(services.map(service => service.id === id ? response.data.service : service));
+      } else {
+        alert(response.data.message);
+      }
+    } catch (error) {
+      console.error("Erreur lors de la mise à jour du service : ", error);
+    }
+  };
+
+  const handleDeleteService = async (id) => {
+    try {
+      const response = await deleteService(id);
+      if (response.data.success) {
+        alert("Service supprimé avec succès!");
+        setServices(services.filter(service => service.id !== id));
+      } else {
+        alert(response.data.message);
+      }
+    } catch (error) {
+      console.error("Erreur lors de la suppression du service : ", error);
+    }
+  };
   
   return (
-    <div className="container">
-      <h1 className="mt-4">Services</h1>
-      <p>Voici la liste des services municipaux :</p>
-      <div className="row">
-        {services.map((service) => (
-          <div key={service.id} className="col-md-4 mb-4">
-            <div className="card">
-              <div className="card-body">
-                <h5 className="card-title">{service.name}</h5>
-                <p className="card-text">{service.description}</p>
-                <p><strong>Durée :</strong> {service.duration} minutes</p>
-                <p><strong>Département :</strong> {service.department}</p>
-                <button className="btn btn-primary" onClick={() => alert(`Service sélectionné : ${service.name}`)}>Prendre rendez-vous</button>
-              </div>
+    <div>
+      <h2 className="mb-4">Gestion des services</h2>
+      <form onSubmit={handleCreateService} className="mb-4">
+        <div className="mb-3">
+          <label className="form-label">Nom</label>
+          <input
+            type="text"
+            className="form-control"
+            name="name"
+            value={newService.name}
+            onChange={handleInputChange}
+            required
+          />
+        </div>
+        <div className="mb-3">
+          <label className="form-label">Description</label>
+          <textarea
+            className="form-control"
+            name="description"
+            value={newService.description}
+            onChange={handleInputChange}
+            required
+          ></textarea>
+        </div>
+        <div className="mb-3">
+          <label className="form-label">Durée (en minutes)</label>
+          <input
+            type="number"
+            className="form-control"
+            name="duration"
+            value={newService.duration}
+            onChange={handleInputChange}
+            required
+          />
+        </div>
+        <div className="mb-3">
+          <label className="form-label">Département</label>
+          <input
+            type="text"
+            className="form-control"
+            name="department"
+            value={newService.department}
+            onChange={handleInputChange}
+            required
+          />
+        </div>
+        <button type="submit" className="btn btn-primary">Créer un service</button>
+      </form>
+
+      <h3>Liste des services</h3>
+      <ul className="list-group">
+        {services.map(service => (
+          <li key={service.id} className="list-group-item d-flex justify-content-between align-items-center">
+            <div>
+              <strong>Nom:</strong> {service.name}<br />
+              <strong>Description:</strong> {service.description}<br />
+              <strong>Durée:</strong> {service.duration} minutes<br />
+              <strong>Département:</strong> {service.department}
             </div>
-          </div>
+            <div>
+              <button className="btn btn-primary btn-sm me-2" onClick={() => handleUpdateService(service.id, {...service, name: "Nouveau nom" })}>Modifier</button>
+              <button className="btn btn-danger btn-sm" onClick={() => handleDeleteService(service.id)}>Supprimer</button>
+            </div>
+          </li>
         ))}
-      </div>
+      </ul>
     </div>
   );
 };

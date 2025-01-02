@@ -1,60 +1,43 @@
 import React, { useState } from "react";
 
 function Contact() {
-    const [name, setName] = useState("");
-    const [email, setEmail] = useState("");
-    const [message, setMessage] = useState("");
-    const [submitted, setSubmitted] = useState(false);
+    const [formData, setFormData] = useState({
+        name: "",
+        email: "",
+        message: "",
+    });
+    
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData({ ...formData, [name]: value });
+    };
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        // Envoyer le formulaire de contact à votre API
-        setSubmitted(true);
+        // Ajouter la logique pour envoyer le formulaire au backend
+        console.log("Formulaire envoyé : ", formData);
+        alert("Votre message a été envoyé avec succès !");
+        setFormData({ name: "", email: "", message: "" });
     };
 
     return (
-        <div className="container">
+        <div>
             <h2 className="my-4">Contactez-nous</h2>
-            {submitted ? (
-                <div className="alert alert-success mt-4">Merci pour votre message, nous vous répondrons rapidement.</div>
-            ) : (
-                <form onSubmit={handleSubmit} className="mt-4">
-                    <div className="mb-3">
-                        <label htmlFor="name" className="form-label">Nom</label>
-                        <input
-                            type="text"
-                            className="form-control"
-                            id="name"
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
-                            required
-                        />
-                    </div>
-                    <div className="mb-3">
-                        <label htmlFor="email" className="form-label">Email</label>
-                        <input
-                            type="email"
-                            className="form-control"
-                            id="email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            required
-                        />
-                    </div>
-                    <div className="mb-3">
-                        <label htmlFor="message" className="form-label">Message</label>
-                        <textarea
-                            className="form-control"
-                            id="message"
-                            rows="5"
-                            value={message}
-                            onChange={(e) => setMessage(e.target.value)}
-                            required
-                        ></textarea>
-                    </div>
-                    <button type="submit" className="btn btn-primary">Envoyer</button>
-                </form>
-            )}
+            <form onSubmit={handleSubmit}>
+                <div className="mb-3">
+                    <label className="form-label">Nom</label>
+                    <input type="text" className="form-control" name="name" value={formData.name} onChange={handleChange} required />
+                </div>
+                <div className="mb-3">
+                    <label className="form-label">Email</label>
+                    <input type="email" className="form-control" name="email" value={formData.email} onChange={handleChange} required />
+                </div>
+                <div className="mb-3">
+                    <label className="form-label">Message</label>
+                    <textarea className="form-control" name="message" rows="5" value={formData.message} onChange={handleChange} required></textarea>
+                </div>
+                <button type="submit" className="btn btn-primary">Envoyer</button>
+            </form>
         </div>
     );
 };
