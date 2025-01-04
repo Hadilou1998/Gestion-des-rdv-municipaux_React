@@ -9,11 +9,15 @@ function Dashboard() {
     useEffect(() => {
         const fetchDashboardData = async () => {
             try {
-                const [appointmentsResponse, servicesResponse] = await Promise.all([
-                    api.get("/appointments"),
-                    api.get("/services"),
-                ]);
+                const token = localStorage.getItem("user");
+                const headers = token ? { Authorization: `Bearer ${token}` } : {};
+
+                // fetch rendez-vous
+                const appointmentsResponse = await api.get("http://localhost:5000/api/appointments", { headers });
                 setAppointments(appointmentsResponse.data);
+
+                // fetch services
+                const servicesResponse = await api.get("http://localhost:5000/api/services", { headers });
                 setServices(servicesResponse.data);
 
                 setLoading(false);
@@ -51,10 +55,10 @@ function Dashboard() {
                         {appointments.map((appointment, index) => (
                             <tr key={appointment.id}>
                                 <td>{index + 1}</td>
-                                <td>{appointment.service.name}</td>
+                                <td>{appointment.service?.name || "Service non trouvé"}</td>
                                 <td>{new Date(appointment.appointment_date).toLocaleString()}</td>
                                 <td>{appointment.status}</td>
-                                <td>{appointment.user.first_name} {appointment.user.last_name}</td>
+                                <td>{appointment.user?.first_name} {appointment.user?.last_name}</td>
                             </tr>
                         ))}
                     </tbody>
