@@ -11,14 +11,18 @@ function Dashboard() {
         const fetchDashboardData = async () => {
             try {
                 const savedUser = localStorage.getItem("user");
-                const token = savedUser?.token;
-                if (!token) {
-                    throw new Error("Token manquant");
+                if (!savedUser) {
+                    throw new Error("Aucun utilisateur trouvé. Redirection...");
                 }
 
-                const headers = {
-                    Authorization: `Bearer ${token}`,
-                };
+                const parsedUser = JSON.parse(savedUser);
+                const token = parsedUser?.token;
+
+                if (!token) {
+                    throw new Error("Token manquant. Redirection vers la page de connexion.");
+                }
+
+                const headers = { Authorization: `Bearer ${token}` };
 
                 // fetch rendez-vous
                 const appointmentsResponse = await api.get("http://localhost:5000/api/appointments", { headers });
@@ -31,7 +35,7 @@ function Dashboard() {
                 setLoading(false);
             } catch (error) {
                 console.error("Erreur lors de la récupération des données : ", error);
-                setError(error);
+                setError(error.message || "Erreur inconnue");
                 setLoading(false);
             }
         };

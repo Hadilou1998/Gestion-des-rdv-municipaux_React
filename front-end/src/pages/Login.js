@@ -7,11 +7,12 @@ function Login() {
     const [password, setPassword] = useState("");
     const navigate = useNavigate();
 
-    const handleSubmit = async (credentials) => {
+    const handleSubmit = async (e) => {
+        e.preventDefault();
         try {
-            const response = await axios.post("http://localhost:5000/api/auth/login", credentials);
-            const { token, user } = response.data; // Extraire le token et le profil utilisateur
-            localStorage.setItem("user", JSON.stringify({ token, ...user })); // Enregistrer le token utilisateur dans le local storage
+            const response = await axios.post("http://localhost:5000/api/auth/login", { email, password });
+            const { user } = response.data; // Extraire le token et le profil utilisateur
+            console.log("Connexion réussie : ", user);
             navigate("/dashboard");
         } catch (error) {
             console.error("Erreur lors de la connexion : ", error);
