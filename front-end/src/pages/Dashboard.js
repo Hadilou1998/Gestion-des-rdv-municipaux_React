@@ -36,6 +36,12 @@ function Dashboard() {
             } catch (error) {
                 console.error("Erreur lors de la récupération des données : ", error);
                 setError(error.message || "Erreur inconnue");
+
+                // Redirection vers la page de connexion en cas d'erreur
+                if (error.message.includes("Token manquant") || error.message.includes("Aucun utilisateur trouvé")) {
+                    window.location.href = "/login";
+                }
+                
                 setLoading(false);
             }
         };
