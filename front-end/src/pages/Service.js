@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { getServices, createService, updateService, deleteService } from "../services/api";
 
-function Services() {
+function Service() {
   const [services, setServices] = useState([]);
   const [newService, setNewService] = useState({
     name: "",
@@ -142,4 +142,4 @@ function Services() {
   );
 };
 
-export default Services;
+export default Service;
