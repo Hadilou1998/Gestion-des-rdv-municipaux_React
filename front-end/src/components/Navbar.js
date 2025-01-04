@@ -1,21 +1,9 @@
-import React, { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import Logout from "../pages/Logout";
+import React, { useContext } from "react";
+import { Link } from "react-router-dom";
+import { AuthContext } from "../context/AuthContext";
 
 function Navbar() {
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const navigate = useNavigate();
-
-    useEffect(() => {
-        const token = localStorage.getItem("user");
-        setIsLoggedIn(!!token);
-    }, []);
-
-    const handleLogout = () => {
-        localStorage.removeItem("user");
-        setIsLoggedIn(false);
-        navigate("/login");
-    };
+    const { user, logout } = useContext(AuthContext);
 
     return (
         <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -45,19 +33,19 @@ function Navbar() {
                     </ul>
                     <ul className="navbar-nav">
                         {/* Liens pour utilisateurs connectés */} 
-                        {isLoggedIn ? (
+                        {user ? (
                             <>
                                 <li className="nav-item">
                                     <Link className="nav-link" to="/appointments">Mes Rendez-vous</Link>
                                 </li>
                                 <li className="nav-item">
-                                    <Link className="nav-link" to="/profile">Profile</Link>
-                                </li>
-                                <li className="nav-item">
                                     <Link className="nav-link" to="/dashboard">Tableau de bord</Link>
                                 </li>
                                 <li className="nav-item">
-                                    <Logout handleLogout={handleLogout} />
+                                    <Link className="nav-link" to="/profile">Profile</Link>
+                                </li>
+                                <li className="nav-item">
+                                    <button className="btn btn-link nav-link" onClick={logout}>Déconnexion</button>
                                 </li>
                             </>
                         ) : (
