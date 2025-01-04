@@ -4,7 +4,7 @@ import React, { createContext, useEffect, useState } from "react";
 export const AuthContext = createContext();
 
 // Provider du contexte
-export const AuthContextProvider = ({ children }) => {
+export const AuthProvider = ({ children }) => {
     const [auth, setAuth] = useState(null);
     const [loading, setLoading] = useState(true);
 
