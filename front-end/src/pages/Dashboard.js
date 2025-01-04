@@ -4,63 +4,30 @@ import api from "../services/api";
 function Dashboard() {
     const [appointments, setAppointments] = useState([]);
     const [services, setServices] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
 
     useEffect(() => {
         const fetchDashboardData = async () => {
             try {
-                const savedUser = localStorage.getItem("user");
-                if (!savedUser) {
-                    throw new Error("Aucun utilisateur trouvé. Redirection...");
-                }
+                const appointmentResponse = await api.get("http://localhost:5000/api/appointments", {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem("user")}`,
+                    },
+                });
+                setAppointments(appointmentResponse.data);
 
-                const parsedUser = JSON.parse(savedUser);
-                const token = parsedUser?.token;
-
-                if (!token) {
-                    throw new Error("Token manquant. Redirection vers la page de connexion.");
-                }
-
-                const headers = { Authorization: `Bearer ${token}` };
-
-                // fetch rendez-vous
-                const appointmentsResponse = await api.get("http://localhost:5000/api/appointments", { headers });
-                setAppointments(appointmentsResponse.data);
-
-                // fetch services
-                const servicesResponse = await api.get("http://localhost:5000/api/services", { headers });
+                const servicesResponse = await api.get("http://localhost:5000/api/services", {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem("user")}`,
+                    },
+                });
                 setServices(servicesResponse.data);
-
-                setLoading(false);
             } catch (error) {
-                console.error("Erreur lors de la récupération des données : ", error);
-                setError(error.message || "Erreur inconnue");
-
-                // Redirection vers la page de connexion en cas d'erreur
-                if (error.message.includes("Token manquant") || error.message.includes("Aucun utilisateur trouvé")) {
-                    window.location.href = "/login";
-                }
-                
-                setLoading(false);
+                console.error("Erreur lors de la récupération des rendez-vous : ", error);
             }
         };
 
         fetchDashboardData();
     }, []);
-
-    if (loading) {
-        return <p>Chargement des données...</p>;
-    }
-
-    if (error) {
-        return (
-            <div className="text-danger">
-                <p>Erreur : {error}</p>
-                <button onClick={() => window.location.href = "/login"}>Reconnexion</button>
-            </div>
-        );
-    }
 
     return (
         <div>
