@@ -8,16 +8,17 @@ function Dashboard() {
     useEffect(() => {
         const fetchDashboardData = async () => {
             try {
+                const auth = localStorage.getItem("user");
                 const appointmentResponse = await api.get("http://localhost:5000/api/appointments", {
                     headers: {
-                        Authorization: `Bearer ${localStorage.getItem("user")}`,
+                        Authorization: `Bearer ${auth}`,
                     },
                 });
                 setAppointments(appointmentResponse.data);
 
                 const servicesResponse = await api.get("http://localhost:5000/api/services", {
                     headers: {
-                        Authorization: `Bearer ${localStorage.getItem("user")}`,
+                        Authorization: `Bearer ${auth}`,
                     },
                 });
                 setServices(servicesResponse.data);
