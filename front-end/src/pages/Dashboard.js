@@ -5,6 +5,7 @@ function Dashboard() {
     const [appointments, setAppointments] = useState([]);
     const [services, setServices] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
     useEffect(() => {
         const fetchDashboardData = async () => {
@@ -30,6 +31,7 @@ function Dashboard() {
                 setLoading(false);
             } catch (error) {
                 console.error("Erreur lors de la récupération des données : ", error);
+                setError(error);
                 setLoading(false);
             }
         };
@@ -39,6 +41,15 @@ function Dashboard() {
 
     if (loading) {
         return <p>Chargement des données...</p>;
+    }
+
+    if (error) {
+        return (
+            <div className="text-danger">
+                <p>Erreur : {error}</p>
+                <button onClick={() => window.location.href = "/login"}>Reconnexion</button>
+            </div>
+        );
     }
 
     return (
