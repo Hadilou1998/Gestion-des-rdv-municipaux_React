@@ -70,11 +70,13 @@ function Dashboard() {
                 <h2>Services gérés</h2>
                 <table className="table table-bordered">
                     <thead>
-                        <tr>#</tr>
-                        <tr>Nom</tr>
-                        <tr>Description</tr>
-                        <tr>Durée (min)</tr>
-                        <th>État</th>
+                        <tr>
+                            <th>#</th>
+                            <th>Nom</th>
+                            <th>Description</th>
+                            <th>Durée (min)</th>
+                            <th>État</th>
+                        </tr>
                     </thead>
                     <tbody>
                         {services.map((service, index) => (
