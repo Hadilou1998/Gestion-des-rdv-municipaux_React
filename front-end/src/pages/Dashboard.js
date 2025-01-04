@@ -9,8 +9,15 @@ function Dashboard() {
     useEffect(() => {
         const fetchDashboardData = async () => {
             try {
-                const token = localStorage.getItem("user");
-                const headers = token ? { Authorization: `Bearer ${token}` } : {};
+                const savedUser = localStorage.getItem("user");
+                const token = savedUser?.token;
+                if (!token) {
+                    throw new Error("Token manquant");
+                }
+
+                const headers = {
+                    Authorization: `Bearer ${token}`,
+                };
 
                 // fetch rendez-vous
                 const appointmentsResponse = await api.get("http://localhost:5000/api/appointments", { headers });

@@ -1,12 +1,12 @@
-const express = require('express');
+const express = require("express");
 const bodyParser = require("body-parser");
-const dotenv = require('dotenv');
-const cors = require('cors');
+const dotenv = require("dotenv");
+const cors = require("cors");
 const sequelize = require("./config/database");
 const authRoutes = require("./routes/authRoutes");
-const appointmentRoutes = require('./routes/appointmentRoutes');
-const serviceRoutes = require('./routes/serviceRoutes');
-const slotRoutes = require('./routes/slotRoutes');
+const appointmentRoutes = require("./routes/appointmentRoutes");
+const serviceRoutes = require("./routes/serviceRoutes");
+const slotRoutes = require("./routes/slotRoutes");
 const db = require("./models");
 
 // Initialisation
@@ -16,23 +16,23 @@ const PORT = process.env.PORT || 5000;
 
 // Middlewares
 app.use(cors({
-    credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    allowedHeaders: ['Content-Type', 'Authorization']
+    origin: "http://localhost:3000",
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true
 }));
 app.use(bodyParser.json());
 
 // Routes
-app.use('/api/auth', authRoutes);
-app.use('/api/appointments', appointmentRoutes);
-app.use('/api/services', serviceRoutes);
-app.use('/api/slots', slotRoutes);
+app.use("/api/auth", authRoutes);
+app.use("/api/appointments", appointmentRoutes);
+app.use("/api/services", serviceRoutes);
+app.use("/api/slots", slotRoutes);
 
 // Connexion à la base de données
 db.sequelize.sync({ alter: true }).then(() => {
-    console.log('Connexion à la base de données réussie.');
+    console.log("Connexion à la base de données réussie.");
 }).catch((error) => {
-    console.error('Erreur de connexion à la base de données :', error);
+    console.error("Erreur de connexion à la base de données :", error);
 });
 
 // Lancement du serveur
