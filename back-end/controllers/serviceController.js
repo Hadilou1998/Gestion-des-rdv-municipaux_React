@@ -14,7 +14,9 @@ exports.createService = async (req, res) => {
 // Liste des services
 exports.getAllServices = async (req, res) => {
     try {
-        const services = await Service.findAll();
+        const services = await Service.findAll({
+            where: { is_active: true }
+        });
         res.json(services);
     } catch (error) {
         res.status(500).json({ error: 'Erreur lors de la récupération des services', details: error.message });
