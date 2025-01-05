@@ -45,12 +45,7 @@ function Dashboard() {
     }
 
     if (error) {
-        return (
-            <div className="text-danger">
-                <p>Une erreur s'est produite : {error}</p>
-                <button className="btn btn-primary" onClick={() => navigate("/login")}>Se reconnecter</button>
-            </div>
-        );
+        return <p>Erreur : {error}</p>;
     }
 
     return (
