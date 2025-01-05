@@ -1,4 +1,4 @@
-import React, { createContext, useState } from "react";
+import React, { createContext, useState, useEffect } from "react";
 
 // Création du contexte
 export const AuthContext = createContext();
@@ -7,16 +7,23 @@ export const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
     const [auth, setAuth] = useState(null);
 
+    useEffect(() => {
+        const savedUser = localStorage.getItem("user");
+        if (savedUser) {
+            setAuth(JSON.parse(savedUser));
+        }
+    }, []);
+
     // Fonction pour connecter un utilisateur
-    const login = (credentials) => {
-        setAuth(credentials);
-        localStorage.setItem("user", JSON.stringify(credentials));
+    const login = (userData) => {
+        localStorage.setItem("user", JSON.stringify(userData));
+        setAuth(userData);
     };
 
     // Fonction pour déconnecter un utilisateur
     const logout = () => {
-        setAuth(null);
         localStorage.removeItem("user");
+        setAuth(null);
     };
 
     return (
