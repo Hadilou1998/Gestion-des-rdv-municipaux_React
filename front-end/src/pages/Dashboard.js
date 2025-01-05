@@ -21,8 +21,8 @@ function Dashboard() {
                 const headers = { Authorization: `Bearer ${token}` };
 
                 const [appointmentsResponse, servicesResponse] = await Promise.all([
-                    api.get("http://localhost:5000/api/appointments", { headers }),
-                    api.get("http://localhost:5000/api/services", { headers }),
+                    await api.get("http://localhost:5000/api/appointments", { headers }),
+                    await api.get("http://localhost:5000/api/services", { headers }),
                 ]);
 
                 setAppointments(appointmentsResponse.data);
