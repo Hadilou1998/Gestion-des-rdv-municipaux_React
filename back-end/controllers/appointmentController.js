@@ -1,4 +1,5 @@
 const authMiddleware = require('../middleware/authMiddleware');
+const roleMiddleware = require('../middleware/roleMiddleware');
 const { Appointment, Service } = require('../models');
 
 // Création de rendez-vous
@@ -14,7 +15,7 @@ exports.createAppointment = async (req, res) => {
 
 // Liste des rendez-vous
 
-exports.getAllAppointments = authMiddleware, async (req, res) => {
+exports.getAllAppointments = authMiddleware, roleMiddleware(["citizen", "admin", "agent"]), async (req, res) => {
     try {
         const appointments = await Appointment.findAll({
             where: { user_id: req.user.id },

@@ -15,7 +15,7 @@ exports.createService = async (req, res) => {
 exports.getAllServices = async (req, res) => {
     try {
         const services = await Service.findAll({
-            where: { is_active: true }
+            where: { isActive: true }
         });
         res.json(services);
     } catch (error) {
