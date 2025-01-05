@@ -51,6 +51,7 @@ export const getAppointments = () => api.get(`${api.baseURL}/appointments`);
 export const createAppointment = (data) => api.post(`${api.baseURL}/appointments`, data);
 export const updateAppointment = (id, data) => api.put(`${api.baseURL}/appointments/${id}`, data);
 export const deleteAppointment = (id) => api.delete(`${api.baseURL}/appointments/${id}`);
+export const getAppointmentById = (id) => api.get(`${api.baseURL}/appointments/${id}`);
 
 // Gestion des services
 export const getServices = () => api.get(`${api.baseURL}/services`);
