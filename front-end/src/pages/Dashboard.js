@@ -10,11 +10,12 @@ function Dashboard() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        const fetchDashboardData = async () => {
+        const fetchData = async () => {
             try {
                 const savedUser = localStorage.getItem("user");
                 if (!savedUser) {
-                    throw new Error("Utilisateur non connecté. Veuillez vous reconnecter.");
+                    navigate("/login");
+                    return;
                 }
 
                 const { token } = JSON.parse(savedUser);
@@ -36,8 +37,8 @@ function Dashboard() {
             }
         };
 
-        fetchDashboardData();
-    }, []);
+        fetchData();
+    }, [navigate]);
 
     if (loading) {
         return <p>Chargement des données...</p>;
