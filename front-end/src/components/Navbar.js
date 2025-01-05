@@ -1,10 +1,9 @@
 import React, { useContext } from "react";
 import { Link } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
-import Logout from "../pages/Logout";
 
 function Navbar() {
-    const { user } = useContext(AuthContext);
+    const { user, logout } = useContext(AuthContext);
 
     return (
         <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -46,7 +45,7 @@ function Navbar() {
                                     <Link className="nav-link" to="/profile">Profile</Link>
                                 </li>
                                 <li className="nav-item">
-                                    <Logout />
+                                    <button className="btn btn-danger nav-link" onClick={logout} style={{ border: "none" }}>Déconnexion</button>
                                 </li>
                             </>
                         ) : (
