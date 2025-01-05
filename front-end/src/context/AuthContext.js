@@ -1,4 +1,4 @@
-import React, { createContext, useEffect, useState } from "react";
+import React, { createContext, useState } from "react";
 
 // Création du contexte
 export const AuthContext = createContext();
@@ -6,16 +6,6 @@ export const AuthContext = createContext();
 // Provider du contexte
 export const AuthProvider = ({ children }) => {
     const [auth, setAuth] = useState(null);
-    const [loading, setLoading] = useState(true);
-
-    // Charger l'utilisateur à partir du localStorage lors du démarrage de l'application
-    useEffect(() => {
-        const savedUser = localStorage.getItem("user");
-        if (savedUser) {
-            setAuth(JSON.parse(savedUser));
-        }
-        setLoading(false);
-    }, []);
 
     // Fonction pour connecter un utilisateur
     const login = (credentials) => {
@@ -30,7 +20,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     return (
-        <AuthContext.Provider value={{ auth, login, logout, loading }}>
+        <AuthContext.Provider value={{ auth, login, logout }}>
             {children}
         </AuthContext.Provider>
     );
