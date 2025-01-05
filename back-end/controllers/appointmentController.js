@@ -1,4 +1,4 @@
-const { Appointment, User, Service } = require('../models');
+const { Appointment, Service } = require('../models');
 
 // Création de rendez-vous
 exports.createAppointment = async (req, res) => {
@@ -15,7 +15,8 @@ exports.createAppointment = async (req, res) => {
 exports.getAllAppointments = async (req, res) => {
     try {
         const appointments = await Appointment.findAll({
-            include: ['user', 'service']
+            where: { user_id: req.user.id },
+            include: [Service]
         });
         res.status(200).json(appointments);
     } catch (error) {
