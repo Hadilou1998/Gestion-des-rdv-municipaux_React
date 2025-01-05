@@ -16,6 +16,7 @@ exports.createAppointment = async (req, res) => {
 // Liste des rendez-vous
 
 exports.getAllAppointments = authMiddleware, roleMiddleware(["citizen", "admin", "agent"]), async (req, res) => {
+    console.log("Utilisateur authentifié : ", req.user);
     try {
         const appointments = await Appointment.findAll({
             where: { user_id: req.user.id },
