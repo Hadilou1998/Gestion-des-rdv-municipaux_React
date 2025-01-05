@@ -16,6 +16,7 @@ import Register from './pages/Register';
 import Logout from './pages/Logout';
 import ProtectedRoute from './components/ProtectedRoute';
 import PublicRoute from './components/PublicRoute';
+import PrivateRoute from './components/PrivateRoute';
 
 function App() {
   return (
@@ -33,7 +34,7 @@ function App() {
               <Route path="/contact" element={<Contact />} />
 
               {/* Routes accessibles seulement aux utilisateurs connectés */}
-              <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+              <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
               <Route path="/appointments" element={<ProtectedRoute><Appointment /></ProtectedRoute>} />
               <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
               

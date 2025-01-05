@@ -1,26 +1,56 @@
 import React, { useState, useEffect } from "react";
 import api from "../services/api";
+import { useNavigate } from "react-router-dom";
 
 function Dashboard() {
     const [appointments, setAppointments] = useState([]);
     const [services, setServices] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchDashboardData = async () => {
             try {
-                const auth = localStorage.getItem("user");
-                const appointmentResponse = await api.get("http://localhost:5000/api/appointments", auth);
-                setAppointments(appointmentResponse.data);
+                const savedUser = localStorage.getItem("user");
+                if (!savedUser) {
+                    throw new Error("Utilisateur non connecté. Veuillez vous reconnecter.");
+                }
 
-                const servicesResponse = await api.get("http://localhost:5000/api/services", auth);
+                const { token } = JSON.parse(savedUser);
+
+                const headers = { Authorization: `Bearer ${token}` };
+
+                const [appointmentsResponse, servicesResponse] = await Promise.all([
+                    api.get("http://localhost:5000/api/appointments", { headers }),
+                    api.get("http://localhost:5000/api/services", { headers }),
+                ]);
+
+                setAppointments(appointmentsResponse.data);
                 setServices(servicesResponse.data);
+                setLoading(false);
             } catch (error) {
                 console.error("Erreur lors de la récupération des rendez-vous : ", error);
+                setError(error.message || "Erreur inconnue");
+                setLoading(false);
             }
         };
 
         fetchDashboardData();
     }, []);
+
+    if (loading) {
+        return <p>Chargement des données...</p>;
+    }
+
+    if (error) {
+        return (
+            <div className="text-danger">
+                <p>Une erreur s'est produite : {error}</p>
+                <button className="btn btn-primary" onClick={() => navigate("/login")}>Se reconnecter</button>
+            </div>
+        );
+    }
 
     return (
         <div>
