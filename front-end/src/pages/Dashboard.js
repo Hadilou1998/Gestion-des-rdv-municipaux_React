@@ -5,8 +5,6 @@ import { useNavigate } from "react-router-dom";
 function Dashboard() {
     const [appointments, setAppointments] = useState([]);
     const [services, setServices] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -29,24 +27,13 @@ function Dashboard() {
 
                 setAppointments(appointmentsResponse.data);
                 setServices(servicesResponse.data);
-                setLoading(false);
             } catch (error) {
                 console.error("Erreur lors de la récupération des rendez-vous : ", error);
-                setError(error.message || "Erreur inconnue");
-                setLoading(false);
             }
         };
 
         fetchData();
     }, [navigate]);
-
-    if (loading) {
-        return <p>Chargement des données...</p>;
-    }
-
-    if (error) {
-        return <p>Erreur : {error}</p>;
-    }
 
     return (
         <div>
