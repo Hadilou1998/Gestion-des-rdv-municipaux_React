@@ -20,7 +20,7 @@ function Login() {
         axios.post("/auth/login", formData)
         .then(response => {
             localStorage.setItem("user", response.data.token);
-            navigate("/");
+            navigate("/dashboard");
         })
         .catch(error => setError("Informations d'identification non valides."));
     };
