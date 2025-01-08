@@ -7,7 +7,7 @@ function ServiceList() {
 
     useEffect(() => {
         axios.get("/services")
-        .then(response => setServices(response.data))
+        .then((response) => setServices(response.data))
         .catch(error => console.log("Erreur lors de la récupération des services:", error));
     }, []);
 
