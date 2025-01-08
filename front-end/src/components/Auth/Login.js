@@ -19,7 +19,7 @@ function Login() {
         e.preventDefault();
         axios.post("/auth/login", formData)
         .then(response => {
-            localStorage.setItem("token", response.data.token);
+            localStorage.setItem("user", response.data.token);
             navigate("/");
         })
         .catch(error => setError("Informations d'identification non valides."));

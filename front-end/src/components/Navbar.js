@@ -1,9 +1,8 @@
-import React, { useContext } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
-import { AuthContext } from "../context/AuthContext";
 
 function Navbar() {
-    const { user, logout } = useContext(AuthContext);
+    const isLoggedIn = localStorage.getItem("user");
 
     return (
         <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -14,7 +13,6 @@ function Navbar() {
                 </button>
                 <div className="collapse navbar-collapse" id="navbarNav">
                     <ul className="navbar-nav me-auto">
-                        {/* Liens accessibles à tous */}
                         <li className="nav-item">
                             <Link className="nav-link" to="/">Accueil</Link>
                         </li>
@@ -22,35 +20,32 @@ function Navbar() {
                             <Link className="nav-link" to="/about">À propos</Link>
                         </li>
                         <li className="nav-item">
-                            <Link className="nav-link" to="/services">Services</Link>
-                        </li>
-                        <li className="nav-item">
-                            <Link className="nav-link" to="/calendar">Calendrier</Link>
-                        </li>
-                        <li className="nav-item">
                             <Link className="nav-link" to="/contact">Contact</Link>
-                        </li> 
-                    </ul>
-                    <ul className="navbar-nav">
-                        {/* Liens pour utilisateurs connectés */} 
-                        {user ? (
+                        </li>
+                        {isLoggedIn && (
                             <>
                                 <li className="nav-item">
                                     <Link className="nav-link" to="/appointments">Mes Rendez-vous</Link>
                                 </li>
                                 <li className="nav-item">
+                                    <Link className="nav-link" to="/calendar">Calendrier</Link>
+                                </li>
+                                <li className="nav-item">
                                     <Link className="nav-link" to="/dashboard">Tableau de bord</Link>
                                 </li>
                                 <li className="nav-item">
-                                    <Link className="nav-link" to="/profile">Profile</Link>
-                                </li>
-                                <li className="nav-item">
-                                    <button className="btn btn-danger nav-link" onClick={logout} style={{ border: "none" }}>Déconnexion</button>
+                                    <Link className="nav-link" to="/logout">Déconnexion</Link>
                                 </li>
                             </>
+                        )}
+                    </ul>
+                    <ul className="navbar-nav">
+                        {isLoggedIn ? (
+                            <li className="nav-item">
+                                <Link className="nav-link" to="/logout">Déconnexion</Link>
+                            </li>
                         ) : (
                             <>
-                                {/* Liens conditionnels pour utilisateurs non connectés */}
                                 <li className="nav-item">
                                     <Link className="nav-link" to="/login">Connexion</Link>
                                 </li>
