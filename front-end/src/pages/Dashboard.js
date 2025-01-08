@@ -1,97 +1,31 @@
-import React, { useState, useEffect } from "react";
-import api from "../services/api";
-import { useNavigate } from "react-router-dom";
+import React from "react";
 
 function Dashboard() {
-    const [appointments, setAppointments] = useState([]);
-    const [services, setServices] = useState([]);
-    const navigate = useNavigate();
-
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const savedUser = localStorage.getItem("user");
-                if (!savedUser) {
-                    navigate("/login");
-                    return;
-                }
-
-                const { token } = JSON.parse(savedUser);
-
-                const headers = { Authorization: `Bearer ${token}` };
-
-                const [appointmentsResponse, servicesResponse] = await Promise.all([
-                    await api.get("http://localhost:5000/api/appointments", { headers }),
-                    await api.get("http://localhost:5000/api/services", { headers }),
-                ]);
-
-                setAppointments(appointmentsResponse.data);
-                setServices(servicesResponse.data);
-            } catch (error) {
-                console.error("Erreur lors de la récupération des rendez-vous : ", error);
-            }
-        };
-
-        fetchData();
-    }, [navigate]);
 
     return (
-        <div>
-            <h1>Tableau de bord</h1>
-
-            {/* Afficher les rendez-vous */}
-            <section className="mb-4">
-                <h2>Rendez-vous récents</h2>
-                <table className="table table-striped">
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Service</th>
-                            <th>Date</th>
-                            <th>Statut</th>
-                            <th>Utilisateur</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {appointments.map((appointment, index) => (
-                            <tr key={appointment.id}>
-                                <td>{index + 1}</td>
-                                <td>{appointment.service?.name || "Service non trouvé"}</td>
-                                <td>{new Date(appointment.appointment_date).toLocaleString()}</td>
-                                <td>{appointment.status}</td>
-                                <td>{appointment.user?.first_name} {appointment.user?.last_name}</td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </section>
-
-            {/* Afficher les services */}
-            <section>
-                <h2>Services gérés</h2>
-                <table className="table table-bordered">
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Nom</th>
-                            <th>Description</th>
-                            <th>Durée (min)</th>
-                            <th>État</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {services.map((service, index) => (
-                            <tr key={service.id}>
-                                <td>{index + 1}</td>
-                                <td>{service.name}</td>
-                                <td>{service.description}</td>
-                                <td>{service.duration}</td>
-                                <td>{service.is_active ? "Actif" : "Inactif"}</td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </section>
+        <div className="container mt-4">
+            <h2>Tableau de bord</h2>
+            <p>Bienvenue sur votre tableau de bord. Vous pouvez ici accéder à votre liste des rendez-vous, des créneaux horaires, des services, etc.</p>
+            <div className="row">
+                <div className="col-md-4">
+                    <div className="card">
+                        <div className="card-body">
+                            <h5 className="card-title">Rendez-vous</h5>
+                            <p className="card-text">Consultez ou modifiez vos rendez-vous.</p>
+                            <a href="/appointments" className="btn btn-primary">Voir mes rendez-vous</a>
+                        </div>
+                    </div>
+                </div>
+                <div className="col-md-4">
+                    <div className="card">
+                        <div className="card-body">
+                            <h5 className="card-title">Services</h5>
+                            <p className="card-text">Explorez les services proposés par la mairie.</p>
+                            <a href="/services" className="btn btn-primary">Explorer les services</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     );
 };
