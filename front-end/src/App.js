@@ -11,6 +11,8 @@ import Login from './components/Auth/Login';
 import Register from './components/Auth/Register';
 import Logout from './components/Auth/Logout';
 import ServiceList from './components/Services/ServiceList';
+import ServiceDetails from './components/Services/ServiceDetails';
+import ServiceEdit from './components/Services/ServiceEdit';
 import UserList from './components/Users/UserList';
 import AppointmentList from './components/Appointments/AppointmentList';
 import AppointmentForm from './components/Appointments/AppointmentForm';
@@ -32,6 +34,8 @@ function App() {
             <Route path="/register" element={<Register />} />
             <Route path="/logout" element={<Logout />} />
             <Route path="/services" element={<ServiceList />} />
+            <Route path="/services/:id" element={<ServiceDetails />} />
+            <Route path="/services/edit/:id" element={<ServiceEdit />} />
             <Route path="/users" element={<UserList />} />
             <Route path="/appointments" element={<AppointmentList />} />
             <Route path="/appointments/new" element={<AppointmentForm />} />
