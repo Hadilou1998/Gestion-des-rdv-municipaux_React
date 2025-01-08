@@ -10,6 +10,8 @@ import Dashboard from './pages/Dashboard';
 import Login from './components/Auth/Login';
 import Register from './components/Auth/Register';
 import Logout from './components/Auth/Logout';
+import ServiceList from './components/Services/ServiceList';
+import UserList from './components/Users/UserList';
 import AppointmentList from './components/Appointments/AppointmentList';
 import AppointmentForm from './components/Appointments/AppointmentForm';
 import AppointmentDetails from './components/Appointments/AppointmentDetails';
@@ -29,6 +31,8 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/logout" element={<Logout />} />
+            <Route path="/services" element={<ServiceList />} />
+            <Route path="/users" element={<UserList />} />
             <Route path="/appointments" element={<AppointmentList />} />
             <Route path="/appointments/new" element={<AppointmentForm />} />
             <Route path="/appointments/:id" element={<AppointmentDetails />} />
