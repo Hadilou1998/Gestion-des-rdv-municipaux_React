@@ -33,9 +33,6 @@ function Navbar() {
                                 <li className="nav-item">
                                     <Link className="nav-link" to="/dashboard">Tableau de bord</Link>
                                 </li>
-                                <li className="nav-item">
-                                    <Link className="nav-link" to="/logout">Déconnexion</Link>
-                                </li>
                             </>
                         )}
                     </ul>
