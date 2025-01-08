@@ -10,9 +10,9 @@ import Dashboard from './pages/Dashboard';
 import Login from './components/Auth/Login';
 import Register from './components/Auth/Register';
 import Logout from './components/Auth/Logout';
-import AppointmentList from './components/Auth/AppointmentList';
-import AppointmentForm from './components/Auth/AppointmentForm';
-import AppointmentDetails from './components/Auth/AppointmentDetails';
+import AppointmentList from './components/Appointments/AppointmentList';
+import AppointmentForm from './components/Appointments/AppointmentForm';
+import AppointmentDetails from './components/Appointments/AppointmentDetails';
 
 function App() {
   return (
