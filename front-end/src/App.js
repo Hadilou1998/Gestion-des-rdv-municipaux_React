@@ -2,46 +2,41 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
-
 import Home from './pages/Home';
 import About from './pages/About';
-import Services from './pages/Service';
-import Calendar from './pages/Calendar';
 import Contact from './pages/Contact';
-import Login from './pages/Login';
-import Register from './pages/Register';
+import Calendar from './pages/Calendar';
 import Dashboard from './pages/Dashboard';
-import Appointment from './pages/Appointment';
-import Profile from './pages/Profile';
-import { AuthProvider } from './context/AuthContext';
+import Login from './components/Auth/Login';
+import Register from './components/Auth/Register';
+import Logout from './components/Auth/Logout';
+import AppointmentList from './components/Auth/AppointmentList';
+import AppointmentForm from './components/Auth/AppointmentForm';
+import AppointmentDetails from './components/Auth/AppointmentDetails';
 
 function App() {
   return (
-    <AuthProvider>
-      <Router>
-        <div className="d-flex flex-column min-vh-100">
-          <Navbar />
-          <div className="flex-grow-1">
-            <Routes>
-              {/* Routes accessibles à tous */}
-              <Route path="/" element={<Home />} />
-              <Route path="/about" element={<About />} />
-              <Route path="/services" element={<Services />} />
-              <Route path="/calendar" element={<Calendar />} />
-              <Route path="/contact" element={<Contact />} />
-              {/* Routes accessibles seulement aux utilisateurs connectés */}
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/appointments" element={<Appointment />} />
-              <Route path="/profile" element={<Profile />} />
-              {/* Routes accessibles seulement aux utilisateurs non connectés */}
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
-            </Routes>
-          </div>
-          <Footer />
+    <Router>
+      <div className="d-flex flex-column min-vh-100">
+        <Navbar />
+        <div className="flex-grow-1">
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/calendar" element={<Calendar />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/logout" element={<Logout />} />
+            <Route path="/appointments" element={<AppointmentList />} />
+            <Route path="/appointments/new" element={<AppointmentForm />} />
+            <Route path="/appointments/:id" element={<AppointmentDetails />} />
+          </Routes>
         </div>
-      </Router>
-    </AuthProvider>
+        <Footer />
+      </div>
+    </Router>
   );
 };
 
