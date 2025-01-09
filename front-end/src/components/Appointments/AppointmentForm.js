@@ -25,6 +25,7 @@ function AppointmentForm() {
         setError("");
 
         const appointmentData = { serviceId: selectedService, date, timeSlot };
+        console.log("Payload envoyé : ", appointmentData);
 
         try {
             await axios.post("/appointments", appointmentData);
@@ -34,7 +35,12 @@ function AppointmentForm() {
             setTimeSlot("");
         } catch (error) {
             console.error("Erreur lors de la prise du rendez-vous : ", error);
-            setError("Une erreur est survenue lors de la prise de rendez-vous. Veuillez réessayer.");
+            if (error.response) {
+                console.error("Réponse de l'API : ", error.response.data);
+                setError(`Erreur : ${error.response.data.message || "Requête invalide."}`);
+            } else {
+                setError("Une erreur est survenue lors de la prise de rendez-vous. Veuillez réessayer.");
+            }
         }
     };
 
