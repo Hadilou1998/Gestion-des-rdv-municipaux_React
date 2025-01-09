@@ -6,28 +6,25 @@ import "react-datepicker/dist/react-datepicker.css";
 function AppointmentForm() {
     const [services, setServices] = useState([]);
     const [selectedService, setSelectedService] = useState("");
-    const [date, setDate] = useState(null); // Utiliser null pour la compatibilité avec DatePicker
+    const [date, setDate] = useState(null); // Initialisation avec null
     const [timeSlot, setTimeSlot] = useState("");
     const [message, setMessage] = useState("");
     const [error, setError] = useState("");
 
     // Récupération des services
     useEffect(() => {
-        axios
-            .get("/services")
-            .then((response) => setServices(response.data))
-            .catch((error) => {
-                console.error("Erreur lors de la récupération des services : ", error);
-                setError(
-                    "Une erreur est survenue lors de la récupération des services. Veuillez réessayer."
-                );
-            });
+        axios.get("/services")
+        .then((response) => setServices(response.data))
+        .catch((error) => {
+            console.error("Erreur lors de la récupération des services : ", error);
+            setError("Une erreur est survenue lors de la récupération des services. Veuillez réessayer.");
+        });
     }, []);
 
     const handleDateChange = (selectedDate) => {
         if (selectedDate) {
             const formattedDate = selectedDate.toISOString().split("T")[0];
-            setDate(formattedDate);
+            setDate(formattedDate); // Formatage de la date en 'YYYY-MM-DD'
         } else {
             setDate(null);
         }
@@ -37,6 +34,20 @@ function AppointmentForm() {
         e.preventDefault();
         setMessage("");
         setError("");
+
+        // Validation des données
+        if (!selectedService) {
+            setError("Le service est requis.");
+            return;
+        }
+        if (!date) {
+            setError("La date est requise.");
+            return;
+        }
+        if (!timeSlot) {
+            setError("Le créneau horaire est requis.");
+            return;
+        }
 
         // Mapping des créneaux horaires
         const slotsMap = {
@@ -50,12 +61,12 @@ function AppointmentForm() {
         const formattedTimeSlot = slotsMap[timeSlot] || timeSlot;
 
         const appointmentData = {
-            service_id: parseInt(selectedService, 10),
-            appointment_date: date,
-            time_slot: formattedTimeSlot,
+            service_id: parseInt(selectedService, 10), // Assurez-vous que c'est un entier
+            appointment_date: date, // Format 'YYYY-MM-DD'
+            time_slot: formattedTimeSlot, // Format horaire
         };
 
-        console.log("Données envoyées au serveur : ", appointmentData);
+        console.log("Données envoyées à l'API : ", appointmentData); // Débogage des données
 
         try {
             const response = await axios.post("/appointments", appointmentData);
@@ -66,17 +77,19 @@ function AppointmentForm() {
             setTimeSlot("");
         } catch (error) {
             console.error("Erreur lors de la prise du rendez-vous : ", error);
+
             if (error.response) {
-                console.error("Réponse de l'API : ", error.response.data);
                 const apiErrors = error.response.data.errors || [];
-                const errorMessages = apiErrors
-                    .map((err) => `${err.field ? `${err.field}: ` : ""}${err.message}`)
-                    .join(", ");
-                setError(`Erreurs : ${errorMessages}`);
+                if (apiErrors.length > 0) {
+                    const errorMessages = apiErrors
+                        .map((err) => `${err.field ? `${err.field}: ` : ""}${err.message}`)
+                        .join(", ");
+                    setError(`Erreurs : ${errorMessages}`);
+                } else {
+                    setError("Erreur inconnue du serveur.");
+                }
             } else {
-                setError(
-                    "Une erreur réseau est survenue. Veuillez vérifier votre connexion."
-                );
+                setError("Une erreur réseau est survenue. Veuillez vérifier votre connexion.");
             }
         }
     };
@@ -88,9 +101,7 @@ function AppointmentForm() {
             {message && <div className="alert alert-success">{message}</div>}
             <form onSubmit={handleSubmit}>
                 <div className="mb-3">
-                    <label htmlFor="service" className="form-label">
-                        Service
-                    </label>
+                    <label htmlFor="service" className="form-label">Service</label>
                     <select
                         id="service"
                         className="form-control"
@@ -107,9 +118,7 @@ function AppointmentForm() {
                     </select>
                 </div>
                 <div className="mb-3">
-                    <label htmlFor="date" className="form-label">
-                        Date
-                    </label>
+                    <label htmlFor="date" className="form-label">Date</label>
                     <DatePicker
                         className="form-control"
                         selected={date ? new Date(date) : null}
@@ -128,13 +137,11 @@ function AppointmentForm() {
                         required
                     >
                         <option value="">-- Choisissez une heure --</option>
-                        {["9h-10h", "10h-11h", "11h-12h", "14h-15h", "15h-16h", "16h-17h"].map(
-                            (slot) => (
-                                <option key={slot} value={slot}>
-                                    {slot}
-                                </option>
-                            )
-                        )}
+                        {["9h-10h", "10h-11h", "11h-12h", "14h-15h", "15h-16h", "16h-17h"].map((slot) => (
+                            <option key={slot} value={slot}>
+                                {slot}
+                            </option>
+                        ))}
                     </select>
                 </div>
                 <button
