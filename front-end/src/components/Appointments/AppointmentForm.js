@@ -1,44 +1,75 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "../../services/api";
 
-function AppointmentForm({ onAppointmentSaved }) {
-    const [formData, setFormData] = useState({
-        user_id: "",
-        service_id: "",
-        appointment_date: "",
-        status: "scheduled",
-    });
+function AppointmentForm() {
+    const [services, setServices] = useState([]);
+    const [selectedService, setSelectedService] = useState("");
+    const [date, setDate] = useState("");
+    const [timeSlot, setTimeSlot] = useState("");
+    const [availableTimeSlots, setAvailableTimeSlots] = useState([]);
+    const [message, setMessage] = useState("");
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData({...formData, [name]: value });
+    // Récupère la liste des services depuis l'API
+    useEffect(() => {
+        axios.get("/services")
+       .then((response) => setServices(response.data))
+       .catch((error) => console.log("Erreur lors de la récupération des services : ", error));
+    }, []);
+
+    // Récupère les créneaux disponibles pour le service sélectionné
+    const handleDateChange = (e) => {
+        const selectedDate = e.target.value;
+        setDate(selectedDate);
+
+        if (selectedService) {
+            axios.get(`/appointments/available?serviceId=${selectedService}&date=${selectedDate}`)
+            .then((response) => setAvailableTimeSlots(response.data))
+            .catch((error) => console.log("Erreur lors de la récupération des créneaux disponibles : ", error));
+        }
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        axios.post("/appointments", formData)
-        .then(() => {
-            onAppointmentSaved();
-        })
-        .catch(error => console.error(error));
+        const appointmentData = { serviceId: selectedService, date, timeSlot };
+
+        axios.post("/appointments", appointmentData)
+        .then(() => setMessage("Rendez-vous pris avec succès !"))
+        .catch((error) => {
+            console.log("Erreur lors de la prise du rendez-vous : ", error);
+            setMessage("Une erreur est survenue lors de la prise de rendez-vous. Veuillez réessayer.");
+        });
     };
 
     return (
-        <form onSubmit={handleSubmit}>
-            <div className="form-group">
-                <label htmlFor="user_id" className="form-label">Citoyen</label>
-                <input type="text" id="user_id" name="user_id" className="form-control" value={formData.user_id} onChange={handleChange} />
-            </div>
-            <div className="form-group">
-                <label htmlFor="service_id" className="form-label">Service</label>
-                <input type="text" id="service_id" name="service_id" className="form-control" value={formData.service_id} onChange={handleChange} />
-            </div>
-            <div className="form-group">
-                <label htmlFor="appointment_date" className="form-label">Date</label>
-                <input type="datetime-local" id="appointment_date" name="appointment_date" className="form-control" value={formData.appointment_date} onChange={handleChange} />
-            </div>
-            <button type="submit" className="btn btn-primary">Enregistrer</button>
-        </form>
+        <div className="container mt-4">
+            <h2>Prendre un rendez-vous</h2>
+            {message && <div className="alert alert-info">{message}</div>}
+            <form onSubmit={handleSubmit}>
+                <div className="mb-3">
+                    <label className="form-label">Service</label>
+                    <select className="form-control" value={selectedService} onChange={(e) => setSelectedService(e.target.value)} required>
+                        <option value="">-- Choisissez un service --</option>
+                        {services.map((service) => (
+                            <option key={service.id} value={service.id}>{service.name}</option>
+                        ))}
+                    </select>
+                </div>
+                <div className="mb-3">
+                    <label className="form-label">Date</label>
+                    <input type="date" className="form-control" value={date} onChange={handleDateChange} required />
+                </div>
+                <div className="mb-3">
+                    <label className="form-label">Créneau horaire</label>
+                    <select className="form-control" value={timeSlot} onChange={(e) => setTimeSlot(e.target.value)} required>
+                        <option value="">-- Choisissez une heure --</option>
+                        {availableTimeSlots.map((slot) => (
+                            <option key={slot} value={slot}>{slot}</option>
+                        ))}
+                    </select>
+                </div>
+                <button type="submit" className="btn btn-primary">Confirmer</button>
+            </form>
+        </div>
     );
 };
 
