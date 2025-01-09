@@ -1,52 +1,42 @@
 import React, { useState, useEffect } from "react";
 import axios from "../../services/api";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 function AppointmentForm() {
     const [services, setServices] = useState([]);
     const [selectedService, setSelectedService] = useState("");
-    const [date, setDate] = useState("");
+    const [date, setDate] = useState(null); // Utiliser null pour la compatibilité avec DatePicker
     const [timeSlot, setTimeSlot] = useState("");
     const [message, setMessage] = useState("");
     const [error, setError] = useState("");
 
-    // Récupération de la liste des services depuis l'API
+    // Récupération des services
     useEffect(() => {
-        axios.get("/services")
+        axios
+            .get("/services")
             .then((response) => setServices(response.data))
             .catch((error) => {
                 console.error("Erreur lors de la récupération des services : ", error);
-                setError("Une erreur est survenue lors de la récupération des services. Veuillez réessayer.");
+                setError(
+                    "Une erreur est survenue lors de la récupération des services. Veuillez réessayer."
+                );
             });
     }, []);
 
-    const isValidDate = (dateString) => {
-        // Regex pour valider le format AAAA-MM-JJ
-        const regex = /^\d{4}-\d{2}-\d{2}$/;
-        if (!regex.test(dateString)) return false;
-
-        // Vérifier que la date est valide
-        const date = new Date(dateString);
-        return !isNaN(date.getTime());
+    const handleDateChange = (selectedDate) => {
+        if (selectedDate) {
+            const formattedDate = selectedDate.toISOString().split("T")[0];
+            setDate(formattedDate);
+        } else {
+            setDate(null);
+        }
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setMessage("");
         setError("");
-
-        // Validation locale des champs
-        if (!isValidDate(date)) {
-            setError("La date doit être au format AAAA-MM-JJ.");
-            return;
-        }
-        if (!selectedService) {
-            setError("Veuillez sélectionner un service.");
-            return;
-        }
-        if (!timeSlot) {
-            setError("Veuillez sélectionner un créneau horaire.");
-            return;
-        }
 
         // Mapping des créneaux horaires
         const slotsMap = {
@@ -59,21 +49,20 @@ function AppointmentForm() {
         };
         const formattedTimeSlot = slotsMap[timeSlot] || timeSlot;
 
-        // Données à envoyer à l'API
         const appointmentData = {
             service_id: parseInt(selectedService, 10),
             appointment_date: date,
             time_slot: formattedTimeSlot,
         };
 
-        console.log("Données envoyées : ", appointmentData);
+        console.log("Données envoyées au serveur : ", appointmentData);
 
         try {
             const response = await axios.post("/appointments", appointmentData);
             console.log("Réponse de l'API : ", response.data);
             setMessage("Rendez-vous pris avec succès !");
             setSelectedService("");
-            setDate("");
+            setDate(null);
             setTimeSlot("");
         } catch (error) {
             console.error("Erreur lors de la prise du rendez-vous : ", error);
@@ -85,7 +74,9 @@ function AppointmentForm() {
                     .join(", ");
                 setError(`Erreurs : ${errorMessages}`);
             } else {
-                setError("Une erreur réseau est survenue. Veuillez vérifier votre connexion.");
+                setError(
+                    "Une erreur réseau est survenue. Veuillez vérifier votre connexion."
+                );
             }
         }
     };
@@ -97,7 +88,9 @@ function AppointmentForm() {
             {message && <div className="alert alert-success">{message}</div>}
             <form onSubmit={handleSubmit}>
                 <div className="mb-3">
-                    <label htmlFor="service" className="form-label">Service</label>
+                    <label htmlFor="service" className="form-label">
+                        Service
+                    </label>
                     <select
                         id="service"
                         className="form-control"
@@ -107,18 +100,22 @@ function AppointmentForm() {
                     >
                         <option value="">-- Choisissez un service --</option>
                         {services.map((service) => (
-                            <option key={service.id} value={service.id}>{service.name}</option>
+                            <option key={service.id} value={service.id}>
+                                {service.name}
+                            </option>
                         ))}
                     </select>
                 </div>
                 <div className="mb-3">
-                    <label htmlFor="date" className="form-label">Date</label>
-                    <input
-                        type="date"
-                        id="date"
+                    <label htmlFor="date" className="form-label">
+                        Date
+                    </label>
+                    <DatePicker
                         className="form-control"
-                        value={date}
-                        onChange={(e) => setDate(e.target.value)}
+                        selected={date ? new Date(date) : null}
+                        onChange={handleDateChange}
+                        dateFormat="yyyy-MM-dd"
+                        placeholderText="Sélectionnez une date"
                         required
                     />
                 </div>
@@ -131,9 +128,13 @@ function AppointmentForm() {
                         required
                     >
                         <option value="">-- Choisissez une heure --</option>
-                        {["9h-10h", "10h-11h", "11h-12h", "14h-15h", "15h-16h", "16h-17h"].map((slot) => (
-                            <option key={slot} value={slot}>{slot}</option>
-                        ))}
+                        {["9h-10h", "10h-11h", "11h-12h", "14h-15h", "15h-16h", "16h-17h"].map(
+                            (slot) => (
+                                <option key={slot} value={slot}>
+                                    {slot}
+                                </option>
+                            )
+                        )}
                     </select>
                 </div>
                 <button
