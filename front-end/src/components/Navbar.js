@@ -8,7 +8,7 @@ function Navbar() {
     useEffect(() => {
         const token = localStorage.getItem("user");
         if (token) {
-            setIsLoggedIn(true);
+            setIsLoggedIn(false);
         }
     }, []);
 
@@ -19,8 +19,7 @@ function Navbar() {
 
     const handleLogin = (e) => {
         e.preventDefault();
-        localStorage.setItem("user");
-        navigate("/dashboard");
+        navigate("/login");
     };
 
     const handleLogout = () => {

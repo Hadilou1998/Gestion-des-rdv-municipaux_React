@@ -22,12 +22,7 @@ function AppointmentForm() {
     }, []);
 
     const handleDateChange = (selectedDate) => {
-        if (selectedDate) {
-            const formattedDate = selectedDate.toISOString().split("T")[0];
-            setDate(formattedDate); // Formatage de la date en 'YYYY-MM-DD'
-        } else {
-            setDate(null);
-        }
+        setDate(selectedDate ? selectedDate.toISOString().split("T")[0] : null);
     };
 
     const handleSubmit = async (e) => {
@@ -68,30 +63,18 @@ function AppointmentForm() {
 
         console.log("Données envoyées à l'API : ", appointmentData); // Débogage des données
 
-        try {
-            const response = await axios.post("/appointments", appointmentData);
-            console.log("Réponse de l'API : ", response.data);
-            setMessage("Rendez-vous pris avec succès !");
-            setSelectedService("");
-            setDate(null);
-            setTimeSlot("");
-        } catch (error) {
-            console.error("Erreur lors de la prise du rendez-vous : ", error);
-
-            if (error.response) {
-                const apiErrors = error.response.data.errors || [];
-                if (apiErrors.length > 0) {
-                    const errorMessages = apiErrors
-                        .map((err) => `${err.field ? `${err.field}: ` : ""}${err.message}`)
-                        .join(", ");
-                    setError(`Erreurs : ${errorMessages}`);
-                } else {
-                    setError("Erreur inconnue du serveur.");
-                }
-            } else {
-                setError("Une erreur réseau est survenue. Veuillez vérifier votre connexion.");
-            }
-        }
+        await axios.post("/appointments", appointmentData)
+            .then((response) => {
+                console.log("Réponse de l'API : ", response.data); // Débogage de la réponse de l'API
+                setMessage("Rendez-vous pris avec succès !");
+                setSelectedService("");
+                setDate(null);
+                setTimeSlot("")
+            .catch((error) => {
+                console.error("Erreur lors de la prise du rendez-vous : ", error);
+                setError("Une erreur est survenue lors de la prise du rendez-vous. Veuillez réessayer.");
+            });
+        });
     };
 
     return (
