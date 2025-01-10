@@ -22,6 +22,9 @@ function Navbar() {
                         <li className="nav-item">
                             <Link className="nav-link" to="/contact">Contact</Link>
                         </li>
+                        <li className="nav-item">
+                            <Link className="nav-link" to="/services">Services</Link>
+                        </li>
                         {isLoggedIn && (
                             <>
                                 <li className="nav-item">
@@ -37,11 +40,7 @@ function Navbar() {
                         )}
                     </ul>
                     <ul className="navbar-nav">
-                        {isLoggedIn ? (
-                            <li className="nav-item">
-                                <Link className="nav-link" to="/logout">Déconnexion</Link>
-                            </li>
-                        ) : (
+                        {!isLoggedIn ? (
                             <>
                                 <li className="nav-item">
                                     <Link className="nav-link" to="/login">Connexion</Link>
@@ -50,6 +49,10 @@ function Navbar() {
                                     <Link className="nav-link" to="/register">Inscription</Link>
                                 </li>
                             </>
+                        ) : (
+                            <li className="nav-item">
+                                <Link className="nav-link" to="/logout">Déconnexion</Link>
+                            </li>
                         )}
                     </ul>
                 </div>
@@ -57,5 +60,4 @@ function Navbar() {
         </nav>
     );
 }
-
 export default Navbar;
