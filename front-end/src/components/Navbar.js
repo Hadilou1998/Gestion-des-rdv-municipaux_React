@@ -1,8 +1,33 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
 function Navbar() {
-    const isLoggedIn = localStorage.getItem("user");
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        const token = localStorage.getItem("user");
+        if (token) {
+            setIsLoggedIn(true);
+        }
+    }, []);
+
+    const handleRegister = (e) => {
+        e.preventDefault();
+        navigate("/login");
+    };
+
+    const handleLogin = (e) => {
+        e.preventDefault();
+        localStorage.setItem("user");
+        navigate("/dashboard");
+    };
+
+    const handleLogout = () => {
+        localStorage.removeItem("user");
+        setIsLoggedIn(false);
+        navigate("/login");
+    };
 
     return (
         <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -43,15 +68,15 @@ function Navbar() {
                         {!isLoggedIn ? (
                             <>
                                 <li className="nav-item">
-                                    <Link className="nav-link" to="/login">Connexion</Link>
+                                    <Link className="nav-link" to="/login" onClick={handleLogin}>Connexion</Link>
                                 </li>
                                 <li className="nav-item">
-                                    <Link className="nav-link" to="/register">Inscription</Link>
+                                    <Link className="nav-link" to="/register" onClick={handleRegister}>Inscription</Link>
                                 </li>
                             </>
                         ) : (
                             <li className="nav-item">
-                                <Link className="nav-link" to="/logout">Déconnexion</Link>
+                                <button className="nav-link" onClick={handleLogout}>Déconnexion</button>
                             </li>
                         )}
                     </ul>
