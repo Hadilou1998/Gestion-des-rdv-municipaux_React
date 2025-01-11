@@ -58,7 +58,7 @@ function AppointmentForm() {
 
         const appointmentData = {
             service_id: parseInt(selectedService, 10),
-            appointment_date: date,  // Correction du nom du champ en "appointmentDate"
+            appointmentDate: date,  // Correction du nom du champ en "appointmentDate"
             time_slot: slotsMap[timeSlot],
         };
 
