@@ -19,8 +19,11 @@ module.exports = (sequelizeInstance, DataTypes) => {
     }, { timestamps: true, underscored: true });
 
     Appointment.associate = (models) => {
-        Appointment.belongsTo(models.User, { foreignKey: 'user_id', as: 'user', });
-        Appointment.belongsTo(models.Service, { foreignKey: 'service_id', as: 'service', });
+        // Relier Appointment à User
+        Appointment.belongsTo(models.User, { foreignKey: 'user_id', as: 'user' });
+        
+        // Relier Appointment à Service
+        Appointment.belongsTo(models.Service, { foreignKey: 'service_id', as: 'service' });  // assurez-vous que l'alias est 'service'
     };
 
     return Appointment;

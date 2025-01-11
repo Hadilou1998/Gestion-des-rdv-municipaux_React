@@ -25,5 +25,11 @@ module.exports = (sequelize, DataTypes) => {
             defaultValue: true,
         }
     }, { timestamps: true, underscored: true });
+
+    Service.associate = (models) => {
+        // Relier Service à Appointment
+        Service.hasMany(models.Appointment, { foreignKey: 'service_id', as: 'appointments' });
+    };
+
     return Service;
 };
