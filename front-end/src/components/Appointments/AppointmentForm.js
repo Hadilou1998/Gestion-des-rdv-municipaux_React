@@ -58,7 +58,7 @@ function AppointmentForm() {
 
         const appointmentData = {
             service_id: parseInt(selectedService, 10),
-            appointment_date: date,
+            appointment_date: date,  // Correction du nom du champ en "appointmentDate"
             time_slot: slotsMap[timeSlot],
         };
 
@@ -76,7 +76,7 @@ function AppointmentForm() {
 
             // Vérification des erreurs renvoyées par l'API
             if (error.response?.data?.errors) {
-                const errorMessages = error.response.data.errors.map((err) => err.message).join(", ");
+                const errorMessages = error.response.data.errors.map((err) => err.msg).join(", ");
                 setError(errorMessages);
             } else if (error.response?.data?.message) {
                 setError(error.response.data.message);
