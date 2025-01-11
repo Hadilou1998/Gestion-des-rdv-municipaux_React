@@ -1,5 +1,5 @@
+// controllers/appointmentController.js
 const authMiddleware = require('../middleware/authMiddleware');
-const roleMiddleware = require('../middleware/roleMiddleware');
 const { Appointment, Service } = require('../models');
 
 // Création de rendez-vous
@@ -13,20 +13,19 @@ exports.createAppointment = async (req, res) => {
     }
 };
 
-// Liste des rendez-vous
-
-exports.getAllAppointments = authMiddleware, roleMiddleware(["citizen", "admin", "agent"]), async (req, res) => {
+// Liste des rendez-vous (avec authentification)
+exports.getAllAppointments = [authMiddleware, async (req, res) => {
     console.log("Utilisateur authentifié : ", req.user);
     try {
         const appointments = await Appointment.findAll({
-            where: { user_id: req.user.id },
+            where: { user_id: req.user.id }, // Assurez-vous que req.user.id existe et est correct
             include: [Service]
         });
         res.status(200).json(appointments);
     } catch (error) {
         res.status(500).json({ error: 'Erreur lors de la récupération des rendez-vous', details: error.message });
     }
-};
+}];
 
 // Consultation d'un rendez-vous par son ID
 exports.getAppointmentById = async (req, res) => {
