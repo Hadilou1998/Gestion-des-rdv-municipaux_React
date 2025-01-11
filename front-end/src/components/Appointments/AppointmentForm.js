@@ -6,19 +6,24 @@ import "react-datepicker/dist/react-datepicker.css";
 function AppointmentForm() {
     const [services, setServices] = useState([]);
     const [selectedService, setSelectedService] = useState("");
-    const [date, setDate] = useState(null); // Initialisation avec null
+    const [date, setDate] = useState(null);
     const [timeSlot, setTimeSlot] = useState("");
     const [message, setMessage] = useState("");
     const [error, setError] = useState("");
 
     // Récupération des services
     useEffect(() => {
-        axios.get("/services")
-        .then((response) => setServices(response.data))
-        .catch((error) => {
-            console.error("Erreur lors de la récupération des services : ", error);
-            setError("Une erreur est survenue lors de la récupération des services. Veuillez réessayer.");
-        });
+        const fetchServices = async () => {
+            try {
+                const response = await axios.get("/services");
+                setServices(response.data);
+            } catch (error) {
+                console.error("Erreur lors de la récupération des services :", error);
+                setError("Une erreur est survenue lors de la récupération des services. Veuillez réessayer.");
+            }
+        };
+
+        fetchServices();
     }, []);
 
     const handleDateChange = (selectedDate) => {
@@ -30,21 +35,12 @@ function AppointmentForm() {
         setMessage("");
         setError("");
 
-        // Validation des données
-        if (!selectedService) {
-            setError("Le service est requis.");
-            return;
-        }
-        if (!date) {
-            setError("La date est requise.");
-            return;
-        }
-        if (!timeSlot) {
-            setError("Le créneau horaire est requis.");
+        // Validation des champs
+        if (!selectedService || !date || !timeSlot) {
+            setError("Tous les champs sont requis.");
             return;
         }
 
-        // Mapping des créneaux horaires
         const slotsMap = {
             "9h-10h": "09:00-10:00",
             "10h-11h": "10:00-11:00",
@@ -53,27 +49,41 @@ function AppointmentForm() {
             "15h-16h": "15:00-16:00",
             "16h-17h": "16:00-17:00",
         };
-        const formattedTimeSlot = slotsMap[timeSlot] || timeSlot;
+
+        // Vérification du créneau horaire sélectionné
+        if (!slotsMap[timeSlot]) {
+            setError("Créneau horaire invalide.");
+            return;
+        }
 
         const appointmentData = {
-            service_id: parseInt(selectedService, 10), // Assurez-vous que c'est un entier
-            appointment_date: date, // Format 'YYYY-MM-DD'
-            time_slot: formattedTimeSlot, // Format horaire
+            service_id: parseInt(selectedService, 10),
+            appointment_date: date,
+            time_slot: slotsMap[timeSlot],
         };
 
-        console.log("Données envoyées à l'API : ", appointmentData); // Débogage des données
+        console.log("Données envoyées : ", JSON.stringify(appointmentData, null, 2));
 
         try {
             const response = await axios.post("/appointments", appointmentData);
-            console.log("Réponse de l'API : ", response.data); // Débogage de la réponse de l'API
+            console.log("Réponse de l'API : ", response.data);
             setMessage("Rendez-vous pris avec succès !");
             setSelectedService("");
             setDate(null);
             setTimeSlot("");
         } catch (error) {
-            console.error("Erreur lors de la prise du rendez-vous : ", error);
-            setError("Une erreur est survenue lors de la prise du rendez-vous. Veuillez réessayer.");
-        }        
+            console.error("Erreur lors de la prise du rendez-vous :", error.response?.data || error.message);
+
+            // Vérification des erreurs renvoyées par l'API
+            if (error.response?.data?.errors) {
+                const errorMessages = error.response.data.errors.map((err) => err.message).join(", ");
+                setError(errorMessages);
+            } else if (error.response?.data?.message) {
+                setError(error.response.data.message);
+            } else {
+                setError("Une erreur inconnue est survenue.");
+            }
+        }
     };
 
     return (
@@ -108,6 +118,7 @@ function AppointmentForm() {
                         dateFormat="yyyy-MM-dd"
                         placeholderText="Sélectionnez une date"
                         required
+                        minDate={new Date()} // Empêche la sélection de dates antérieures
                     />
                 </div>
                 <div className="mb-3">
