@@ -63,18 +63,17 @@ function AppointmentForm() {
 
         console.log("Données envoyées à l'API : ", appointmentData); // Débogage des données
 
-        await axios.post("/appointments", appointmentData)
-            .then((response) => {
-                console.log("Réponse de l'API : ", response.data); // Débogage de la réponse de l'API
-                setMessage("Rendez-vous pris avec succès !");
-                setSelectedService("");
-                setDate(null);
-                setTimeSlot("")
-            .catch((error) => {
-                console.error("Erreur lors de la prise du rendez-vous : ", error);
-                setError("Une erreur est survenue lors de la prise du rendez-vous. Veuillez réessayer.");
-            });
-        });
+        try {
+            const response = await axios.post("/appointments", appointmentData);
+            console.log("Réponse de l'API : ", response.data); // Débogage de la réponse de l'API
+            setMessage("Rendez-vous pris avec succès !");
+            setSelectedService("");
+            setDate(null);
+            setTimeSlot("");
+        } catch (error) {
+            console.error("Erreur lors de la prise du rendez-vous : ", error);
+            setError("Une erreur est survenue lors de la prise du rendez-vous. Veuillez réessayer.");
+        }        
     };
 
     return (

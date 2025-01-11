@@ -6,21 +6,9 @@ function Navbar() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        const token = localStorage.getItem("user");
-        if (token) {
-            setIsLoggedIn(false);
-        }
+        const user = localStorage.getItem("user");
+        setIsLoggedIn(!!user);
     }, []);
-
-    const handleRegister = (e) => {
-        e.preventDefault();
-        navigate("/login");
-    };
-
-    const handleLogin = (e) => {
-        e.preventDefault();
-        navigate("/login");
-    };
 
     const handleLogout = () => {
         localStorage.removeItem("user");
@@ -31,34 +19,58 @@ function Navbar() {
     return (
         <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
             <div className="container-fluid">
-                <Link className="navbar-brand" to="/">Ville d'Argenteuil</Link>
-                <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <Link className="navbar-brand" to="/">
+                    Ville d'Argenteuil
+                </Link>
+                <button
+                    className="navbar-toggler"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#navbarNav"
+                    aria-controls="navbarNav"
+                    aria-expanded="false"
+                    aria-label="Toggle navigation"
+                >
                     <span className="navbar-toggler-icon"></span>
                 </button>
                 <div className="collapse navbar-collapse" id="navbarNav">
                     <ul className="navbar-nav me-auto">
                         <li className="nav-item">
-                            <Link className="nav-link" to="/">Accueil</Link>
+                            <Link className="nav-link" to="/">
+                                Accueil
+                            </Link>
                         </li>
                         <li className="nav-item">
-                            <Link className="nav-link" to="/about">À propos</Link>
+                            <Link className="nav-link" to="/about">
+                                À propos
+                            </Link>
                         </li>
                         <li className="nav-item">
-                            <Link className="nav-link" to="/contact">Contact</Link>
+                            <Link className="nav-link" to="/contact">
+                                Contact
+                            </Link>
                         </li>
                         <li className="nav-item">
-                            <Link className="nav-link" to="/services">Services</Link>
+                            <Link className="nav-link" to="/services">
+                                Services
+                            </Link>
                         </li>
                         {isLoggedIn && (
                             <>
                                 <li className="nav-item">
-                                    <Link className="nav-link" to="/appointments">Mes Rendez-vous</Link>
+                                    <Link className="nav-link" to="/appointments">
+                                        Mes Rendez-vous
+                                    </Link>
                                 </li>
                                 <li className="nav-item">
-                                    <Link className="nav-link" to="/calendar">Calendrier</Link>
+                                    <Link className="nav-link" to="/calendar">
+                                        Calendrier
+                                    </Link>
                                 </li>
                                 <li className="nav-item">
-                                    <Link className="nav-link" to="/dashboard">Tableau de bord</Link>
+                                    <Link className="nav-link" to="/dashboard">
+                                        Tableau de bord
+                                    </Link>
                                 </li>
                             </>
                         )}
@@ -67,15 +79,24 @@ function Navbar() {
                         {!isLoggedIn ? (
                             <>
                                 <li className="nav-item">
-                                    <Link className="nav-link" to="/login" onClick={handleLogin}>Connexion</Link>
+                                    <Link className="nav-link" to="/login">
+                                        Connexion
+                                    </Link>
                                 </li>
                                 <li className="nav-item">
-                                    <Link className="nav-link" to="/register" onClick={handleRegister}>Inscription</Link>
+                                    <Link className="nav-link" to="/register">
+                                        Inscription
+                                    </Link>
                                 </li>
                             </>
                         ) : (
                             <li className="nav-item">
-                                <button className="nav-link" onClick={handleLogout}>Déconnexion</button>
+                                <button
+                                    className="btn btn-outline-danger"
+                                    onClick={handleLogout} // Utilisation correcte de onClick
+                                >
+                                    Déconnexion
+                                </button>
                             </li>
                         )}
                     </ul>
