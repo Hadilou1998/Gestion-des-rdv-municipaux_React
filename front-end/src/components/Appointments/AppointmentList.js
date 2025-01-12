@@ -37,8 +37,8 @@ function AppointmentList() {
                 <tr key={appt.id}>
                     <td>{appt.id}</td>
                     <td>{appt.user_name}</td>
-                    <td>{appt.service ? appt.service.name : 'Service non trouvé'}</td> {/* Accédez au nom du service correctement */}
-                    <td>{appt.appointment_date}</td>
+                    <td>{appt.service ? appt.service.name : 'Service non trouvé'}</td> {/* Utilisation correcte du service */}
+                    <td>{appt.appointmentDate}</td> {/* Assurez-vous que l'attribut est 'appointmentDate' */}
                     <td>{appt.status}</td>
                 </tr>
             ))}
