@@ -17,16 +17,21 @@ exports.createAppointment = async (req, res) => {
 exports.getAllAppointments = [authMiddleware, async (req, res) => {
     try {
         const appointments = await Appointment.findAll({
-            where: { user_id: req.user.id }, // Assurez-vous que req.user.id existe et est correct
-            include: {
-                model: Service,
-                as: 'service',
-            }
+            where: { user_id: req.user.id },
+            include: [
+                {
+                    model: Service,
+                    as: 'service', // Utilisez l'alias défini dans le modèle
+                },
+            ],
         });
         res.status(200).json(appointments);
     } catch (error) {
         console.error("Erreur lors de la récupération des rendez-vous :", error);
-        res.status(500).json({ error: 'Erreur lors de la récupération des rendez-vous', details: error.message });
+        res.status(500).json({
+            error: 'Erreur lors de la récupération des rendez-vous',
+            details: error.message,
+        });
     }
 }];
 
