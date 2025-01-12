@@ -9,21 +9,25 @@ function AppointmentList() {
   useEffect(() => {
     const fetchAppointments = async () => {
       try {
-        setLoading(true);
         const response = await axios.get("/appointments");
         const appointmentsWithUser = await Promise.all(
           response.data.map(async (appt) => {
             if (appt.userId) {
-              const userResponse = await axios.get(`/users/${appt.userId}`);
-              return { ...appt, user: userResponse.data };
+              try {
+                const userResponse = await axios.get(`/users/${appt.userId}`);
+                return { ...appt, user: userResponse.data };
+              } catch (userErr) {
+                console.error(`Erreur lors de la récupération de l'utilisateur ${appt.userId}:`, userErr);
+                return { ...appt, user: {} }; // Utilisateur vide
+              }
             } else {
-              return { ...appt, user: { firstName: "Nom", lastName: "Inconnu" } };
+              return { ...appt, user: {} }; // Utilisateur vide
             }
           })
         );
         setAppointments(appointmentsWithUser);
       } catch (err) {
-        setError(err.response?.data?.message || "Erreur lors de la récupération des rendez-vous.");
+        setError("Une erreur est survenue lors du chargement des rendez-vous.");
         console.error("Erreur lors de la récupération des rendez-vous :", err);
       } finally {
         setLoading(false);
@@ -32,6 +36,16 @@ function AppointmentList() {
 
     fetchAppointments();
   }, []);
+
+  const cancelAppointment = async (appointmentId) => {
+    try {
+      await axios.delete(`/appointments/${appointmentId}`);
+      setAppointments(appointments.filter((appt) => appt.id !== appointmentId));
+    } catch (err) {
+      setError("Une erreur est survenue lors de l'annulation du rendez-vous.");
+      console.error("Erreur lors de l'annulation du rendez-vous :", err);
+    }
+  };
 
   if (loading) {
     return <div className="text-center mt-4">Chargement des rendez-vous...</div>;
@@ -52,6 +66,7 @@ function AppointmentList() {
             <th>Service</th>
             <th>Date</th>
             <th>Status</th>
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -59,17 +74,23 @@ function AppointmentList() {
             appointments.map((appt) => (
               <tr key={appt.id}>
                 <td>{appt.id}</td>
-                <td>
-                  {appt.user.firstName} {appt.user.lastName}
-                </td>
+                <td>{appt.user.firstName || ""} {appt.user.lastName || ""}</td>
                 <td>{appt.service?.name || "Service inconnu"}</td>
                 <td>{new Date(appt.appointmentDate).toLocaleString("fr-FR")}</td>
                 <td>{appt.status}</td>
+                <td>
+                  <button
+                    className="btn btn-danger"
+                    onClick={() => cancelAppointment(appt.id)}
+                  >
+                    Annuler
+                  </button>
+                </td>
               </tr>
             ))
           ) : (
             <tr>
-              <td colSpan="5" className="text-center">Aucun rendez-vous trouvé.</td>
+              <td colSpan="6" className="text-center">Aucun rendez-vous trouvé.</td>
             </tr>
           )}
         </tbody>
