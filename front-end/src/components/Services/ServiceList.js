@@ -35,6 +35,7 @@ function ServiceList() {
                             <td>
                                 <Link to={`/services/${service.id}`} className="btn btn-info btn-sm">Voir</Link>
                                 <Link to={`/services/edit/${service.id}`} className="btn btn-warning btn-sm mx-2">Modifier</Link>
+                                <button className="btn btn-danger btn-sm">Supprimer</button>
                             </td>
                         </tr>
                     ))}
