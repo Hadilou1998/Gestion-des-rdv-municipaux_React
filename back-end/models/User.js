@@ -28,5 +28,6 @@ module.exports = (sequelize, DataTypes) => {
             defaultValue: 'citizen',
         },
     }, { timestamps: true, underscored: true });
+    
     return User;
 };

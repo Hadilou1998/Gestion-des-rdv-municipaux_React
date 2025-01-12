@@ -9,14 +9,24 @@ function AppointmentList() {
   useEffect(() => {
     const fetchAppointments = async () => {
       try {
-        setLoading(true); // Indique que les données sont en cours de chargement
+        setLoading(true);
         const response = await axios.get("/appointments");
-        setAppointments(response.data); // Charge les rendez-vous dans l'état
+        const appointmentsWithUser = await Promise.all(
+          response.data.map(async (appt) => {
+            if (appt.userId) {
+              const userResponse = await axios.get(`/users/${appt.userId}`);
+              return { ...appt, user: userResponse.data };
+            } else {
+              return { ...appt, user: { firstName: "Nom", lastName: "Inconnu" } };
+            }
+          })
+        );
+        setAppointments(appointmentsWithUser);
       } catch (err) {
         setError(err.response?.data?.message || "Erreur lors de la récupération des rendez-vous.");
         console.error("Erreur lors de la récupération des rendez-vous :", err);
       } finally {
-        setLoading(false); // Fin du chargement
+        setLoading(false);
       }
     };
 
@@ -49,10 +59,12 @@ function AppointmentList() {
             appointments.map((appt) => (
               <tr key={appt.id}>
                 <td>{appt.id}</td>
-                <td>{appt.user?.name || "Inconnu"}</td> {/* Récupère le nom du citoyen */}
-                <td>{appt.service?.name || "Service inconnu"}</td> {/* Récupère le nom du service */}
-                <td>{new Date(appt.appointmentDate).toLocaleString()}</td> {/* Affiche la date au format lisible */}
-                <td>{appt.status}</td> {/* Statut du rendez-vous */}
+                <td>
+                  {appt.user.firstName} {appt.user.lastName}
+                </td>
+                <td>{appt.service?.name || "Service inconnu"}</td>
+                <td>{new Date(appt.appointmentDate).toLocaleString("fr-FR")}</td>
+                <td>{appt.status}</td>
               </tr>
             ))
           ) : (
