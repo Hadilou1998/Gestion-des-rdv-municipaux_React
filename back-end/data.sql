@@ -64,18 +64,18 @@ CREATE TABLE IF NOT EXISTS time_slots (
 INSERT INTO users (first_name, last_name, email, password, role) VALUES
 ('Alice', 'Dupont', 'alice.dupont@example.com', 'password123', 'citizen'),
 ('Bob', 'Martin', 'bob.martin@example.com', 'password123', 'citizen'),
-('Charlie', 'Durand', 'charlie.durand@example.com', 'admin123', 'admin'),
+('Charlie', 'Durand', 'charlie.durand@example.com', 'password123', 'citizen'),
 ('David', 'Lemoine', 'david.lemoine@example.com', 'agent123', 'agent'),
 ('Eve', 'Rousseau', 'eve.rousseau@example.com', 'agent123', 'agent'),
-('Frédéric', 'Pierre', 'frederic.pierre@example.com', 'admin123', 'admin'),
+('Frédéric', 'Pierre', 'frederic.pierre@example.com', 'agent123', 'agent'),
 ('Gabrielle', 'Garcia', 'gabrielle.garcia@example.com', 'password123', 'citizen'),
 ('Hélène', 'Thomas', 'helene.thomas@example.com', 'password123', 'citizen'),
 ('Isabelle', 'Lambert', 'isabelle.lambert@example.com', 'admin123', 'admin'),
-('Jean-Pierre', 'Dubois', 'jeanpierre.dubois@example.com', 'agent123', 'agent'),
+('Jean-Pierre', 'Dubois', 'jeanpierre.dubois@example.com', 'admin123', 'admin'),
 ('Karen', 'Moreau', 'karen.moreau@example.com', 'agent123', 'agent'),
-('Laurent', 'Lefebvre', 'laurent.lefebvre@example.com', 'admin123', 'admin'),
+('Laurent', 'Lefebvre', 'laurent.lefebvre@example.com', 'agent123', 'agent'),
 ('Marie', 'Roux', 'marie.roux@example.com', 'password123', 'citizen'),
-('Nicolas', 'Lefèvre', 'nicolas.lefevre@example.com', 'agent123', 'agent');
+('Nicolas', 'Lefèvre', 'nicolas.lefevre@example.com', 'password123', 'citizen');
 
 
 INSERT INTO services (name, description, duration, department, is_active) VALUES
