@@ -53,6 +53,7 @@ CREATE TABLE IF NOT EXISTS time_slots (
     end_time DATETIME NOT NULL,
     is_available BOOLEAN DEFAULT true,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (service_id) REFERENCES services(id) ON DELETE CASCADE
 );
 
@@ -98,17 +99,17 @@ INSERT INTO appointments (user_id, service_id, appointment_date, status, notes) 
 (1, 1, '2025-10-25 10:00:00', 'scheduled', 'Première demande de carte d\'identité.'),
 (2, 2, '2025-10-26 14:00:00', 'scheduled', 'Consultation pour un permis de construire.'),
 (3, 3, '2025-10-27 09:30:00', 'completed', 'Rendez-vous pour une aide sociale.'),
-(1, 4, '2025-11-01 16:00:00', 'cancelled', 'Demande annulée par l\'utilisateur.'),
-(2, 5, '2025-11-02 10:00:00', 'scheduled', 'Première demande de déclaration de santé.'),
-(3, 6, '2025-11-03 14:30:00', 'scheduled', 'Inscription dans une école.'),
-(1, 7, '2025-11-04 11:00:00', 'completed', 'Déclaration de pollution.'),
-(2, 8, '2025-11-05 15:30:00', 'scheduled', 'Consultation pour un procès.'),
-(3, 9, '2025-11-06 10:30:00', 'scheduled', 'Demande d\'emploi.'),
-(1, 10, '2025-11-07 16:30:00', 'scheduled', 'Demande de permis de conduire.'),
-(2, 11, '2025-11-08 11:30:00', 'scheduled', 'Demande de visa pour un voyage international.'),
-(3, 12, '2025-11-09 15:00:00', 'scheduled', 'Déclaration de propriété agricole.'),
-(1, 13, '2025-11-10 10:30:00', 'scheduled', 'Demande de résidence permanente.'),
-(2, 14, '2025-11-11 14:00:00', 'scheduled', 'Déclaration d\'impôts.');
+(4, 4, '2025-11-01 16:00:00', 'cancelled', 'Demande annulée par l\'utilisateur.'),
+(5, 5, '2025-11-02 10:00:00', 'scheduled', 'Première demande de déclaration de santé.'),
+(6, 6, '2025-11-03 14:30:00', 'scheduled', 'Inscription dans une école.'),
+(7, 7, '2025-11-04 11:00:00', 'completed', 'Déclaration de pollution.'),
+(8, 8, '2025-11-05 15:30:00', 'scheduled', 'Consultation pour un procès.'),
+(9, 9, '2025-11-06 10:30:00', 'scheduled', 'Demande d\'emploi.'),
+(10, 10, '2025-11-07 16:30:00', 'scheduled', 'Demande de permis de conduire.'),
+(11, 11, '2025-11-08 11:30:00', 'scheduled', 'Demande de visa pour un voyage international.'),
+(12, 12, '2025-11-09 15:00:00', 'scheduled', 'Déclaration de propriété agricole.'),
+(13, 13, '2025-11-10 10:30:00', 'scheduled', 'Demande de résidence permanente.'),
+(14, 14, '2025-11-11 14:00:00', 'scheduled', 'Déclaration d\'impôts.');
 
 INSERT INTO time_slots (service_id, start_time, end_time, is_available) VALUES
 (1, '2025-10-25 09:00:00', '2025-10-25 09:30:00', true),
