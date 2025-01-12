@@ -1,6 +1,6 @@
 // controllers/appointmentController.js
 const authMiddleware = require('../middleware/authMiddleware');
-const { Appointment, Service } = require('../models');
+const { Appointment, Service, User } = require('../models');
 
 // Création de rendez-vous
 exports.createAppointment = async (req, res) => {
@@ -20,8 +20,14 @@ exports.getAllAppointments = [authMiddleware, async (req, res) => {
             where: { user_id: req.user.id },
             include: [
                 {
+                    model: User,
+                    as: 'user', // Utilisez l'alias défini dans le modèle
+                    attributes: ['first_name', 'last_name'], // Sélectionnez uniquement les champs souhaités
+                },
+                {
                     model: Service,
                     as: 'service', // Utilisez l'alias défini dans le modèle
+                    attributes: ['name'], // Sélectionnez uniquement le nom du service
                 },
             ],
         });
