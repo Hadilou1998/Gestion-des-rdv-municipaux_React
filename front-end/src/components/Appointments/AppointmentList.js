@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "../../services/api"; // Assurez-vous que ce chemin est correct
+import axios from "../../services/api";
 
 function AppointmentList() {
   const [appointments, setAppointments] = useState([]);
@@ -10,26 +10,15 @@ function AppointmentList() {
     const fetchAppointments = async () => {
       try {
         const response = await axios.get("/appointments");
-        const appointmentsWithUser = await Promise.all(
-          response.data.map(async (appt) => {
-            if (appt.userId) {
-              try {
-                const userResponse = await axios.get(`/users/${appt.userId}`);
-                return { ...appt, user: userResponse.data };
-              } catch (userErr) {
-                console.error(`Erreur lors de la récupération de l'utilisateur ${appt.userId}:`, userErr);
-                return { ...appt, user: {} }; // Utilisateur vide
-              }
-            } else {
-              return { ...appt, user: {} }; // Utilisateur vide
-            }
-          })
-        );
-        setAppointments(appointmentsWithUser);
+        setAppointments(response.data);
+        setLoading(false);
       } catch (err) {
-        setError("Une erreur est survenue lors du chargement des rendez-vous.");
-        console.error("Erreur lors de la récupération des rendez-vous :", err);
-      } finally {
+        console.error("Détails de l'erreur:", err);
+        setError(
+          `Une erreur est survenue lors du chargement des rendez-vous: ${
+            err.response?.data?.message || err.message
+          }`
+        );
         setLoading(false);
       }
     };
@@ -42,8 +31,12 @@ function AppointmentList() {
       await axios.delete(`/appointments/${appointmentId}`);
       setAppointments(appointments.filter((appt) => appt.id !== appointmentId));
     } catch (err) {
-      setError("Une erreur est survenue lors de l'annulation du rendez-vous.");
-      console.error("Erreur lors de l'annulation du rendez-vous :", err);
+      console.error("Erreur lors de l'annulation:", err);
+      setError(
+        `Une erreur est survenue lors de l'annulation du rendez-vous: ${
+          err.response?.data?.message || err.message
+        }`
+      );
     }
   };
 
@@ -52,7 +45,20 @@ function AppointmentList() {
   }
 
   if (error) {
-    return <div className="alert alert-danger mt-4">{error}</div>;
+    return (
+      <div className="container mt-4">
+        <div className="alert alert-danger">
+          <h4>Erreur</h4>
+          <p>{error}</p>
+          <button 
+            className="btn btn-primary mt-2"
+            onClick={() => window.location.reload()}
+          >
+            Réessayer
+          </button>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -74,7 +80,11 @@ function AppointmentList() {
             appointments.map((appt) => (
               <tr key={appt.id}>
                 <td>{appt.id}</td>
-                <td>{appt.user.firstName || ""} {appt.user.lastName || ""}</td>
+                <td>
+                  {appt.user?.firstName && appt.user?.lastName
+                    ? `${appt.user.firstName} ${appt.user.lastName}`
+                    : "Non spécifié"}
+                </td>
                 <td>{appt.service?.name || "Service inconnu"}</td>
                 <td>{new Date(appt.appointmentDate).toLocaleString("fr-FR")}</td>
                 <td>{appt.status}</td>
@@ -90,7 +100,9 @@ function AppointmentList() {
             ))
           ) : (
             <tr>
-              <td colSpan="6" className="text-center">Aucun rendez-vous trouvé.</td>
+              <td colSpan="6" className="text-center">
+                Aucun rendez-vous trouvé.
+              </td>
             </tr>
           )}
         </tbody>

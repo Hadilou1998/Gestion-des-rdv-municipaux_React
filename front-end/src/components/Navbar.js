@@ -63,6 +63,11 @@ function Navbar() {
                                     </Link>
                                 </li>
                                 <li className="nav-item">
+                                    <Link className="nav-link" to="/slots">
+                                        Créneaux disponibles
+                                    </Link>
+                                </li>
+                                <li className="nav-item">
                                     <Link className="nav-link" to="/calendar">
                                         Calendrier
                                     </Link>

@@ -17,6 +17,7 @@ import UserList from './components/Users/UserList';
 import AppointmentList from './components/Appointments/AppointmentList';
 import AppointmentForm from './components/Appointments/AppointmentForm';
 import AppointmentDetails from './components/Appointments/AppointmentDetails';
+import TimeSlotList from './components/TimeSlots/TimeSlotList';
 
 function App() {
   return (
@@ -40,6 +41,7 @@ function App() {
             <Route path="/appointments" element={<AppointmentList />} />
             <Route path="/appointments/new" element={<AppointmentForm />} />
             <Route path="/appointments/:id" element={<AppointmentDetails />} />
+            <Route path="/slots" element={<TimeSlotList />} />
           </Routes>
         </div>
         <Footer />
