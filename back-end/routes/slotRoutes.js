@@ -20,4 +20,7 @@ router.put('/:id', authMiddleware, roleMiddleware(['admin', 'agent']), slotContr
 // Supprimer un créneau (accessible uniquement par les administrateurs ou agents)
 router.delete('/:id', authMiddleware, roleMiddleware(['admin', 'agent']), slotController.deleteSlot);
 
+// Route pour la RÉSERVATION d'un créneau (POST /api/reservations)
+router.post('/reservations', slotController.bookSlot); // **NOUVEAU : Route POST pour réserver un créneau**
+
 module.exports = router;
