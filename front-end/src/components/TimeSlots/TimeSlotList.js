@@ -87,11 +87,10 @@ function TimeSlotList() {
             setError(null);
             setSuccessMessage(null);
     
-            // Correction de la route pour la réservation
             const response = await axios.post(`/slots/${slotId}/reserve`);
     
-            if (response.status === 200 || response.status === 201) {
-                setSuccessMessage("Réservation effectuée avec succès !");
+            if (response.data && response.data.message) {
+                setSuccessMessage(response.data.message);
                 
                 // Mise à jour du statut du créneau localement
                 setTimeSlots(prevSlots => 
@@ -110,11 +109,8 @@ function TimeSlotList() {
     
         } catch (err) {
             console.error("Erreur détaillée de réservation:", err);
-            setError(
-                `Erreur lors de la réservation : ${
-                    err.response?.data?.error || "Une erreur est survenue"
-                }`
-            );
+            const errorMessage = err.response?.data?.error || "Une erreur est survenue lors de la réservation";
+            setError(errorMessage);
         } finally {
             setReservationLoading(false);
         }
