@@ -28,6 +28,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/appointments", appointmentRoutes);
 app.use("/api/services", serviceRoutes);
 app.use("/api/slots", slotRoutes);
+app.use("/api/reservations", slotRoutes);
 
 // Connexion à la base de données
 db.sequelize.sync({ alter: true }).then(() => {
