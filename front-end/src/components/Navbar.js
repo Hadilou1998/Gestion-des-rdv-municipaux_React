@@ -77,6 +77,16 @@ function Navbar() {
                                         Tableau de bord
                                     </Link>
                                 </li>
+                                <li className="nav-item">
+                                    <Link className="nav-link" to="/slots/new">
+                                        Ajouter un créneau
+                                    </Link>
+                                </li>
+                                <li className="nav-item">
+                                    <Link className="nav-link" to="/slots/:id">
+                                        Détail du créneau
+                                    </Link>
+                                </li>
                             </>
                         )}
                     </ul>
