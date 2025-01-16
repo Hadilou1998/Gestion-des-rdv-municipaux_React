@@ -21,6 +21,6 @@ router.put('/:id', authMiddleware, roleMiddleware(['admin', 'agent']), slotContr
 router.delete('/:id', authMiddleware, roleMiddleware(['admin', 'agent']), slotController.deleteSlot);
 
 // Route pour la RÉSERVATION d'un créneau
-router.post('/:id/reserve', slotController.bookSlot); // **NOUVEAU : Route POST pour réserver un créneau**
+router.post('/:id/reserve', slotController.reserveSlot); // **NOUVEAU : Route POST pour réserver un créneau**
 
 module.exports = router;

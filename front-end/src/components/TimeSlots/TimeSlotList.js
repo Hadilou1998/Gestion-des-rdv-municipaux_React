@@ -64,7 +64,11 @@ function TimeSlotList() {
     }, [selectedService, selectedDate]);
 
     const handleDateChange = (selectedDate) => {
-        setSelectedDate(selectedDate.toISOString().split("T")[0]);
+        if (selectedDate) {
+            setSelectedDate(selectedDate.toISOString().split("T")[0]);
+        } else {
+            setSelectedDate(""); // Gérer le cas où la date est null
+        }
     };
 
     const formatTimeSlot = (startTime, endTime) => {
@@ -79,60 +83,40 @@ function TimeSlotList() {
 
     const handleReservation = async (slotId) => {
         try {
-            setReservationLoading(true); // Début du chargement de la réservation
+            setReservationLoading(true);
             setError(null);
             setSuccessMessage(null);
-
-            // Appel à l'API pour effectuer la réservation (POST à "/api/reservations")
-            const response = await axios.post("/reservations", { slotId: slotId }); // POST à "/reservations" avec slotId dans le corps
-
-            if (response.status === 200) {
+    
+            // Correction de la route pour la réservation
+            const response = await axios.post(`/slots/${slotId}/reserve`);
+    
+            if (response.status === 200 || response.status === 201) {
                 setSuccessMessage("Réservation effectuée avec succès !");
-                // Redirection vers la page de détails après une réservation réussie
+                
+                // Mise à jour du statut du créneau localement
+                setTimeSlots(prevSlots => 
+                    prevSlots.map(slot => 
+                        slot.id === slotId 
+                            ? { ...slot, isAvailable: false }
+                            : slot
+                    )
+                );
+    
+                // Redirection après un court délai
                 setTimeout(() => {
                     navigate(`/slots/${slotId}`);
                 }, 1500);
-
-                // Mise à jour de la liste des créneaux (optionnel : recharger toute la liste ou juste modifier le créneau réservé)
-                // Ici, je choisis de recharger toute la liste pour refléter l'état le plus récent depuis le serveur
-                if (selectedService && selectedDate) {
-                    const fetchTimeSlots = async () => {
-                        setLoading(true);
-                        try {
-                            const response = await axios.get("/slots", {
-                                params: {
-                                    serviceId: selectedService,
-                                    date: selectedDate,
-                                },
-                            });
-                            setTimeSlots(response.data);
-                            setError(null);
-                        } catch (err) {
-                            console.error("Erreur lors de la récupération des créneaux:", err);
-                            setError(
-                                `Une erreur est survenue lors du chargement des créneaux: ${
-                                    err.response?.data?.message || err.message
-                                }`
-                            );
-                        } finally {
-                            setLoading(false);
-                        }
-                    };
-                    fetchTimeSlots();
-                }
-            } else {
-                setError(`Erreur lors de la réservation : Statut ${response.status}`);
             }
-
+    
         } catch (err) {
+            console.error("Erreur détaillée de réservation:", err);
             setError(
                 `Erreur lors de la réservation : ${
-                    err.response?.data?.message || "Une erreur est survenue"
+                    err.response?.data?.error || "Une erreur est survenue"
                 }`
             );
-            console.error("Erreur détaillée de réservation:", err); // Log pour plus de détails en cas d'erreur
         } finally {
-            setReservationLoading(false); // Fin du chargement de la réservation
+            setReservationLoading(false);
         }
     };
 

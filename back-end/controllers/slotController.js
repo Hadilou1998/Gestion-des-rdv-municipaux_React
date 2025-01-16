@@ -68,30 +68,54 @@ exports.deleteSlot = async (req, res) => {
 };
 
 // Fonction pour la RÉSERVATION d'un créneau
-exports.bookSlot = async (req, res) => {
-    const { slotId } = req.body; // Récupère l'ID du créneau depuis le corps de la requête
-
-    if (!slotId) {
-        return res.status(400).json({ error: 'ID du créneau manquant pour la réservation.' });
-    }
-
+exports.reserveSlot = async (req, res) => {
+    const { id } = req.params;
     try {
-        const slot = await TimeSlot.findByPk(slotId);
+        // Vérifier si l'ID est valide
+        if (!id) {
+            return res.status(400).json({ error: 'ID du créneau manquant' });
+        }
+
+        const slot = await TimeSlot.findByPk(id);
+        
+        // Vérifier si le créneau existe
         if (!slot) {
-            return res.status(404).json({ error: 'Créneau introuvable.' });
+            return res.status(404).json({ error: 'Créneau introuvable' });
         }
 
+        // Vérifier si le créneau est disponible
         if (!slot.isAvailable) {
-            return res.status(400).json({ error: 'Créneau déjà réservé ou indisponible.' });
+            return res.status(400).json({ error: 'Ce créneau n\'est plus disponible' });
         }
 
-        // Logique de réservation : Mettre à jour le créneau pour le rendre indisponible (ou autre logique de réservation)
-        await slot.update({ isAvailable: false }); // Exemple : le rendre indisponible
+        // Vérifier si le créneau n'est pas déjà passé
+        if (new Date(slot.startTime) < new Date()) {
+            return res.status(400).json({ error: 'Ce créneau est déjà passé' });
+        }
 
-        res.status(200).json({ message: 'Créneau réservé avec succès.', slot });
+        // Mettre à jour le créneau
+        await slot.update({ 
+            isAvailable: false,
+            // Ajoutez d'autres champs si nécessaire pour la réservation
+        });
+
+        // Renvoyer la réponse
+        res.status(200).json({
+            message: 'Réservation effectuée avec succès',
+            slot: {
+                id: slot.id,
+                startTime: slot.startTime,
+                endTime: slot.endTime,
+                isAvailable: false,
+                // Autres informations nécessaires
+            }
+        });
 
     } catch (error) {
-        console.error("Erreur lors de la réservation du créneau:", error);
-        res.status(500).json({ error: 'Erreur lors de la réservation du créneau.', details: error.message });
+        console.error('Erreur lors de la réservation:', error);
+        res.status(500).json({
+            error: 'Erreur lors de la réservation du créneau',
+            details: error.message
+        });
     }
 };
