@@ -20,9 +20,9 @@ function ServiceDetails() {
             <ul className="list-group">
                 <li className="list-group-item"><strong>ID :</strong> {slot.id}</li>
                 <li className="list-group-item"><strong>Service :</strong> {slot.service_name}</li>
-                <li className="list-group-item"><strong>Début :</strong> {slot.start_time}</li>
-                <li className="list-group-item"><strong>Fin :</strong> {slot.end_time}</li>
-                <li className="list-group-item"><strong>Disponibilité :</strong> {slot.is_available? "Disponible" : "Indisponible"}</li>
+                <li className="list-group-item"><strong>Début :</strong> {slot.startTime}</li>
+                <li className="list-group-item"><strong>Fin :</strong> {slot.endTime}</li>
+                <li className="list-group-item"><strong>Disponibilité :</strong> {slot.isAvailable? "Disponible" : "Indisponible"}</li>
             </ul>
         </div>
     );

@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "../../services/api";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 function TimeSlotList() {
     const [timeSlots, setTimeSlots] = useState([]);
@@ -59,6 +61,10 @@ function TimeSlotList() {
         }
     }, [selectedService, selectedDate]);
 
+    const handleDateChange = (selectedDate) => {
+        setSelectedDate(selectedDate.toISOString().split("T")[0]);
+    };
+
     const formatTimeSlot = (startTime, endTime) => {
         return `${new Date(startTime).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })} - ${new Date(endTime).toLocaleTimeString("fr-FR"
                 , { hour: "2-digit", minute: "2-digit" })}`;
@@ -85,11 +91,14 @@ function TimeSlotList() {
                 </div>
                 <div className="col-md-6">
                     <label className="form-label">Date</label>
-                    <input
-                        type="date"
+                    <DatePicker
                         className="form-control"
-                        value={selectedDate}
-                        onChange={(e) => setSelectedDate(e.target.value)}
+                        selected={selectedDate ? new Date(selectedDate) : null}
+                        onChange={handleDateChange}
+                        dateFormat="yyyy-MM-dd"
+                        minDate={new Date()}
+                        placeholderText="Sélectionnez une date"
+                        required
                     />
                 </div>
             </div>
