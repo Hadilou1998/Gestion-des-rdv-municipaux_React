@@ -82,11 +82,6 @@ function Navbar() {
                                         Ajouter un créneau
                                     </Link>
                                 </li>
-                                <li className="nav-item">
-                                    <Link className="nav-link" to="/slots/:id">
-                                        Détail du créneau
-                                    </Link>
-                                </li>
                             </>
                         )}
                     </ul>

@@ -1,4 +1,3 @@
-// controllers/appointmentController.js
 const authMiddleware = require('../middleware/authMiddleware');
 const { Appointment, Service, User } = require('../models');
 
@@ -14,7 +13,7 @@ exports.createAppointment = async (req, res) => {
 };
 
 // Liste des rendez-vous (avec authentification)
-exports.getAllAppointments = [authMiddleware, async (req, res) => {
+exports.getAllAppointments = async (req, res) => {
     try {
         const appointments = await Appointment.findAll({
             where: { user_id: req.user.id },
@@ -39,7 +38,7 @@ exports.getAllAppointments = [authMiddleware, async (req, res) => {
             details: error.message,
         });
     }
-}];
+};
 
 // Consultation d'un rendez-vous par son ID
 exports.getAppointmentById = async (req, res) => {

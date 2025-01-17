@@ -1,6 +1,6 @@
 const { TimeSlot, Service } = require('../models');
 
-// Création d'un créneau (fonction existante - inchangée)
+// Création d'un créneau
 exports.createSlot = async (req, res) => {
     const { serviceId, startTime, endTime } = req.body;
     try {
@@ -14,7 +14,7 @@ exports.createSlot = async (req, res) => {
     }
 };
 
-// Liste des créneaux (fonction existante - inchangée)
+// Liste des créneaux
 exports.getAllSlots = async (req, res) => {
     try {
         const slots = await TimeSlot.findAll({ include: 'service' });
@@ -24,7 +24,7 @@ exports.getAllSlots = async (req, res) => {
     }
 };
 
-// Consultation d'un créneau par son ID (fonction existante - inchangée)
+// Consultation d'un créneau par son ID
 exports.getSlotById = async (req, res) => {
     const { id } = req.params;
     try {
@@ -38,7 +38,7 @@ exports.getSlotById = async (req, res) => {
     }
 };
 
-// Modification d'un créneau (fonction existante - inchangée)
+// Modification d'un créneau
 exports.updateSlot = async (req, res) => {
     const { id } = req.params;
     const { startTime, endTime, isAvailable } = req.body;
@@ -53,7 +53,7 @@ exports.updateSlot = async (req, res) => {
     }
 };
 
-// Suppression d'un créneau (fonction existante - inchangée)
+// Suppression d'un créneau
 exports.deleteSlot = async (req, res) => {
     const { id } = req.params;
     try {
