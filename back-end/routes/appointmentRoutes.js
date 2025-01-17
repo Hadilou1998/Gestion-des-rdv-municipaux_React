@@ -2,7 +2,6 @@ const express = require('express');
 const router = express.Router();
 const appointmentController = require('../controllers/appointmentController');
 const authMiddleware = require('../middleware/authMiddleware');
-const roleMiddleware = require('../middleware/roleMiddleware');
 const validateMiddleware = require('../middleware/validateMiddleware');
 
 // Créer un rendez-vous
