@@ -5,6 +5,7 @@ import "react-datepicker/dist/react-datepicker.css";
 
 function AppointmentForm() {
     const [services, setServices] = useState([]);
+    const [appointments, setAppointments] = useState([]);
     const [selectedService, setSelectedService] = useState("");
     const [date, setDate] = useState(null);
     const [timeSlot, setTimeSlot] = useState("");
@@ -26,6 +27,21 @@ function AppointmentForm() {
         fetchServices();
     }, []);
 
+    // Récupération des rendez-vous
+    const fetchAppointments = async () => {
+        try {
+            const response = await axios.get("/appointments");
+            setAppointments(response.data);
+        } catch (error) {
+            console.error("Erreur lors de la récupération des rendez-vous :", error);
+            setError("Une erreur est survenue lors de la récupération des rendez-vous.");
+        }
+    };
+
+    useEffect(() => {
+        fetchAppointments();
+    }, []);
+
     const handleDateChange = (selectedDate) => {
         setDate(selectedDate ? selectedDate.toISOString().split("T")[0] : null);
     };
@@ -35,7 +51,6 @@ function AppointmentForm() {
         setMessage("");
         setError("");
 
-        // Validation des champs
         if (!selectedService || !date || !timeSlot) {
             setError("Tous les champs sont requis.");
             return;
@@ -50,7 +65,6 @@ function AppointmentForm() {
             "16h-17h": "16:00-17:00",
         };
 
-        // Vérification du créneau horaire sélectionné
         if (!slotsMap[timeSlot]) {
             setError("Créneau horaire invalide.");
             return;
@@ -58,23 +72,20 @@ function AppointmentForm() {
 
         const appointmentData = {
             service_id: parseInt(selectedService, 10),
-            appointmentDate: date,  // Correction du nom du champ en "appointmentDate"
+            appointmentDate: date,
             time_slot: slotsMap[timeSlot],
         };
 
-        console.log("Données envoyées : ", JSON.stringify(appointmentData, null, 2));
-
         try {
-            const response = await axios.post("/appointments", appointmentData);
-            console.log("Réponse de l'API : ", response.data);
+            await axios.post("/appointments", appointmentData);
             setMessage("Rendez-vous pris avec succès !");
             setSelectedService("");
             setDate(null);
             setTimeSlot("");
+            fetchAppointments(); // Rafraîchit la liste des rendez-vous
         } catch (error) {
             console.error("Erreur lors de la prise du rendez-vous :", error.response?.data || error.message);
 
-            // Vérification des erreurs renvoyées par l'API
             if (error.response?.data?.errors) {
                 const errorMessages = error.response.data.errors.map((err) => err.msg).join(", ");
                 setError(errorMessages);
@@ -118,7 +129,7 @@ function AppointmentForm() {
                         dateFormat="yyyy-MM-dd"
                         placeholderText="Sélectionnez une date"
                         required
-                        minDate={new Date()} // Empêche la sélection de dates antérieures
+                        minDate={new Date()}
                     />
                 </div>
                 <div className="mb-3">
@@ -137,14 +148,32 @@ function AppointmentForm() {
                         ))}
                     </select>
                 </div>
-                <button
-                    type="submit"
-                    className="btn btn-primary"
-                    disabled={!selectedService || !date || !timeSlot}
-                >
+                <button type="submit" className="btn btn-primary">
                     Confirmer
                 </button>
             </form>
+
+            <h3 className="mt-5">Liste des rendez-vous</h3>
+            <table className="table table-striped mt-3">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Service</th>
+                        <th>Date</th>
+                        <th>Créneau horaire</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {appointments.map((appointment, index) => (
+                        <tr key={appointment.id}>
+                            <td>{index + 1}</td>
+                            <td>{appointment.service_name}</td>
+                            <td>{appointment.appointmentDate}</td>
+                            <td>{appointment.time_slot}</td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
         </div>
     );
 }
