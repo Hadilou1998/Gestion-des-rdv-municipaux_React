@@ -20,6 +20,7 @@ import AppointmentDetails from './components/Appointments/AppointmentDetails';
 import TimeSlotList from './components/TimeSlots/TimeSlotList';
 import TimeSlotForm from './components/TimeSlots/TimeSlotForm';
 import TimeSlotDetails from './components/TimeSlots/TimeSlotDetails';
+import Unauthorized from './pages/Unauthorized';
 
 function App() {
   return (
@@ -46,6 +47,7 @@ function App() {
             <Route path="/slots" element={<TimeSlotList />} />
             <Route path="/slots/new" element={<TimeSlotForm />} />
             <Route path="/slots/:id" element={<TimeSlotDetails />} />
+            <Route path="/unauthorized" element={<Unauthorized />} />
           </Routes>
         </div>
         <Footer />

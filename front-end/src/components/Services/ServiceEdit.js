@@ -1,15 +1,24 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "../../services/api";
+import { UserContext } from "../../context/UserContext";
 
 function ServiceEdit() {
     const { id } = useParams();
     const navigate = useNavigate();
+    const { user } = useContext(UserContext);
     const [service, setService] = useState({
         name: "",
         description: "",
         duration: ""
     });
+
+    // Restriction d'accès pour les citoyens
+    useEffect(() => {
+        if (user.role === "citizen") {
+            navigate("/unauthorized");
+        }
+    }, [user, navigate]);
 
     useEffect(() => {
         axios.get(`/services/${id}`)
