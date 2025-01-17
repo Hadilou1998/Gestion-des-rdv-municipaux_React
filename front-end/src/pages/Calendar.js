@@ -86,6 +86,8 @@ function Calendar() {
             showTimeSelect
             dateFormat="Pp"
             placeholderText="Sélectionnez une date"
+            minDate={new Date()}
+            required
           />
         </div>
         <div className="mb-3">
