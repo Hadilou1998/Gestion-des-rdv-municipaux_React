@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "../../services/api";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { UserContext } from "../../context/UserContext"; // Importer le contexte utilisateur
 
 function TimeSlotList() {
     const navigate = useNavigate();
@@ -13,7 +14,9 @@ function TimeSlotList() {
     const [selectedService, setSelectedService] = useState("");
     const [selectedDate, setSelectedDate] = useState("");
     const [services, setServices] = useState([]);
-    const [reservationLoading, setReservationLoading] = useState(false); // Etat pour le chargement de la réservation
+    const [reservationLoading, setReservationLoading] = useState(false);
+
+    const { user } = useContext(UserContext); // Récupérer les informations utilisateur
 
     useEffect(() => {
         const fetchServices = async () => {
@@ -38,11 +41,8 @@ function TimeSlotList() {
 
             setLoading(true);
             try {
-                const response = await axios.get("/slots", { // Requête GET à "/slots" (corrigé)
-                    params: {
-                        serviceId: selectedService,
-                        date: selectedDate,
-                    },
+                const response = await axios.get("/slots", {
+                    params: { serviceId: selectedService, date: selectedDate },
                 });
                 setTimeSlots(response.data);
                 setError(null);
@@ -67,17 +67,17 @@ function TimeSlotList() {
         if (selectedDate) {
             setSelectedDate(selectedDate.toISOString().split("T")[0]);
         } else {
-            setSelectedDate(""); // Gérer le cas où la date est null
+            setSelectedDate("");
         }
     };
 
     const formatTimeSlot = (startTime, endTime) => {
         return `${new Date(startTime).toLocaleTimeString("fr-FR", {
             hour: "2-digit",
-            minute: "2-digit"
+            minute: "2-digit",
         })} - ${new Date(endTime).toLocaleTimeString("fr-FR", {
             hour: "2-digit",
-            minute: "2-digit"
+            minute: "2-digit",
         })}`;
     };
 
@@ -86,33 +86,38 @@ function TimeSlotList() {
             setReservationLoading(true);
             setError(null);
             setSuccessMessage(null);
-    
+
             const response = await axios.post(`/slots/${slotId}/reserve`);
-    
+
             if (response.data && response.data.message) {
                 setSuccessMessage(response.data.message);
-                
-                // Mise à jour du statut du créneau localement
-                setTimeSlots(prevSlots => 
-                    prevSlots.map(slot => 
-                        slot.id === slotId 
-                            ? { ...slot, isAvailable: false }
-                            : slot
+
+                // Mise à jour locale du statut du créneau
+                setTimeSlots((prevSlots) =>
+                    prevSlots.map((slot) =>
+                        slot.id === slotId ? { ...slot, isAvailable: false } : slot
                     )
                 );
-    
-                // Redirection après un court délai
-                setTimeout(() => {
-                    navigate(`/slots/${slotId}`);
-                }, 1500);
             }
-    
         } catch (err) {
-            console.error("Erreur détaillée de réservation:", err);
+            console.error("Erreur lors de la réservation:", err);
             const errorMessage = err.response?.data?.error || "Une erreur est survenue lors de la réservation";
             setError(errorMessage);
         } finally {
             setReservationLoading(false);
+        }
+    };
+
+    const handleDelete = async (slotId) => {
+        try {
+            setError(null);
+            await axios.delete(`/slots/${slotId}`);
+            setTimeSlots((prevSlots) => prevSlots.filter((slot) => slot.id !== slotId));
+            setSuccessMessage("Créneau supprimé avec succès.");
+        } catch (err) {
+            console.error("Erreur lors de la suppression du créneau:", err);
+            const errorMessage = err.response?.data?.error || "Une erreur est survenue lors de la suppression";
+            setError(errorMessage);
         }
     };
 
@@ -151,7 +156,7 @@ function TimeSlotList() {
                         onChange={(e) => setSelectedService(e.target.value)}
                     >
                         <option value="">-- Choisir un service --</option>
-                        {services.map(service => (
+                        {services.map((service) => (
                             <option key={service.id} value={service.id}>
                                 {service.name}
                             </option>
@@ -195,9 +200,39 @@ function TimeSlotList() {
                                 <td>
                                     {slot.isAvailable && (
                                         <button
-                                            className="btn btn-primary btn-sm"
+                                            className="btn btn-primary btn-sm me-2"
                                             onClick={() => handleReservation(slot.id)}
-                                            disabled={reservationLoading} // Désactive pendant la réservation
+                                            disabled={reservationLoading}
+                                        >
+                                            {reservationLoading ? "Réservation..." : "Réserver"}
+                                        </button>
+                                    )}
+                                    {(user.role === "admin" || user.role === "agent") ? (
+                                        <>
+                                            <button
+                                                className="btn btn-warning btn-sm me-2"
+                                                onClick={() => navigate(`/slots/edit/${slot.id}`)}
+                                            >
+                                                Modifier
+                                            </button>
+                                            <button
+                                                className="btn btn-danger btn-sm"
+                                                onClick={() => handleDelete(slot.id)}
+                                            >
+                                                Supprimer
+                                            </button>
+                                        </>
+                                    ) : (
+                                        <button
+                                            className="btn btn-primary btn-sm"
+                                            onClick={(e) => {
+                                                if (user.role === "citizen") {
+                                                    e.preventDefault();
+                                                    console.log("Vous n'avez pas les autorisations nécessaires pour modifier un service.");
+                                                    alert("Vous n'avez pas les autorisations nécessaires pour modifier un service.");
+                                                }
+                                            }}
+                                            disabled={reservationLoading}
                                         >
                                             {reservationLoading ? "Réservation..." : "Réserver"}
                                         </button>
@@ -209,9 +244,7 @@ function TimeSlotList() {
                 </table>
             )}
             {!loading && !error && timeSlots.length === 0 && (
-                <div className="alert alert-info">
-                    Aucun créneau disponible pour le service sélectionné.
-                </div>
+                <div className="alert alert-info">Aucun créneau disponible pour le service sélectionné.</div>
             )}
         </div>
     );

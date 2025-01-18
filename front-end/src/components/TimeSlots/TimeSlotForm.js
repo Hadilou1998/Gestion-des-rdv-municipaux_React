@@ -1,7 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "../../services/api";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { UserContext } from "../../context/UserContext";
 
 function TimeSlotForm({ onSlotSaved = () => {} }) { // Valeur par défaut ajoutée
     const [services, setServices] = useState([]);
@@ -12,6 +14,17 @@ function TimeSlotForm({ onSlotSaved = () => {} }) { // Valeur par défaut ajout�
         isAvailable: true
     });
     const [error, setError] = useState(""); // Pour gérer les erreurs
+    const { user } = useContext(UserContext);
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        // Vérifier si l'utilisateur est autorisé à créer un créneau horaire
+        if (user.role === "citizen") {
+            console.log("Vous n'avez pas les autorisations nécessaires pour créer un créneau horaire.");
+            alert("Vous n'avez pas les autorisations nécessaires pour créer un créneau horaire.");
+            navigate("/unauthorized");
+        }
+    }, [user, navigate]);
 
     useEffect(() => {
         axios.get("/services")
@@ -35,11 +48,11 @@ function TimeSlotForm({ onSlotSaved = () => {} }) { // Valeur par défaut ajout�
         e.preventDefault();
         setError(""); // Réinitialiser les erreurs
         try {
-            const response = await axios.post("/slots", formData);
-            console.log("Response from API:", response);
+            await axios.post("/slots", formData);
             if (typeof onSlotSaved === 'function') {
                 onSlotSaved();
             }
+            
             // Réinitialiser le formulaire
             setFormData({
                 serviceId: "",
