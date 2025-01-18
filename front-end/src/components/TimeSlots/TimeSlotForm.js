@@ -5,7 +5,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { UserContext } from "../../context/UserContext";
 
-function TimeSlotForm({ onSlotSaved = () => {} }) { // Valeur par défaut ajoutée
+function TimeSlotForm({ onSlotSaved = () => {} }) {
     const [services, setServices] = useState([]);
     const [formData, setFormData] = useState({
         serviceId: "",
@@ -13,27 +13,34 @@ function TimeSlotForm({ onSlotSaved = () => {} }) { // Valeur par défaut ajout�
         endTime: "",
         isAvailable: true
     });
-    const [error, setError] = useState(""); // Pour gérer les erreurs
+    const [error, setError] = useState("");
     const { user } = useContext(UserContext);
     const navigate = useNavigate();
 
     useEffect(() => {
+        if (!user) {
+            return <div>Accès refusé : Vous devez être connecté.</div>;
+        }
+
         // Vérifier si l'utilisateur est autorisé à créer un créneau horaire
         if (user.role === "citizen") {
             console.log("Vous n'avez pas les autorisations nécessaires pour créer un créneau horaire.");
             alert("Vous n'avez pas les autorisations nécessaires pour créer un créneau horaire.");
             navigate("/unauthorized");
         }
+
+        // Recupérer la liste des services
+        axios.get("/services")
+        .then(response => setServices(response.data))
+        .catch(error => {
+            console.error(error);
+            setError("Erreur lors du chargement des services");
+        });
     }, [user, navigate]);
 
-    useEffect(() => {
-        axios.get("/services")
-            .then(response => setServices(response.data))
-            .catch(error => {
-                console.error(error);
-                setError("Erreur lors du chargement des services");
-            });
-    }, []);
+    if (!user) {
+        return <div>Accès refusé : Vous devez etre connecté</div>;
+    }
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -46,7 +53,7 @@ function TimeSlotForm({ onSlotSaved = () => {} }) { // Valeur par défaut ajout�
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setError(""); // Réinitialiser les erreurs
+        setError("");
         try {
             await axios.post("/slots", formData);
             if (typeof onSlotSaved === 'function') {
