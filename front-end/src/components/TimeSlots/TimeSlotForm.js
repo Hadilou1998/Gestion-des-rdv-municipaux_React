@@ -14,18 +14,16 @@ function TimeSlotForm({ onSlotSaved = () => {} }) {
         isAvailable: true
     });
     const [error, setError] = useState("");
-    const { user } = useContext(UserContext);
+    const { user } = useContext(UserContext) || {};
     const navigate = useNavigate();
 
     useEffect(() => {
         if (!user) {
-            return <div>Accès refusé : Vous devez être connecté.</div>;
+            navigate("/login"); // Redirigez les utilisateurs non connectés
         }
 
-        // Vérifier si l'utilisateur est autorisé à créer un créneau horaire
-        if (user.role === "citizen") {
-            console.log("Vous n'avez pas les autorisations nécessaires pour créer un créneau horaire.");
-            alert("Vous n'avez pas les autorisations nécessaires pour créer un créneau horaire.");
+        if (user?.role === "citizen") {
+            alert("Vous n'avez pas les autorisations nécessaires.");
             navigate("/unauthorized");
         }
 
@@ -39,7 +37,7 @@ function TimeSlotForm({ onSlotSaved = () => {} }) {
     }, [user, navigate]);
 
     if (!user) {
-        return <div>Accès refusé : Vous devez etre connecté</div>;
+        return <div>Chargement...</div>;
     }
 
     const handleChange = (e) => {
