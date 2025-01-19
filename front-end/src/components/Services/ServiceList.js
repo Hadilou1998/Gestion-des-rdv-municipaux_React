@@ -5,24 +5,48 @@ import { UserContext } from "../../context/UserContext";
 
 function ServiceList() {
     const [services, setServices] = useState([]);
-    const { user } = useContext(UserContext);
+    const [error, setError] = useState(null);
+    const { user } = useContext(UserContext) || {};
 
     useEffect(() => {
-        axios.get("/services")
-        .then((response) => setServices(response.data))
-        .catch(error => console.log("Erreur lors de la récupération des services:", error));
+        const fetchServices = async () => {
+            try {
+                const response = await axios.get("/services");
+                setServices(response.data);
+            } catch (err) {
+                console.error("Erreur lors de la récupération des services :", err);
+                setError("Impossible de charger les services. Veuillez réessayer plus tard.");
+            }
+        };
+
+        fetchServices();
     }, []);
 
-    const handleDelete = (serviceId) => {
-        if (user.role === "admin") {
-            axios.delete(`/services/${serviceId}`)
-            .then(() => setServices(services.filter((s) => s.id !== serviceId)))
-            .catch(error => console.log("Erreur lors de la suppression du service:", error));
+    const handleDelete = async (serviceId) => {
+        if (user?.role === "admin") {
+            try {
+                await axios.delete(`/services/${serviceId}`);
+                setServices(services.filter((s) => s.id !== serviceId));
+            } catch (err) {
+                console.error("Erreur lors de la suppression du service :", err);
+                setError("Échec de la suppression du service. Veuillez réessayer.");
+            }
         } else {
             console.log("Vous n'avez pas les autorisations nécessaires pour supprimer un service.");
             alert("Vous n'avez pas les autorisations nécessaires pour supprimer un service.");
         }
     };
+
+    if (error) {
+        return (
+            <div className="container mt-4">
+                <div className="alert alert-danger">
+                    <h4>Erreur</h4>
+                    <p>{error}</p>
+                </div>
+            </div>
+        );
+    }   
 
     return (
         <div className="container mt-4">
@@ -47,12 +71,12 @@ function ServiceList() {
                             <td>{service.duration} min</td>
                             <td>
                                 <Link to={`/services/${service.id}`} className="btn btn-info btn-sm">Voir</Link>
-                                {user.role !== "citizen" && (
+                                {user?.role !== "citizen" && (
                                     <Link to={`/services/edit/${service.id}`} className={`btn btn-warning btn-sm mx-2 ${
-                                        user.role === "citizen" ? "disabled" : ""
+                                        user?.role === "citizen" ? "disabled" : ""
                                     }`}
                                     onClick={(e) => {
-                                        if (user.role === "citizen") {
+                                        if (user?.role === "citizen") {
                                             e.preventDefault();
                                             console.log("Vous n'avez pas les autorisations nécessaires pour modifier un service.");
                                             alert("Vous n'avez pas les autorisations nécessaires pour modifier un service.");
@@ -60,13 +84,13 @@ function ServiceList() {
                                     }}
                                     >Modifier</Link>
                                 )}
-                                {user.role === "admin" && (
+                                {user?.role === "admin" && (
                                     <button className="btn btn-danger btn-sm" onClick={() => handleDelete(service.id)}>Supprimer</button>
                                 )}
-                                {user.role === "agent" && (
+                                {user?.role === "agent" && (
                                     <button className="btn btn-warning btn-sm disabled" title="Les agents ne peuvent pas supprimer les services.">Supprimer</button>
                                 )}
-                                {user.role === "citizen" && (
+                                {user?.role === "citizen" && (
                                     <button className="btn btn-warning btn-sm disabled" title="Les citoyens ne peuvent pas modifier ou supprimer les services.">Modifier</button>
                                 )}
                             </td>
