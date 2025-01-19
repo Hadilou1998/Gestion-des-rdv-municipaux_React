@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "../../services/api";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { UserContext } from "../../context/UserContext"; // Importer le contexte utilisateur
+import { UserContext } from "../../context/UserContext"; // Contexte utilisateur
 
 function TimeSlotList() {
     const navigate = useNavigate();
@@ -16,7 +16,7 @@ function TimeSlotList() {
     const [services, setServices] = useState([]);
     const [reservationLoading, setReservationLoading] = useState(false);
 
-    const { user } = useContext(UserContext); // Récupérer les informations utilisateur
+    const { user } = useContext(UserContext) || {}; // Récupérer les informations utilisateur
 
     useEffect(() => {
         const fetchServices = async () => {
@@ -58,9 +58,7 @@ function TimeSlotList() {
             }
         };
 
-        if (selectedService && selectedDate) {
-            fetchTimeSlots();
-        }
+        fetchTimeSlots();
     }, [selectedService, selectedDate]);
 
     const handleDateChange = (selectedDate) => {
@@ -207,7 +205,7 @@ function TimeSlotList() {
                                             {reservationLoading ? "Réservation..." : "Réserver"}
                                         </button>
                                     )}
-                                    {(user.role === "admin" || user.role === "agent") ? (
+                                    {(user?.role === "admin" || user?.role === "agent") ? (
                                         <>
                                             <button
                                                 className="btn btn-warning btn-sm me-2"
@@ -223,19 +221,7 @@ function TimeSlotList() {
                                             </button>
                                         </>
                                     ) : (
-                                        <button
-                                            className="btn btn-primary btn-sm"
-                                            onClick={(e) => {
-                                                if (user.role === "citizen") {
-                                                    e.preventDefault();
-                                                    console.log("Vous n'avez pas les autorisations nécessaires pour modifier un service.");
-                                                    alert("Vous n'avez pas les autorisations nécessaires pour modifier un service.");
-                                                }
-                                            }}
-                                            disabled={reservationLoading}
-                                        >
-                                            {reservationLoading ? "Réservation..." : "Réserver"}
-                                        </button>
+                                        console.log("Vous n'avez pas les droits pour modifier ou supprimer un créneau.")
                                     )}
                                 </td>
                             </tr>
