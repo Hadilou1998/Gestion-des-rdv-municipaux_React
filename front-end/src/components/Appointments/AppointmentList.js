@@ -10,7 +10,7 @@ function AppointmentList() {
     const fetchAppointments = async () => {
       try {
         const response = await axios.get("/appointments");
-        setAppointments(response.data);
+        setAppointments(response.data); // Récupère tous les rendez-vous
         setLoading(false);
       } catch (err) {
         console.error("Détails de l'erreur:", err);
@@ -81,9 +81,9 @@ function AppointmentList() {
               <tr key={appt.id}>
                 <td>{appt.id}</td>
                 <td>
-                  {appt.user?.firstName && appt.user?.lastName
-                    ? `${appt.user.firstName} ${appt.user.lastName}`
-                    : "Non spécifié"}
+                  {appt.user
+                    ? `${appt.user.first_name} ${appt.user.last_name}`
+                    : "Erreur : Utilisateur introuvable"}
                 </td>
                 <td>{appt.service?.name || "Service inconnu"}</td>
                 <td>{new Date(appt.appointmentDate).toLocaleString("fr-FR")}</td>
