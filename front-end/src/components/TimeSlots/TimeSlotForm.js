@@ -18,10 +18,6 @@ function TimeSlotForm({ onSlotSaved = () => {} }) {
     const navigate = useNavigate();
 
     useEffect(() => {
-        if (!user) {
-            navigate("/login"); // Redirigez les utilisateurs non connectés
-        }
-
         if (user?.role === "citizen") {
             alert("Vous n'avez pas les autorisations nécessaires.");
             navigate("/unauthorized");
@@ -35,10 +31,6 @@ function TimeSlotForm({ onSlotSaved = () => {} }) {
             setError("Erreur lors du chargement des services");
         });
     }, [user, navigate]);
-
-    if (!user) {
-        return <div>Chargement...</div>;
-    }
 
     const handleChange = (e) => {
         const { name, value } = e.target;

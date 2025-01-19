@@ -6,7 +6,7 @@ import { UserContext } from "../../context/UserContext";
 function ServiceEdit() {
     const { id } = useParams();
     const navigate = useNavigate();
-    const { user } = useContext(UserContext);
+    const { user } = useContext(UserContext) || {};
     const [service, setService] = useState({
         name: "",
         description: "",
@@ -15,7 +15,7 @@ function ServiceEdit() {
 
     // Restriction d'accès pour les citoyens
     useEffect(() => {
-        if (user.role === "citizen") {
+        if (user?.role === "citizen") {
             navigate("/unauthorized");
         }
     }, [user, navigate]);
