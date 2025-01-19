@@ -1,12 +1,14 @@
 import React, { useEffect, useState, useContext } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "../../services/api";
 import { UserContext } from "../../context/UserContext";
 
 function ServiceList() {
     const [services, setServices] = useState([]);
     const [error, setError] = useState(null);
+    const [loading, setLoading] = useState(true); // État pour le chargement
     const { user } = useContext(UserContext) || {};
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchServices = async () => {
@@ -16,6 +18,8 @@ function ServiceList() {
             } catch (err) {
                 console.error("Erreur lors de la récupération des services :", err);
                 setError("Impossible de charger les services. Veuillez réessayer plus tard.");
+            } finally {
+                setLoading(false); // Fin du chargement
             }
         };
 
@@ -32,10 +36,17 @@ function ServiceList() {
                 setError("Échec de la suppression du service. Veuillez réessayer.");
             }
         } else {
-            console.log("Vous n'avez pas les autorisations nécessaires pour supprimer un service.");
             alert("Vous n'avez pas les autorisations nécessaires pour supprimer un service.");
         }
     };
+
+    const handleUnauthorizedAccess = () => {
+        navigate("/unauthorized");
+    };
+
+    if (loading) {
+        return <div className="container mt-4">Chargement des services...</div>;
+    }
 
     if (error) {
         return (
@@ -46,12 +57,14 @@ function ServiceList() {
                 </div>
             </div>
         );
-    }   
+    }
 
     return (
         <div className="container mt-4">
             <h2>Liste des services</h2>
-            <Link to="/dashboard" className="btn btn-secondary mb-3">Retour au tableau de bord</Link>
+            <Link to="/dashboard" className="btn btn-secondary mb-3">
+                Retour au tableau de bord
+            </Link>
             <table className="table table-striped">
                 <thead>
                     <tr>
@@ -70,28 +83,39 @@ function ServiceList() {
                             <td>{service.description}</td>
                             <td>{service.duration} min</td>
                             <td>
-                                <Link to={`/services/${service.id}`} className="btn btn-info btn-sm">Voir</Link>
-                                {user?.role !== "citizen" && (
-                                    <Link to={`/services/edit/${service.id}`} className={`btn btn-warning btn-sm mx-2 ${
-                                        user?.role === "citizen" ? "disabled" : ""
-                                    }`}
-                                    onClick={(e) => {
-                                        if (user?.role === "citizen") {
-                                            e.preventDefault();
-                                            console.log("Vous n'avez pas les autorisations nécessaires pour modifier un service.");
-                                            alert("Vous n'avez pas les autorisations nécessaires pour modifier un service.");
-                                        }
-                                    }}
-                                    >Modifier</Link>
+                                {/* Lien Voir - Accessible à tous */}
+                                <Link to={`/services/${service.id}`} className="btn btn-info btn-sm">
+                                    Voir
+                                </Link>
+
+                                {/* Lien Modifier - Accessible aux agents et admin */}
+                                {(user?.role === "agent" || user?.role === "admin") && (
+                                    <Link
+                                        to={`/services/edit/${service.id}`}
+                                        className="btn btn-warning btn-sm mx-2"
+                                    >
+                                        Modifier
+                                    </Link>
                                 )}
+
+                                {/* Lien Supprimer - Accessible uniquement à l'admin */}
                                 {user?.role === "admin" && (
-                                    <button className="btn btn-danger btn-sm" onClick={() => handleDelete(service.id)}>Supprimer</button>
+                                    <button
+                                        className="btn btn-danger btn-sm"
+                                        onClick={() => handleDelete(service.id)}
+                                    >
+                                        Supprimer
+                                    </button>
                                 )}
-                                {user?.role === "agent" && (
-                                    <button className="btn btn-warning btn-sm disabled" title="Les agents ne peuvent pas supprimer les services.">Supprimer</button>
-                                )}
+
+                                {/* Citoyen tente d'accéder à une action non autorisée */}
                                 {user?.role === "citizen" && (
-                                    <button className="btn btn-warning btn-sm disabled" title="Les citoyens ne peuvent pas modifier ou supprimer les services.">Modifier</button>
+                                    <button
+                                        className="btn btn-secondary btn-sm"
+                                        onClick={handleUnauthorizedAccess}
+                                    >
+                                        Accès refusé
+                                    </button>
                                 )}
                             </td>
                         </tr>
@@ -100,6 +124,6 @@ function ServiceList() {
             </table>
         </div>
     );
-};
+}
 
 export default ServiceList;
