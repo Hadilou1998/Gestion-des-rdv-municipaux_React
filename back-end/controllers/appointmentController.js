@@ -20,7 +20,7 @@ exports.getMyAppointments = async (req, res) => {
         const appointments = await Appointment.find({ user: user.id }).populate('service');
         res.status(200).json(appointments);
     } catch (error) {
-        console.error(err);
+        console.error(error);
         res.status(500).json({ message: 'Erreur lors de la récupération des rendez-vous.' });
     }
 }

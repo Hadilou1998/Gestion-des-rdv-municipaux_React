@@ -23,11 +23,11 @@ function AppointmentList() {
         }
         setAppointments(response.data);
         setLoading(false);
-      } catch (err) {
-        console.error("Détails de l'erreur:", err);
+      } catch (error) {
+        console.error("Détails de l'erreur:", error);
         setError(
           `Une erreur est survenue lors du chargement des rendez-vous: ${
-            err.response?.data?.message || err.message
+            error.response?.data?.message || error.message
           }`
         );
         setLoading(false);

@@ -9,7 +9,9 @@ function AppointmentDetails() {
     useEffect(() => {
         axios.get(`/appointments/${id}`)
         .then(response => setAppointment(response.data))
-        .catch(error => console.error(error));
+        .catch(error => {
+            console.error("Erreur lors de la récupération du rendez-vous:", error.response ? error.response.data : error.message);
+        });
     }, [id]);
 
     if (!appointment) return <div>Chargement...</div>;
