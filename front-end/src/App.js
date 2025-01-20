@@ -17,6 +17,7 @@ import UserList from './components/Users/UserList';
 import AppointmentList from './components/Appointments/AppointmentList';
 import AppointmentForm from './components/Appointments/AppointmentForm';
 import AppointmentDetails from './components/Appointments/AppointmentDetails';
+import AppointmentEdit from './components/Appointments/AppointmentEdit';
 import TimeSlotList from './components/TimeSlots/TimeSlotList';
 import TimeSlotForm from './components/TimeSlots/TimeSlotForm';
 import TimeSlotDetails from './components/TimeSlots/TimeSlotDetails';
@@ -44,6 +45,7 @@ function App() {
             <Route path="/appointments" element={<AppointmentList />} />
             <Route path="/appointments/new" element={<AppointmentForm />} />
             <Route path="/appointments/:id" element={<AppointmentDetails />} />
+            <Route path="/appointments/edit/:id" element={<AppointmentEdit />} />
             <Route path="/slots" element={<TimeSlotList />} />
             <Route path="/slots/new" element={<TimeSlotForm />} />
             <Route path="/slots/:id" element={<TimeSlotDetails />} />
