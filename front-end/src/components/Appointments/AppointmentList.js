@@ -1,10 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import axios from "../../services/api";
+import { useNavigate } from "react-router-dom";
+import { UserContext } from "../../context/UserContext";
 
 function AppointmentList() {
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { user } = useContext(UserContext) || {};
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchAppointments = async () => {
@@ -38,6 +42,10 @@ function AppointmentList() {
         }`
       );
     }
+  };
+
+  const editAppointment = (appointmentId) => {
+    navigate(`/appointments/edit/${appointmentId}`);
   };
 
   if (loading) {
@@ -89,15 +97,25 @@ function AppointmentList() {
                 <td>{new Date(appt.appointmentDate).toLocaleString("fr-FR")}</td>
                 <td>{appt.status}</td>
                 <td>
-                  <button
-                    className="btn btn-danger"
-                    onClick={() => cancelAppointment(appt.id)}
-                  >
-                    Annuler
-                  </button>
+                  <div className="d-flex gap-2">
+                    <button
+                      className="btn btn-danger"
+                      onClick={() => cancelAppointment(appt.id)}
+                    >
+                      Annuler
+                    </button>
+                    {(user?.role === "agent" || user?.role === "admin") && (
+                      <button
+                        className="btn btn-primary"
+                        onClick={() => editAppointment(appt.id)}
+                      >
+                        Modifier
+                      </button>
+                    )}
+                  </div>
                 </td>
               </tr>
-            ))
+            ))          
           ) : (
             <tr>
               <td colSpan="6" className="text-center">
