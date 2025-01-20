@@ -8,7 +8,10 @@ const validateMiddleware = require('../middleware/validateMiddleware');
 router.post('/', authMiddleware, validateMiddleware.validationAppointment, appointmentController.createAppointment);
 
 // Obtenir tous les rendez-vous
-router.get('/', authMiddleware, appointmentController.getAllAppointments);
+router.get('/all', authMiddleware, appointmentController.getAllAppointments);
+
+// Obtenir les rendez-vous de l'utilisateur connecté
+router.get('/my', authMiddleware, appointmentController.getMyAppointments);
 
 // Consulter un rendez-vous
 router.get('/:id', authMiddleware, appointmentController.getAppointmentById);

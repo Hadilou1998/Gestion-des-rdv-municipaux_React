@@ -13,6 +13,18 @@ exports.createAppointment = async (req, res) => {
     }
 };
 
+// Obtenir les rendez-vous de l'utilisateur connecté
+exports.getMyAppointments = async (req, res) => {
+    try {
+        const user = req.user; // Utilisateur connecté (injecté par authMiddleware)
+        const appointments = await Appointment.find({ user: user.id }).populate('service');
+        res.status(200).json(appointments);
+    } catch (error) {
+        console.error(err);
+        res.status(500).json({ message: 'Erreur lors de la récupération des rendez-vous.' });
+    }
+}
+
 // Obtenir tous les rendez-vous
 exports.getAllAppointments = async (req, res) => {
     try {

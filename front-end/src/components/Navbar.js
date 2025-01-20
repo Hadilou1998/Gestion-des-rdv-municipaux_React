@@ -1,18 +1,30 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { jwtDecode } from "jwt-decode"; // Importation corrigée
 
 function Navbar() {
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [user, setUser] = useState(null);
     const navigate = useNavigate();
 
     useEffect(() => {
-        const user = localStorage.getItem("user");
-        setIsLoggedIn(!!user);
+        const storedData = localStorage.getItem("user");
+
+        if (storedData) {
+            try {
+                const decoded = jwtDecode(storedData); // Décodage du JWT
+                setUser({ id: decoded.id, role: decoded.role, token: storedData });
+            } catch (error) {
+                console.warn("Erreur lors de la lecture des données utilisateur :", error);
+                setUser(null);
+            }
+        } else {
+            setUser(null);
+        }
     }, []);
 
     const handleLogout = () => {
         localStorage.removeItem("user");
-        setIsLoggedIn(false);
+        setUser(null);
         navigate("/login");
     };
 
@@ -55,38 +67,42 @@ function Navbar() {
                                 Services
                             </Link>
                         </li>
-                        {isLoggedIn && (
+                        {user && (
                             <>
                                 <li className="nav-item">
-                                    <Link className="nav-link" to="/appointments">
+                                    <Link className="nav-link" to="/appointments/my">
                                         Mes Rendez-vous
                                     </Link>
                                 </li>
-                                <li className="nav-item">
-                                    <Link className="nav-link" to="/slots">
-                                        Créneaux disponibles
-                                    </Link>
-                                </li>
-                                <li className="nav-item">
-                                    <Link className="nav-link" to="/calendar">
-                                        Calendrier
-                                    </Link>
-                                </li>
-                                <li className="nav-item">
-                                    <Link className="nav-link" to="/dashboard">
-                                        Tableau de bord
-                                    </Link>
-                                </li>
-                                <li className="nav-item">
-                                    <Link className="nav-link" to="/slots/new">
-                                        Ajouter un créneau
-                                    </Link>
-                                </li>
+                                {["admin", "agent"].includes(user.role) && (
+                                    <>
+                                        <li className="nav-item">
+                                            <Link className="nav-link" to="/appointments/all">
+                                                Tous les Rendez-vous
+                                            </Link>
+                                        </li>
+                                        <li className="nav-item">
+                                            <Link className="nav-link" to="/dashboard">
+                                                Tableau de bord
+                                            </Link>
+                                        </li>
+                                        <li className="nav-item">
+                                            <Link className="nav-link" to="/slots">
+                                                Créneaux disponibles
+                                            </Link>
+                                        </li>
+                                        <li className="nav-item">
+                                            <Link className="nav-link" to="/slots/new">
+                                                Ajouter un créneau
+                                            </Link>
+                                        </li>
+                                    </>
+                                )}
                             </>
                         )}
                     </ul>
                     <ul className="navbar-nav">
-                        {!isLoggedIn ? (
+                        {!user ? (
                             <>
                                 <li className="nav-item">
                                     <Link className="nav-link" to="/login">
@@ -103,7 +119,7 @@ function Navbar() {
                             <li className="nav-item">
                                 <button
                                     className="btn btn-outline-danger"
-                                    onClick={handleLogout} // Utilisation correcte de onClick
+                                    onClick={handleLogout}
                                 >
                                     Déconnexion
                                 </button>
