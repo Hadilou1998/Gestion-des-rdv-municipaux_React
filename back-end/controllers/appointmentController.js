@@ -1,88 +1,106 @@
-const { Appointment, Service, User } = require('../models');
+const Appointment = require('../models/Appointment'); // Exemple de modèle
+const User = require('../models/User'); // Exemple de modèle utilisateur
 
-// Création de rendez-vous
+// Créer un nouveau rendez-vous
 exports.createAppointment = async (req, res) => {
-    const { userId, serviceId, appointmentDate, notes } = req.body;
     try {
-        const appointment = await Appointment.create({ userId, serviceId, appointmentDate, notes });
-        res.status(201).json({ message: 'Rendez-vous créé', appointment });
+        const { user, service, appointmentDate } = req.body;
+        const newAppointment = new Appointment({ user, service, appointmentDate });
+        await newAppointment.save();
+        res.status(201).json(newAppointment);
     } catch (error) {
         res.status(400).json({ error: 'Erreur lors de la création du rendez-vous', details: error.message });
     }
 };
 
-// Liste des rendez-vous (avec authentification)
+// Obtenir tous les rendez-vous
 exports.getAllAppointments = async (req, res) => {
     try {
-        const appointments = await Appointment.findAll({
-            where: { user_id: req.user.id },
-            include: [
-                {
-                    model: User,
-                    as: 'user', // Utilisez l'alias défini dans le modèle
-                    attributes: ['first_name', 'last_name'], // Sélectionnez uniquement les champs souhaités
-                },
-                {
-                    model: Service,
-                    as: 'service', // Utilisez l'alias défini dans le modèle
-                    attributes: ['name'], // Sélectionnez uniquement le nom du service
-                },
-            ],
-        });
+        const user = req.user; // Utilisateur connecté (injecté par authMiddleware)
+
+        let appointments;
+        if (user.role === 'admin' || user.role === 'agent') {
+            // Admin et agents peuvent voir tous les rendez-vous
+            appointments = await Appointment.find().populate('user service');
+        } else {
+            // Utilisateurs normaux voient uniquement leurs propres rendez-vous
+            appointments = await Appointment.find({ user: user.id }).populate('service');
+        }
+
         res.status(200).json(appointments);
-    } catch (error) {
-        console.error("Erreur lors de la récupération des rendez-vous :", error);
-        res.status(500).json({
-            error: 'Erreur lors de la récupération des rendez-vous',
-            details: error.message,
-        });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Erreur lors de la récupération des rendez-vous.' });
     }
 };
 
-// Consultation d'un rendez-vous par son ID
+// Consulter un rendez-vous
 exports.getAppointmentById = async (req, res) => {
-    const { id } = req.params;
     try {
-        const appointment = await Appointment.findByPk(id);
-        if (!appointment) return res.status(404).json({ error: 'Rendez-vous introuvable' });
+        const user = req.user;
+        const appointment = await Appointment.findById(req.params.id).populate('user service');
 
-        await appointment.save();
+        if (!appointment) {
+            return res.status(404).json({ message: 'Rendez-vous introuvable.' });
+        }
+
+        // Vérifier si l'utilisateur a les droits pour voir ce rendez-vous
+        if (user.role !== 'admin' && user.role !== 'agent' && appointment.user.toString() !== user.id) {
+            return res.status(403).json({ message: 'Accès interdit.' });
+        }
+
         res.status(200).json(appointment);
-    } catch (error) {
-        res.status(500).json({ error: 'Erreur lors de la récupération du rendez-vous', details: error.message });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Erreur lors de la récupération du rendez-vous.' });
     }
 };
 
-// Modification d'un rendez-vous par son ID
+// Mettre à jour un rendez-vous
 exports.updateAppointment = async (req, res) => {
-    // Vérification du rôle (renforcement de la sécurité)
-    if (!['admin', 'agent'].includes(req.user.role)) {
-        return res.status(403).json({ error: 'Accès interdit : rôle insuffisant.' });
-    }
-    
-    const { id } = req.params;
-    const { appointmentDate, status, notes } = req.body;
     try {
-        const appointment = await Appointment.findByPk(id);
-        if (!appointment) return res.status(404).json({ error: 'Rendez-vous introuvable' });
+        const user = req.user;
+        const appointment = await Appointment.findById(req.params.id);
 
-        await appointment.update({ appointmentDate, status, notes });
-        res.status(200).json({ message: 'Rendez-vous mis à jour', appointment });
-    } catch (error) {
-        res.status(400).json({ error: 'Erreur lors de la modification du rendez-vous', details: error.message });
+        if (!appointment) {
+            return res.status(404).json({ message: 'Rendez-vous introuvable.' });
+        }
+
+        // Vérifier les droits pour modifier ce rendez-vous
+        if (user.role !== 'admin' && user.role !== 'agent' && appointment.user.toString() !== user.id) {
+            return res.status(403).json({ message: 'Accès interdit.' });
+        }
+
+        Object.assign(appointment, req.body);
+        await appointment.save();
+
+        res.status(200).json(appointment);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Erreur lors de la mise à jour du rendez-vous.' });
     }
 };
 
-// Suppression d'un rendez-vous par son ID
+// Supprimer un rendez-vous
 exports.deleteAppointment = async (req, res) => {
-    const { id } = req.params;
     try {
-        const appointment = await Appointment.findByPk(id);
-        if (!appointment) return res.status(404).json({ error: 'Rendez-vous introuvable' });
+        const user = req.user;
+        const appointment = await Appointment.findById(req.params.id);
 
-        await appointment.destroy();
-        res.status(200).json({ message: 'Rendez-vous supprimé' });
-    } catch (error) {
-        res.status(500).json({ error: 'Erreur lors de la suppression du rendez-vous', details: error.message });
+        if (!appointment) {
+            return res.status(404).json({ message: 'Rendez-vous introuvable.' });
+        }
+
+        // Vérifier les droits pour supprimer ce rendez-vous
+        if (user.role !== 'admin' && user.role !== 'agent' && appointment.user.toString() !== user.id) {
+            return res.status(403).json({ message: 'Accès interdit.' });
+        }
+
+        await appointment.deleteOne();
+
+        res.status(200).json({ message: 'Rendez-vous supprimé avec succès.' });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Erreur lors de la suppression du rendez-vous.' });
     }
 };

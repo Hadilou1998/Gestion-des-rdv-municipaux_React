@@ -13,8 +13,15 @@ function AppointmentList() {
   useEffect(() => {
     const fetchAppointments = async () => {
       try {
-        const response = await axios.get("/appointments");
-        setAppointments(response.data); // Récupère tous les rendez-vous
+        let response;
+        // Si l'utilisateur est admin ou agent, récupère tous les rendez-vous
+        if (user?.role === "admin" || user?.role === "agent") {
+          response = await axios.get("/appointments/all"); // Endpoint pour tous les rendez-vous
+        } else {
+          // Sinon, récupère uniquement les rendez-vous de l'utilisateur connecté
+          response = await axios.get("/appointments/my"); // Endpoint pour les rendez-vous de l'utilisateur
+        }
+        setAppointments(response.data);
         setLoading(false);
       } catch (err) {
         console.error("Détails de l'erreur:", err);
@@ -28,7 +35,7 @@ function AppointmentList() {
     };
 
     fetchAppointments();
-  }, []);
+  }, [user]);
 
   const cancelAppointment = async (appointmentId) => {
     try {
@@ -115,7 +122,7 @@ function AppointmentList() {
                   </div>
                 </td>
               </tr>
-            ))          
+            ))
           ) : (
             <tr>
               <td colSpan="6" className="text-center">

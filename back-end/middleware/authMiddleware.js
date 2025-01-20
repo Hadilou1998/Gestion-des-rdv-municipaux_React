@@ -1,15 +1,26 @@
-const jwt = require("jsonwebtoken");
+const jwt = require('jsonwebtoken');
+const User = require('../models/User');
 
-module.exports = (req, res, next) => {
-    const authHeader = req.headers["authorization"];
-    const token = authHeader && authHeader.split(" ")[1];
-    if (!token) return res.status(401).json({ message: "Accès interdit" });
-
+const authMiddleware = async (req, res, next) => {
     try {
+        const token = req.header('Authorization')?.split(' ')[1];
+        if (!token) {
+            return res.status(401).json({ message: 'Accès non autorisé.' });
+        }
+
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        req.user = decoded;
+        const user = await User.findById(decoded.id);
+
+        if (!user) {
+            return res.status(401).json({ message: 'Utilisateur non trouvé.' });
+        }
+
+        req.user = { id: user.id, role: user.role }; // Ajoute l'utilisateur et son rôle à la requête
         next();
     } catch (err) {
-        res.status(403).json({ message: "Jeton invalide" });
+        console.error(err);
+        res.status(401).json({ message: 'Accès non autorisé.' });
     }
 };
+
+module.exports = authMiddleware;
