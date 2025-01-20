@@ -1,4 +1,3 @@
-const authMiddleware = require('../middleware/authMiddleware');
 const { Appointment, Service, User } = require('../models');
 
 // Création de rendez-vous
@@ -56,6 +55,11 @@ exports.getAppointmentById = async (req, res) => {
 
 // Modification d'un rendez-vous par son ID
 exports.updateAppointment = async (req, res) => {
+    // Vérification du rôle (renforcement de la sécurité)
+    if (!['admin', 'agent'].includes(req.user.role)) {
+        return res.status(403).json({ error: 'Accès interdit : rôle insuffisant.' });
+    }
+    
     const { id } = req.params;
     const { appointmentDate, status, notes } = req.body;
     try {
