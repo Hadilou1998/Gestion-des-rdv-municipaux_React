@@ -8,6 +8,9 @@ router.post('/register', authController.register);
 // Connexion
 router.post('/login', authController.login);
 
+// Récupérer les informations utilisateur connecté
+router.get("/me", authController.me);
+
 // Déconnexion
 router.delete('/logout', authController.logout);
 

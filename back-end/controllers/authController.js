@@ -36,6 +36,18 @@ exports.login = async (req, res) => {
     }  
 };
 
+// Utilisateur actuel
+exports.me = async (req, res) => {
+    const userId = req.user.id;
+    const user = await User.findOne({ 
+        where: { id: userId  }})
+    if (!user) {
+        return res.status(500).json({ error: "Utilisateur introuvable" });
+    } else {
+        res.status(200).json({ user });
+    }
+};
+
 // Déconnexion (si nécessaire)
 exports.logout = (req, res) => {
     res.json({ message: "Déconnexion réussie" });
