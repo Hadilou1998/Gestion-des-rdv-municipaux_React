@@ -1,7 +1,9 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Link } from "react-router-dom";
+import { UserContext } from "../context/UserContext"; // Contexte utilisateur
 
 function Dashboard() {
+    const { user } = useContext(UserContext) || {}; // Récupérer les informations utilisateur
 
     return (
         <div className="container mt-4">
@@ -22,7 +24,12 @@ function Dashboard() {
                         <div className="card-body">
                             <h5 className="card-title">Rendez-vous</h5>
                             <p className="card-text">Prenez ou gérez des rendez-vous.</p>
-                            <Link to="/appointments" className="btn btn-primary">Voir les rendez-vous</Link>
+                            <Link to="/appointments/all" className="btn btn-primary">Voir les rendez-vous</Link>
+                            {(user?.role === "admin" || user?.role === "agent") && (
+                                <div className="mt-3">
+                                    <Link to="/appointments/manage" className="btn btn-secondary">Gérer les rendez-vous</Link>
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>
@@ -36,6 +43,15 @@ function Dashboard() {
                     </div>
                 </div>
             </div>
+
+            {/* Si l'utilisateur est admin ou agent, afficher une section dédiée aux rendez-vous */}
+            {(user?.role === "admin" || user?.role === "agent") && (
+                <div className="mt-4">
+                    <h5>Rendez-vous Citoyens</h5>
+                    <p>En tant qu'administrateur ou agent, vous pouvez accéder à tous les rendez-vous des citoyens pour les gérer.</p>
+                    <Link to="/appointments/citizens" className="btn btn-warning">Voir les rendez-vous des citoyens</Link>
+                </div>
+            )}
         </div>
     );
 };
