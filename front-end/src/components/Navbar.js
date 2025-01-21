@@ -74,21 +74,21 @@ function Navbar() {
                                         Mes Rendez-vous
                                     </Link>
                                 </li>
+                                <li className="nav-item">
+                                    <Link className="nav-link" to="/dashboard">
+                                        Tableau de bord
+                                    </Link>
+                                </li>
+                                <li className="nav-item">
+                                    <Link className="nav-link" to="/slots">
+                                        Créneaux disponibles
+                                    </Link>
+                                </li>
                                 {["admin", "agent"].includes(user.role) && (
                                     <>
                                         <li className="nav-item">
                                             <Link className="nav-link" to="/appointments/all">
                                                 Tous les Rendez-vous
-                                            </Link>
-                                        </li>
-                                        <li className="nav-item">
-                                            <Link className="nav-link" to="/dashboard">
-                                                Tableau de bord
-                                            </Link>
-                                        </li>
-                                        <li className="nav-item">
-                                            <Link className="nav-link" to="/slots">
-                                                Créneaux disponibles
                                             </Link>
                                         </li>
                                         <li className="nav-item">

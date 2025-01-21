@@ -119,6 +119,16 @@ function TimeSlotList() {
         }
     };
 
+    // Gérer l'affichage des messages selon le rôle de l'utilisateur
+    const getRoleMessage = () => {
+        if (user?.role === "client") {
+            return "Vous n'avez pas les droits pour modifier ou supprimer un créneau.";
+        } else if (user?.role === "agent") {
+            return "Vous n'avez pas le droit de supprimer un créneau.";
+        }
+        return null;
+    };
+
     return (
         <div className="container mt-4">
             <h2>Créneaux Disponibles</h2>
@@ -213,15 +223,17 @@ function TimeSlotList() {
                                             >
                                                 Modifier
                                             </button>
-                                            <button
-                                                className="btn btn-danger btn-sm"
-                                                onClick={() => handleDelete(slot.id)}
-                                            >
-                                                Supprimer
-                                            </button>
+                                            {user?.role === "admin" && (
+                                                <button
+                                                    className="btn btn-danger btn-sm"
+                                                    onClick={() => handleDelete(slot.id)}
+                                                >
+                                                    Supprimer
+                                                </button>
+                                            )}
                                         </>
                                     ) : (
-                                        console.log("Vous n'avez pas les droits pour modifier ou supprimer un créneau.")
+                                        <div className="text-warning">{getRoleMessage()}</div>
                                     )}
                                 </td>
                             </tr>
