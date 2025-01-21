@@ -14,29 +14,22 @@ function AppointmentList() {
     const fetchAppointments = async () => {
       try {
         let response;
-        if (!user?.role) {
-          throw new Error("Utilisateur non connecté ou rôle non défini");
-        }
-
-        // Admin et agent : tous les rendez-vous
-        if (user.role === "admin" || user.role === "agent") {
-          response = await axios.get("/appointments/all"); // API pour tous les rendez-vous
-        } else if (user.role === "citizen") {
-          // Citoyen : uniquement ses rendez-vous
-          response = await axios.get("/appointments/my"); // API pour les rendez-vous du citoyen
+        // Si l'utilisateur est admin ou agent, récupère tous les rendez-vous
+        if (user?.role === "admin" || user?.role === "agent") {
+          response = await axios.get("/appointments/all"); // Endpoint pour tous les rendez-vous
         } else {
-          throw new Error("Rôle utilisateur non valide");
+          // Sinon, récupère uniquement les rendez-vous de l'utilisateur connecté
+          response = await axios.get("/appointments/my"); // Endpoint pour les rendez-vous de l'utilisateur
         }
-
         setAppointments(response.data);
+        setLoading(false);
       } catch (error) {
-        console.error("Erreur lors du chargement des rendez-vous :", error);
+        console.error("Détails de l'erreur:", error);
         setError(
-          `Une erreur est survenue : ${
+          `Une erreur est survenue lors du chargement des rendez-vous: ${
             error.response?.data?.message || error.message
           }`
         );
-      } finally {
         setLoading(false);
       }
     };
@@ -49,9 +42,9 @@ function AppointmentList() {
       await axios.delete(`/appointments/${appointmentId}`);
       setAppointments(appointments.filter((appt) => appt.id !== appointmentId));
     } catch (err) {
-      console.error("Erreur lors de l'annulation :", err);
+      console.error("Erreur lors de l'annulation:", err);
       setError(
-        `Une erreur est survenue lors de l'annulation : ${
+        `Une erreur est survenue lors de l'annulation du rendez-vous: ${
           err.response?.data?.message || err.message
         }`
       );
@@ -72,7 +65,7 @@ function AppointmentList() {
         <div className="alert alert-danger">
           <h4>Erreur</h4>
           <p>{error}</p>
-          <button
+          <button 
             className="btn btn-primary mt-2"
             onClick={() => window.location.reload()}
           >
@@ -93,7 +86,7 @@ function AppointmentList() {
             <th>Citoyen</th>
             <th>Service</th>
             <th>Date</th>
-            <th>Statut</th>
+            <th>Status</th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -105,22 +98,20 @@ function AppointmentList() {
                 <td>
                   {appt.user
                     ? `${appt.user.first_name} ${appt.user.last_name}`
-                    : "Utilisateur inconnu"}
+                    : "Erreur : Utilisateur introuvable"}
                 </td>
                 <td>{appt.service?.name || "Service inconnu"}</td>
                 <td>{new Date(appt.appointmentDate).toLocaleString("fr-FR")}</td>
                 <td>{appt.status}</td>
                 <td>
                   <div className="d-flex gap-2">
-                    {/* Accessible à tous les utilisateurs */}
                     <button
                       className="btn btn-danger"
                       onClick={() => cancelAppointment(appt.id)}
                     >
                       Annuler
                     </button>
-                    {/* Modification accessible à l'admin et à l'agent */}
-                    {(user.role === "admin" || user.role === "agent") && (
+                    {(user?.role === "agent" || user?.role === "admin") && (
                       <button
                         className="btn btn-primary"
                         onClick={() => editAppointment(appt.id)}
