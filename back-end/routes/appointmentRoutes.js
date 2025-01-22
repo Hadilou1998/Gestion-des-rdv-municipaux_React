@@ -4,16 +4,16 @@ const appointmentController = require('../controllers/appointmentController');
 const authMiddleware = require('../middleware/authMiddleware');
 const validateMiddleware = require('../middleware/validateMiddleware');
 
-// Créer un rendez-vous
+// Créer un rendez-vous (Tout utilisateur authentifié peut créer un rendez-vous)
 router.post('/', authMiddleware, validateMiddleware.validationAppointment, appointmentController.createAppointment);
 
-// Obtenir tous les rendez-vous
+// Obtenir tous les rendez-vous (Seuls les admins et agents peuvent voir tous les rendez-vous)
 router.get('/all', authMiddleware, appointmentController.getAllAppointments);
 
 // Obtenir les rendez-vous de l'utilisateur connecté
 router.get('/my', authMiddleware, appointmentController.getMyAppointments);
 
-// Consulter un rendez-vous
+// Consulter un rendez-vous spécifique
 router.get('/:id', authMiddleware, appointmentController.getAppointmentById);
 
 // Mettre à jour un rendez-vous

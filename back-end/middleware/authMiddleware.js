@@ -1,15 +1,23 @@
-const jwt = require("jsonwebtoken");
+const jwt = require('jsonwebtoken');
+const { User } = require('../models');
 
-module.exports = (req, res, next) => {
-    const authHeader = req.headers["authorization"];
-    const token = authHeader && authHeader.split(" ")[1];
-    if (!token) return res.status(401).json({ message: "Accès interdit" });
-
+module.exports = async (req, res, next) => {
     try {
+        const token = req.header('Authorization')?.split(' ')[1];
+        if (!token) {
+            return res.status(401).json({ message: "Accès refusé. Token manquant." });
+        }
+
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        req.user = decoded;
+        const user = await User.findByPk(decoded.id);
+
+        if (!user) {
+            return res.status(401).json({ message: "Utilisateur non trouvé." });
+        }
+
+        req.user = user;
         next();
-    } catch (err) {
-        res.status(403).json({ message: "Jeton invalide" });
+    } catch (error) {
+        res.status(401).json({ message: "Token invalide." });
     }
 };
