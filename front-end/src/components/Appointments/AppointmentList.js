@@ -10,27 +10,11 @@ function AppointmentList() {
   const { user, loading: userLoading } = useContext(UserContext) || {};
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (userLoading) {
-      console.log("Chargement du contexte utilisateur en cours...");
-      return;
-    }
-
-    if (!user) {
-      console.log("Utilisateur non authentifié, redirection vers la page de connexion");
-      navigate('/login', { 
-        state: { from: window.location.pathname },
-        replace: true 
-      });
-      return;
-    }
-
-    console.log("Contexte utilisateur chargé:", {
-      id: user.id,
-      role: user.role,
-      isAuthenticated: true
-    });
-  }, [user, userLoading, navigate]);
+  // Vérification du token au lieu de l'utilisateur
+  const checkAuth = useCallback(() => {
+    const token = localStorage.getItem("user");
+    return !!token;
+  }, []);
 
   const hasRole = useCallback((roles) => {
     if (!user?.role) {
@@ -41,6 +25,74 @@ function AppointmentList() {
     console.log(`Vérification des rôles - Attendus: ${roles.join(", ")}, Actuel: ${user.role}, Accès autorisé: ${hasAccess}`);
     return hasAccess;
   }, [user?.role]);
+
+  useEffect(() => {
+    const fetchAppointments = async () => {
+      // On vérifie d'abord si un token existe
+      if (!checkAuth()) {
+        console.log("Aucun token trouvé, redirection vers la page de connexion");
+        navigate("/login", { 
+          state: { from: window.location.pathname },
+          replace: true 
+        });
+        return;
+      }
+
+      // On attend que le chargement du contexte utilisateur soit terminé
+      if (userLoading) {
+        console.log("Chargement du contexte utilisateur en cours...");
+        return;
+      }
+
+      setLoading(true);
+      setError(null);
+
+      try {
+        console.log("Début de la récupération des rendez-vous");
+        const url = hasRole(["admin", "agent"]) ? "/appointments/all" : "/appointments/my";
+        console.log(`URL de l'API utilisée: ${url}`);
+
+        const response = await axios.get(url);
+        console.log("Données reçues de l'API:", response.data);
+
+        if (!Array.isArray(response.data)) {
+          throw new Error("Format de données invalide reçu de l'API");
+        }
+
+        setAppointments(response.data);
+        console.log(`${response.data.length} rendez-vous chargés avec succès`);
+      } catch (err) {
+        console.error("Erreur détaillée:", {
+          message: err.message,
+          response: err.response,
+          status: err.response?.status
+        });
+
+        let errorMessage = "Une erreur est survenue lors du chargement des rendez-vous";
+        
+        if (err.response?.status === 401) {
+          // On supprime le token invalide
+          localStorage.removeItem("user");
+          console.log("Session expirée, redirection vers la page de connexion");
+          navigate("/login", { 
+            state: { from: window.location.pathname },
+            replace: true 
+          });
+          return;
+        } else if (err.response?.status === 403) {
+          errorMessage = "Vous n'avez pas les permissions nécessaires pour accéder à ces données.";
+        } else if (err.response?.data?.message) {
+          errorMessage = err.response.data.message;
+        }
+
+        setError(errorMessage);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAppointments();
+  }, [user, userLoading, hasRole, navigate, checkAuth]);
 
   useEffect(() => {
     const fetchAppointments = async () => {
@@ -78,7 +130,7 @@ function AppointmentList() {
         
         if (err.response?.status === 401) {
           console.log("Session expirée, redirection vers la page de connexion");
-          navigate('/login', { 
+          navigate("/login", { 
             state: { from: window.location.pathname },
             replace: true 
           });
@@ -111,7 +163,7 @@ function AppointmentList() {
       setAppointments(prevAppointments => 
         prevAppointments.map(appt => 
           appt.id === appointmentId 
-            ? { ...appt, status: 'CANCELLED' }
+            ? { ...appt, status: "CANCELLED" }
             : appt
         )
       );
@@ -123,7 +175,7 @@ function AppointmentList() {
       if (err.response?.status === 404) {
         errorMessage = "Ce rendez-vous n'existe plus ou a déjà été annulé.";
       } else if (err.response?.status === 401) {
-        navigate('/login', { 
+        navigate("/login", { 
           state: { from: window.location.pathname },
           replace: true 
         });
