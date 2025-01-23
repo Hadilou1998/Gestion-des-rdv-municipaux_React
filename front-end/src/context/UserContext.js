@@ -1,44 +1,68 @@
-import React, { createContext, useState, useEffect } from "react";
-import axios from "../services/api";
+import React, { createContext, useState, useEffect } from 'react';
+import axios from '../services/api';
 
 export const UserContext = createContext(null);
 
-function UserProvider({ children }) {
+export const UserProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        const fetchUser = async () => {
-            try {
-                // Vérifier si on a un token dans le localStorage
-                const token = localStorage.getItem("user");
-                if (!token) {
-                    setLoading(false);
-                    return;
-                }
-
-                // Configuration du token dans les headers
-                axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-                
-                // Appel à l'API pour récupérer les infos utilisateur
-                const response = await axios.get("/auth/me");
-                setUser(response.data);
-            } catch (error) {
-                console.error("Erreur lors de la récupération des données utilisateur:", error);
-                localStorage.removeItem("user"); // Supprimer le token si invalide
-            } finally {
-                setLoading(false);
+    const loadUser = async () => {
+        setLoading(true);
+        try {
+            const userData = localStorage.getItem("user");
+            if (!userData) {
+                setUser(null);
+                return;
             }
-        };
 
-        fetchUser();
+            const parsedUser = JSON.parse(userData);
+            if (!parsedUser.token) {
+                localStorage.removeItem("user");
+                setUser(null);
+                return;
+            }
+
+            axios.defaults.headers.common['Authorization'] = `Bearer ${parsedUser.token}`;
+            const response = await axios.get('/auth/me');
+            setUser({ ...response.data, token: parsedUser.token });
+        } catch (error) {
+            localStorage.removeItem("user");
+            setUser(null);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        loadUser();
     }, []);
 
+    const login = async (credentials) => {
+        try {
+            const response = await axios.post('/auth/login', credentials);
+            const userData = { ...response.data.user, token: response.data.token };
+            localStorage.setItem("user", JSON.stringify(userData));
+            setUser(userData);
+            axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
+            return { success: true };
+        } catch (error) {          
+            return {
+                success: false,
+                error: error.response?.data?.message || "Erreur de connexion"
+            };
+        }
+    };
+
+    const logout = () => {
+        localStorage.removeItem("user");
+        setUser(null);
+        delete axios.defaults.headers.common['Authorization'];
+    };
+
     return (
-        <UserContext.Provider value={{ user, setUser, loading }}>
+        <UserContext.Provider value={{ user, loading, login, logout, loadUser }}>
             {children}
         </UserContext.Provider>
     );
-}
-
-export default UserProvider;
+};
