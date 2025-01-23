@@ -5,269 +5,109 @@ import { UserContext } from "../../context/UserContext";
 
 function AppointmentList() {
   const [appointments, setAppointments] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const { user, loading: userLoading } = useContext(UserContext) || {};
+  const { user } = useContext(UserContext) || {};
   const navigate = useNavigate();
 
-  // Vérification du token au lieu de l'utilisateur
-  const checkAuth = useCallback(() => {
-    const token = localStorage.getItem("user");
-    return !!token;
-  }, []);
+  // Fonction pour récupérer le rôle utilisateur en toute sécurité
+  const getUserRole = useCallback(() => {
+    try {
+      const storedUser = localStorage.getItem("user");
 
-  const hasRole = useCallback((roles) => {
-    if (!user?.role) {
-      console.warn("Avertissement: Rôle utilisateur non défini");
-      return false;
+      if (!storedUser) {
+        return user?.role; // Si pas d'utilisateur dans localStorage, utiliser le contexte
+      }
+
+      // Vérifier si c'est un JSON valide
+      if (storedUser.startsWith("{") && storedUser.endsWith("}")) {
+        const parsedUser = JSON.parse(storedUser);
+        return parsedUser?.role || user?.role;
+      }
+
+      // Si ce n'est pas un objet JSON valide, avertir et retourner le rôle du contexte
+      console.warn("Donnée stockée dans localStorage.user n'est pas un objet JSON.");
+      return user?.role;
+    } catch (error) {
+      console.error("Erreur lors du parsing de l'utilisateur depuis localStorage:", error);
+      return user?.role; // Retourne le rôle du contexte en cas d'échec
     }
-    const hasAccess = roles.includes(user.role);
-    console.log(`Vérification des rôles - Attendus: ${roles.join(", ")}, Actuel: ${user.role}, Accès autorisé: ${hasAccess}`);
-    return hasAccess;
   }, [user?.role]);
 
+  // Vérifie si l'utilisateur a un rôle spécifique
+  const hasRole = useCallback(
+    (roles) => {
+      const role = getUserRole();
+      return roles.includes(role);
+    },
+    [getUserRole]
+  );
+
   useEffect(() => {
     const fetchAppointments = async () => {
-      // On vérifie d'abord si un token existe
-      if (!checkAuth()) {
-        console.log("Aucun token trouvé, redirection vers la page de connexion");
-        navigate("/login", { 
-          state: { from: window.location.pathname },
-          replace: true 
-        });
-        return;
-      }
-
-      // On attend que le chargement du contexte utilisateur soit terminé
-      if (userLoading) {
-        console.log("Chargement du contexte utilisateur en cours...");
-        return;
-      }
-
       setLoading(true);
       setError(null);
 
       try {
-        console.log("Début de la récupération des rendez-vous");
+        // Déterminer l'URL API en fonction du rôle utilisateur
         const url = hasRole(["admin", "agent"]) ? "/appointments/all" : "/appointments/my";
-        console.log(`URL de l'API utilisée: ${url}`);
+        console.log(`Fetching appointments from: ${url}`);
 
         const response = await axios.get(url);
-        console.log("Données reçues de l'API:", response.data);
 
         if (!Array.isArray(response.data)) {
           throw new Error("Format de données invalide reçu de l'API");
         }
 
         setAppointments(response.data);
-        console.log(`${response.data.length} rendez-vous chargés avec succès`);
       } catch (err) {
-        console.error("Erreur détaillée:", {
-          message: err.message,
-          response: err.response,
-          status: err.response?.status
-        });
-
-        let errorMessage = "Une erreur est survenue lors du chargement des rendez-vous";
-        
-        if (err.response?.status === 401) {
-          // On supprime le token invalide
-          localStorage.removeItem("user");
-          console.log("Session expirée, redirection vers la page de connexion");
-          navigate("/login", { 
-            state: { from: window.location.pathname },
-            replace: true 
-          });
-          return;
-        } else if (err.response?.status === 403) {
-          errorMessage = "Vous n'avez pas les permissions nécessaires pour accéder à ces données.";
-        } else if (err.response?.data?.message) {
-          errorMessage = err.response.data.message;
-        }
-
-        setError(errorMessage);
+        console.error("Erreur lors de la récupération des rendez-vous:", err);
+        setError(err.response?.data?.message || "Une erreur est survenue.");
       } finally {
         setLoading(false);
       }
     };
 
     fetchAppointments();
-  }, [user, userLoading, hasRole, navigate, checkAuth]);
-
-  useEffect(() => {
-    const fetchAppointments = async () => {
-      // Si le contexte utilisateur est en cours de chargement, on ne fait rien
-      if (userLoading) return;
-      
-      // Si pas d'utilisateur authentifié, on ne fait rien
-      if (!user) return;
-
-      setLoading(true);
-      setError(null);
-
-      try {
-        console.log("Début de la récupération des rendez-vous");
-        const url = hasRole(["admin", "agent"]) ? "/appointments/all" : "/appointments/my";
-        console.log(`URL de l'API utilisée: ${url}`);
-
-        const response = await axios.get(url);
-        console.log("Données reçues de l'API:", response.data);
-
-        if (!Array.isArray(response.data)) {
-          throw new Error("Format de données invalide reçu de l'API");
-        }
-
-        setAppointments(response.data);
-        console.log(`${response.data.length} rendez-vous chargés avec succès`);
-      } catch (err) {
-        console.error("Erreur détaillée:", {
-          message: err.message,
-          response: err.response,
-          status: err.response?.status
-        });
-
-        let errorMessage = "Une erreur est survenue lors du chargement des rendez-vous";
-        
-        if (err.response?.status === 401) {
-          console.log("Session expirée, redirection vers la page de connexion");
-          navigate("/login", { 
-            state: { from: window.location.pathname },
-            replace: true 
-          });
-          return;
-        } else if (err.response?.status === 403) {
-          errorMessage = "Vous n'avez pas les permissions nécessaires pour accéder à ces données.";
-        } else if (err.response?.data?.message) {
-          errorMessage = err.response.data.message;
-        }
-
-        setError(errorMessage);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchAppointments();
-  }, [user, userLoading, hasRole, navigate]);
+  }, [hasRole]);
 
   const cancelAppointment = async (appointmentId) => {
     if (!window.confirm("Êtes-vous sûr de vouloir annuler ce rendez-vous ?")) {
       return;
     }
-
     try {
-      console.log(`Tentative d'annulation du rendez-vous ${appointmentId}`);
       await axios.delete(`/appointments/${appointmentId}`);
-      console.log(`Rendez-vous ${appointmentId} annulé avec succès`);
-      
-      setAppointments(prevAppointments => 
-        prevAppointments.map(appt => 
-          appt.id === appointmentId 
-            ? { ...appt, status: "CANCELLED" }
-            : appt
+      setAppointments((prev) =>
+        prev.map((appt) =>
+          appt.id === appointmentId ? { ...appt, status: "CANCELLED" } : appt
         )
       );
     } catch (err) {
-      console.error("Erreur lors de l'annulation:", err);
-      
-      let errorMessage = "Une erreur est survenue lors de l'annulation du rendez-vous";
-      
-      if (err.response?.status === 404) {
-        errorMessage = "Ce rendez-vous n'existe plus ou a déjà été annulé.";
-      } else if (err.response?.status === 401) {
-        navigate("/login", { 
-          state: { from: window.location.pathname },
-          replace: true 
-        });
-        return;
-      } else if (err.response?.data?.message) {
-        errorMessage = err.response.data.message;
-      }
-
-      setError(errorMessage);
+      console.error("Erreur lors de l'annulation du rendez-vous:", err);
+      setError(err.response?.data?.message || "Impossible d'annuler le rendez-vous.");
     }
   };
 
   const editAppointment = (appointmentId) => {
-    console.log(`Redirection vers l'édition du rendez-vous ${appointmentId}`);
     navigate(`/appointments/edit/${appointmentId}`);
   };
 
   const formatDate = (dateString) => {
     try {
       return new Date(dateString).toLocaleString("fr-FR", {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
       });
-    } catch (err) {
-      console.error("Erreur de formatage de date:", dateString, err);
+    } catch {
       return "Date invalide";
     }
   };
 
-  const getStatusLabel = (status) => {
-    const statusMap = {
-      PENDING: "En attente",
-      CONFIRMED: "Confirmé",
-      CANCELLED: "Annulé",
-      COMPLETED: "Terminé"
-    };
-    return statusMap[status] || status;
-  };
-
-  const getStatusClass = (status) => {
-    const statusClasses = {
-      PENDING: "text-warning",
-      CONFIRMED: "text-success",
-      CANCELLED: "text-danger",
-      COMPLETED: "text-info"
-    };
-    return `fw-bold ${statusClasses[status] || ""}`;
-  };
-
-  if (userLoading) {
-    return (
-      <div className="d-flex justify-content-center align-items-center min-vh-50 mt-4">
-        <div className="spinner-border text-primary me-2" role="status">
-          <span className="visually-hidden">Chargement...</span>
-        </div>
-        <span>Chargement de votre profil...</span>
-      </div>
-    );
-  }
-
   if (loading) {
-    return (
-      <div className="d-flex justify-content-center align-items-center min-vh-50 mt-4">
-        <div className="spinner-border text-primary me-2" role="status">
-          <span className="visually-hidden">Chargement...</span>
-        </div>
-        <span>Chargement des rendez-vous...</span>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="container mt-4">
-        <div className="alert alert-danger">
-          <h4 className="alert-heading">Erreur</h4>
-          <p>{error}</p>
-          <hr />
-          <div className="d-flex justify-content-end">
-            <button
-              className="btn btn-outline-danger"
-              onClick={() => window.location.reload()}
-            >
-              Réessayer
-            </button>
-          </div>
-        </div>
-      </div>
-    );
+    return <div className="text-center mt-4">Chargement des rendez-vous...</div>;
   }
 
   return (
@@ -282,71 +122,77 @@ function AppointmentList() {
         </button>
       </div>
 
-      {appointments.length === 0 ? (
-        <div className="alert alert-info">
-          <h4 className="alert-heading">Aucun rendez-vous</h4>
-          <p>
-            Vous n'avez aucun rendez-vous pour le moment. 
-            Vous pouvez créer un nouveau rendez-vous en cliquant sur le bouton "Nouveau rendez-vous".
-          </p>
+      {error ? (
+        <div className="alert alert-danger">
+          <h4>Erreur</h4>
+          <p>{error}</p>
+          <button
+            className="btn btn-primary mt-2"
+            onClick={() => window.location.reload()}
+          >
+            Réessayer
+          </button>
         </div>
       ) : (
         <div className="table-responsive">
-          <table className="table table-striped table-hover">
-            <thead className="table-light">
+          <table className="table table-striped">
+            <thead>
               <tr>
-                <th scope="col">#</th>
-                {hasRole(["admin", "agent"]) && <th scope="col">Citoyen</th>}
-                <th scope="col">Service</th>
-                <th scope="col">Date</th>
-                <th scope="col">Statut</th>
-                <th scope="col">Actions</th>
+                <th>#</th>
+                {hasRole(["admin", "agent"]) && <th>Citoyen</th>}
+                <th>Service</th>
+                <th>Date</th>
+                <th>Status</th>
+                <th>Actions</th>
               </tr>
             </thead>
             <tbody>
-              {appointments.map((appt) => (
-                <tr key={appt.id}>
-                  <td>{appt.id}</td>
-                  {hasRole(["admin", "agent"]) && (
+              {appointments.length > 0 ? (
+                appointments.map((appt) => (
+                  <tr key={appt.id}>
+                    <td>{appt.id}</td>
+                    {hasRole(["admin", "agent"]) && (
+                      <td>
+                        {appt.user
+                          ? `${appt.user.first_name} ${appt.user.last_name}`
+                          : "Utilisateur inconnu"}
+                      </td>
+                    )}
+                    <td>{appt.service?.name || "Service inconnu"}</td>
+                    <td>{formatDate(appt.appointmentDate)}</td>
+                    <td>{appt.status}</td>
                     <td>
-                      {appt.user ? (
-                        `${appt.user.first_name} ${appt.user.last_name}`
-                      ) : (
-                        <span className="text-danger">Utilisateur introuvable</span>
-                      )}
+                      <div className="d-flex gap-2">
+                        {appt.status !== "CANCELLED" && (
+                          <button
+                            className="btn btn-danger"
+                            onClick={() => cancelAppointment(appt.id)}
+                          >
+                            Annuler
+                          </button>
+                        )}
+                        {hasRole(["admin", "agent"]) && appt.status !== "CANCELLED" && (
+                          <button
+                            className="btn btn-primary"
+                            onClick={() => editAppointment(appt.id)}
+                          >
+                            Modifier
+                          </button>
+                        )}
+                      </div>
                     </td>
-                  )}
-                  <td>{appt.service?.name || "Service inconnu"}</td>
-                  <td>{formatDate(appt.appointmentDate)}</td>
-                  <td>
-                    <span className={getStatusClass(appt.status)}>
-                      {getStatusLabel(appt.status)}
-                    </span>
-                  </td>
-                  <td>
-                    <div className="btn-group">
-                      {appt.status !== "CANCELLED" && appt.status !== "COMPLETED" && (
-                        <button
-                          className="btn btn-sm btn-danger"
-                          onClick={() => cancelAppointment(appt.id)}
-                        >
-                          Annuler
-                        </button>
-                      )}
-                      {hasRole(["admin", "agent"]) && 
-                       appt.status !== "CANCELLED" && 
-                       appt.status !== "COMPLETED" && (
-                        <button
-                          className="btn btn-sm btn-primary ms-1"
-                          onClick={() => editAppointment(appt.id)}
-                        >
-                          Modifier
-                        </button>
-                      )}
-                    </div>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td
+                    colSpan={hasRole(["admin", "agent"]) ? 6 : 5}
+                    className="text-center text-muted"
+                  >
+                    Aucun rendez-vous trouvé pour le moment.
                   </td>
                 </tr>
-              ))}
+              )}
             </tbody>
           </table>
         </div>
