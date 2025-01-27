@@ -4,10 +4,10 @@ import { useNavigate } from "react-router-dom";
 import { UserContext } from "../../context/UserContext";  
 
 function AppointmentList() {  
+    const { user } = useContext(UserContext) || {};  // Valeur par défaut si `user` est null
     const [appointments, setAppointments] = useState([]);  
     const [loading, setLoading] = useState(false);  
     const [error, setError] = useState(null);  
-    const { user } = useContext(UserContext); // User context ajusté  
     const navigate = useNavigate();  
 
     const hasRole = useCallback(  
@@ -18,12 +18,15 @@ function AppointmentList() {
     );  
 
     useEffect(() => {  
+        if (!user) {  // Vérifiez si `user` est défini avant de continuer
+            return;
+        }
+
         const fetchAppointments = async () => {  
             setLoading(true);  
             setError(null);  
 
             try {  
-                // Les admins et les agents récupéreront une liste de tous les rendez-vous  
                 const url = hasRole(["admin", "agent"]) ? "/appointments/all" : "/appointments/my";  
                 const response = await axios.get(url);  
 
@@ -40,9 +43,7 @@ function AppointmentList() {
             }  
         };  
 
-        if (user) { // Assurez-vous que l'utilisateur est chargé avant d'effectuer la requête  
-            fetchAppointments();  
-        }  
+        fetchAppointments();  
     }, [hasRole, user]);  
 
     const cancelAppointment = async (appointmentId) => {  
@@ -173,6 +174,6 @@ function AppointmentList() {
             )}  
         </div>  
     );  
-}  
+}
 
 export default AppointmentList;
