@@ -1,14 +1,13 @@
 import React, { useEffect, useState, useContext } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import axios from "../../services/api";
 import { UserContext } from "../../context/UserContext";
 
 function ServiceList() {
     const [services, setServices] = useState([]);
     const [error, setError] = useState(null);
-    const [loading, setLoading] = useState(true); // État pour le chargement
+    const [loading, setLoading] = useState(true);
     const { user } = useContext(UserContext) || {};
-    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchServices = async () => {
@@ -19,7 +18,7 @@ function ServiceList() {
                 console.error("Erreur lors de la récupération des services :", err);
                 setError("Impossible de charger les services. Veuillez réessayer plus tard.");
             } finally {
-                setLoading(false); // Fin du chargement
+                setLoading(false);
             }
         };
 
@@ -27,7 +26,7 @@ function ServiceList() {
     }, []);
 
     const handleDelete = async (serviceId) => {
-        if (user?.role === "admin") {
+        if (user?.role === "admin" && window.confirm("Êtes-vous sûr de vouloir supprimer ce service ?")) {
             try {
                 await axios.delete(`/services/${serviceId}`);
                 setServices(services.filter((s) => s.id !== serviceId));
@@ -35,13 +34,7 @@ function ServiceList() {
                 console.error("Erreur lors de la suppression du service :", err);
                 setError("Échec de la suppression du service. Veuillez réessayer.");
             }
-        } else {
-            alert("Vous n'avez pas les autorisations nécessaires pour supprimer un service.");
         }
-    };
-
-    const handleUnauthorizedAccess = () => {
-        navigate("/unauthorized");
     };
 
     if (loading) {
@@ -58,6 +51,44 @@ function ServiceList() {
             </div>
         );
     }
+
+    const renderActionButtons = (service) => {
+        if (user?.role === "admin") {
+            return (
+                <div className="d-flex gap-2">
+                    <Link to={`/services/${service.id}`} className="btn btn-info btn-sm">
+                        Voir
+                    </Link>
+                    <Link to={`/services/edit/${service.id}`} className="btn btn-warning btn-sm">
+                        Modifier
+                    </Link>
+                    <button
+                        className="btn btn-danger btn-sm"
+                        onClick={() => handleDelete(service.id)}
+                    >
+                        Supprimer
+                    </button>
+                </div>
+            );
+        } else if (user?.role === "agent") {
+            return (
+                <div className="d-flex gap-2">
+                    <Link to={`/services/${service.id}`} className="btn btn-info btn-sm">
+                        Voir
+                    </Link>
+                    <Link to={`/services/edit/${service.id}`} className="btn btn-warning btn-sm">
+                        Modifier
+                    </Link>
+                </div>
+            );
+        } else {
+            return (
+                <Link to={`/services/${service.id}`} className="btn btn-info btn-sm">
+                    Voir
+                </Link>
+            );
+        }
+    };
 
     return (
         <div className="container mt-4">
@@ -82,42 +113,7 @@ function ServiceList() {
                             <td>{service.name}</td>
                             <td>{service.description}</td>
                             <td>{service.duration} min</td>
-                            <td>
-                                {/* Lien Voir - Accessible à tous */}
-                                <Link to={`/services/${service.id}`} className="btn btn-info btn-sm">
-                                    Voir
-                                </Link>
-
-                                {/* Lien Modifier - Accessible aux agents et admin */}
-                                {(user?.role === "agent" || user?.role === "admin") && (
-                                    <Link
-                                        to={`/services/edit/${service.id}`}
-                                        className="btn btn-warning btn-sm mx-2"
-                                    >
-                                        Modifier
-                                    </Link>
-                                )}
-
-                                {/* Lien Supprimer - Accessible uniquement à l'admin */}
-                                {user?.role === "admin" && (
-                                    <button
-                                        className="btn btn-danger btn-sm"
-                                        onClick={() => handleDelete(service.id)}
-                                    >
-                                        Supprimer
-                                    </button>
-                                )}
-
-                                {/* Citoyen tente d'accéder à une action non autorisée */}
-                                {user?.role === "citizen" && (
-                                    <button
-                                        className="btn btn-secondary btn-sm"
-                                        onClick={handleUnauthorizedAccess}
-                                    >
-                                        Accès refusé
-                                    </button>
-                                )}
-                            </td>
+                            <td>{renderActionButtons(service)}</td>
                         </tr>
                     ))}
                 </tbody>
