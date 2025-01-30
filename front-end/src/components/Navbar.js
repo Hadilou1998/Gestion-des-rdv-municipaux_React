@@ -87,7 +87,7 @@ function Navbar() {
                                 {["admin", "agent"].includes(user.role) && (
                                     <>
                                         <li className="nav-item">
-                                            <Link className="nav-link" to="/appointments/all">
+                                            <Link className="nav-link" to="/appointments">
                                                 Tous les Rendez-vous
                                             </Link>
                                         </li>

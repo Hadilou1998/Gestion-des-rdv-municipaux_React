@@ -43,7 +43,7 @@ function App() {
             <Route path="/services/:id" element={<ServiceDetails />} />
             <Route path="/services/edit/:id" element={<ServiceEdit />} />
             <Route path="/users" element={<UserList />} />
-            <Route path="/appointments/all" element={<AppointmentList />} />
+            <Route path="/appointments" element={<AppointmentList />} />
             <Route path="/appointments/new" element={<AppointmentForm />} />
             <Route path="/appointments/:id" element={<AppointmentDetails />} />
             <Route path="/appointments/edit/:id" element={<AppointmentEdit />} />

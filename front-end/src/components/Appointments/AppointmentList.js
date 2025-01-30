@@ -1,29 +1,23 @@
-import React, { useState, useEffect, useCallback, useContext } from "react";  
+import React, { useState, useEffect, useContext } from "react";  
 import axios from "../../services/api";  
 import { UserContext } from "../../context/UserContext";  
 
 function AppointmentList() {  
     const { user } = useContext(UserContext) || {};  
     const [appointments, setAppointments] = useState([]);  
-    const [loading, setLoading] = useState(false);  
+    const [loading, setLoading] = useState(true);  
     const [error, setError] = useState(null);  
 
-    const hasRole = useCallback((roles) => roles.includes(user?.role), [user]);  
-
     useEffect(() => {  
-        if (!user) return;
+        if (!user) return;  
 
         const fetchAppointments = async () => {  
-            setLoading(true);  
-            setError(null);  
-
             try {  
-                const url = hasRole(["admin", "agent"]) ? "/appointments/all" : "/appointments/my";  
-                
-                console.log("Requête envoyée à:", url);
-                
-                const response = await axios.get(url);  
-                console.log("Réponse de l'API:", response.data);
+                // Tous les utilisateurs connectés peuvent voir leurs rendez-vous
+                // Les admin et agents voient tous les rendez-vous
+                const response = await axios.get("/appointments");  
+
+                console.log("Données reçues :", response.data);
 
                 if (!Array.isArray(response.data)) {  
                     throw new Error("Format de données invalide reçu de l'API");  
@@ -31,7 +25,7 @@ function AppointmentList() {
 
                 setAppointments(response.data);  
             } catch (err) {  
-                console.error("Erreur lors de la récupération des rendez-vous:", err);  
+                console.error("Erreur de récupération des rendez-vous :", err);  
                 setError(err.response?.data?.message || "Une erreur est survenue.");  
             } finally {  
                 setLoading(false);  
@@ -39,7 +33,21 @@ function AppointmentList() {
         };  
 
         fetchAppointments();  
-    }, [hasRole, user]);  
+    }, [user]);  
+
+    const formatDate = (dateString) => {  
+        try {  
+            return new Date(dateString).toLocaleString("fr-FR", {  
+                year: "numeric",  
+                month: "long",  
+                day: "numeric",  
+                hour: "2-digit",  
+                minute: "2-digit",  
+            });  
+        } catch {  
+            return "Date invalide";  
+        }  
+    };  
 
     if (loading) {  
         return <div className="text-center mt-4">Chargement des rendez-vous...</div>;  
@@ -60,7 +68,7 @@ function AppointmentList() {
                         <thead>  
                             <tr>  
                                 <th>#</th>  
-                                {hasRole(["admin", "agent"]) && <th>Citoyen</th>}  
+                                <th>Citoyen</th>  
                                 <th>Service</th>  
                                 <th>Date</th>  
                                 <th>Status</th>  
@@ -71,11 +79,9 @@ function AppointmentList() {
                                 appointments.map((appt) => (  
                                     <tr key={appt.id}>  
                                         <td>{appt.id}</td>  
-                                        {hasRole(["admin", "agent"]) && (  
-                                            <td>{appt.user ? `${appt.user.first_name} ${appt.user.last_name}` : "Utilisateur inconnu"}</td>  
-                                        )}  
+                                        <td>{appt.user ? `${appt.user.first_name} ${appt.user.last_name}` : "Utilisateur inconnu"}</td>  
                                         <td>{appt.service?.name || "Service inconnu"}</td>  
-                                        <td>{new Date(appt.appointmentDate).toLocaleString("fr-FR")}</td>  
+                                        <td>{formatDate(appt.appointmentDate)}</td>  
                                         <td>{appt.status}</td>  
                                     </tr>  
                                 ))  
