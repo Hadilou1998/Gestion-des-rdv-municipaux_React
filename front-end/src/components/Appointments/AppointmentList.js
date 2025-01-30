@@ -3,20 +3,23 @@ import axios from "../../services/api";
 import { UserContext } from "../../context/UserContext";
 
 function AppointmentList() {
-    const { user, loading } = useContext(UserContext) || {};
+    const { user, loading } = useContext(UserContext) || {}; // Vérifier si UserContext existe
     const [appointments, setAppointments] = useState([]);
-    const [fetching, setFetching] = useState(false);
+    const [fetching, setFetching] = useState(true);
     const [error, setError] = useState(null);
 
     useEffect(() => {
         console.log("useEffect exécuté ! Utilisateur :", user, "Loading:", loading);
 
-        if (loading || !user) return;
+        if (loading || !user) return; // Attendre que l'utilisateur soit disponible
 
         const fetchAppointments = async () => {
             setFetching(true);
             try {
-                // Si admin ou agent, récupérer tous les rendez-vous, sinon juste les siens
+                if (!user?.role) {
+                    throw new Error("Le rôle de l'utilisateur est introuvable.");
+                }
+
                 const url = user.role === "admin" || user.role === "agent" ? "/appointments" : "/appointments/my";
                 console.log("Requête envoyée à :", url);
 
@@ -57,6 +60,17 @@ function AppointmentList() {
         return <div className="text-center mt-4">Chargement des rendez-vous...</div>;
     }
 
+    if (!user) {
+        return (
+            <div className="container mt-4">
+                <div className="alert alert-warning">
+                    <h4>Accès refusé</h4>
+                    <p>Vous devez être connecté pour voir cette page.</p>
+                </div>
+            </div>
+        );
+    }
+
     return (
         <div className="container mt-4">
             <h2>Liste des rendez-vous</h2>
@@ -72,7 +86,7 @@ function AppointmentList() {
                         <thead>
                             <tr>
                                 <th>#</th>
-                                {user.role === "admin" || user.role === "agent" ? <th>Citoyen</th> : null}
+                                {(user.role === "admin" || user.role === "agent") && <th>Citoyen</th>}
                                 <th>Service</th>
                                 <th>Date</th>
                                 <th>Status</th>
@@ -83,9 +97,13 @@ function AppointmentList() {
                                 appointments.map((appt) => (
                                     <tr key={appt.id}>
                                         <td>{appt.id}</td>
-                                        {user.role === "admin" || user.role === "agent" ? (
-                                            <td>{appt.user ? `${appt.user.first_name} ${appt.user.last_name}` : "Utilisateur inconnu"}</td>
-                                        ) : null}
+                                        {(user.role === "admin" || user.role === "agent") && (
+                                            <td>
+                                                {appt.user
+                                                    ? `${appt.user.first_name} ${appt.user.last_name}`
+                                                    : "Utilisateur inconnu"}
+                                            </td>
+                                        )}
                                         <td>{appt.service?.name || "Service inconnu"}</td>
                                         <td>{formatDate(appt.appointmentDate)}</td>
                                         <td>{appt.status}</td>
