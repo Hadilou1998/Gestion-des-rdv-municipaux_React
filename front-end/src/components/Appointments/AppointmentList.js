@@ -3,10 +3,16 @@ import axios from "../../services/api";
 import { UserContext } from "../../context/UserContext";
 
 function AppointmentList() {
-    const { user, loading } = useContext(UserContext) || {};
     const [appointments, setAppointments] = useState([]);
     const [fetching, setFetching] = useState(false);
     const [error, setError] = useState(null);
+
+    console.log("🔍 Vérification de l'importation de UserContext :", UserContext);
+
+    const context = useContext(UserContext);
+    console.log("📌 Contexte récupéré :", context);
+
+    const { user, loading } = context || {};
 
     useEffect(() => {
         console.log("useEffect exécuté ! Utilisateur :", user, "Loading:", loading);
@@ -16,20 +22,19 @@ function AppointmentList() {
         const fetchAppointments = async () => {
             setFetching(true);
             try {
-                // Si admin ou agent, récupérer tous les rendez-vous, sinon juste les siens
-                const url = user.role === "admin" || user.role === "agent" ? "/appointments" : "/appointments/my";
-                console.log("Requête envoyée à :", url);
+                const url = user?.role === "admin" || user?.role === "agent" ? "/appointments" : "/appointments/my";
+                console.log("🔄 Requête envoyée à :", url);
 
                 const response = await axios.get(url);
-                console.log("Données reçues :", response.data);
+                console.log("✅ Données reçues :", response.data);
 
                 if (!Array.isArray(response.data)) {
-                    throw new Error("Format de données invalide reçu de l'API");
+                    throw new Error("❌ Format de données invalide reçu de l'API");
                 }
 
                 setAppointments(response.data);
             } catch (err) {
-                console.error("Erreur de récupération des rendez-vous :", err);
+                console.error("❌ Erreur de récupération des rendez-vous :", err);
                 setError(err.response?.data?.message || "Une erreur est survenue.");
             } finally {
                 setFetching(false);
@@ -53,7 +58,12 @@ function AppointmentList() {
         }
     };
 
-    if (loading || fetching) {
+    if (!context) {
+        console.error("❌ UserContext est undefined. Vérifie que UserProvider est bien appliqué.");
+        return <div className="text-center mt-4">Erreur de chargement du contexte utilisateur.</div>;
+    }
+
+    if (loading || fetching || !user) {
         return <div className="text-center mt-4">Chargement des rendez-vous...</div>;
     }
 
@@ -72,7 +82,7 @@ function AppointmentList() {
                         <thead>
                             <tr>
                                 <th>#</th>
-                                {user.role === "admin" || user.role === "agent" ? <th>Citoyen</th> : null}
+                                {user?.role === "admin" || user?.role === "agent" ? <th>Citoyen</th> : null}
                                 <th>Service</th>
                                 <th>Date</th>
                                 <th>Status</th>
@@ -83,7 +93,7 @@ function AppointmentList() {
                                 appointments.map((appt) => (
                                     <tr key={appt.id}>
                                         <td>{appt.id}</td>
-                                        {user.role === "admin" || user.role === "agent" ? (
+                                        {user?.role === "admin" || user?.role === "agent" ? (
                                             <td>{appt.user ? `${appt.user.first_name} ${appt.user.last_name}` : "Utilisateur inconnu"}</td>
                                         ) : null}
                                         <td>{appt.service?.name || "Service inconnu"}</td>
@@ -104,6 +114,4 @@ function AppointmentList() {
             )}
         </div>
     );
-}
-
-export default AppointmentList;
+}export default AppointmentList;
