@@ -174,6 +174,7 @@ module.exports = (sequelize, DataTypes) => {
 #### Authentification
 - POST /api/auth/register
 - POST /api/auth/login
+- POST /api/auth/me
 - POST /api/auth/logout
 
 #### Rendez-vous
@@ -197,87 +198,28 @@ module.exports = (sequelize, DataTypes) => {
 - PUT /api/slots/:id
 - DELETE /api/slots/:id
 
-## 4. Optimisations MySQL spécifiques
+## 4. Sécurité
 
-### 4.1 Indexation
-- Index composites pour les requêtes fréquentes
-- Index couvrants pour les lectures intensives
-- Utilisation d'EXPLAIN pour l'optimisation des requêtes
-
-### 4.2 Partitionnement
-```sql
-ALTER TABLE appointments PARTITION BY RANGE (TO_DAYS(appointment_date)) (
-    PARTITION p_old VALUES LESS THAN (TO_DAYS(CURRENT_DATE - INTERVAL 6 MONTH)),
-    PARTITION p_current VALUES LESS THAN (TO_DAYS(CURRENT_DATE)),
-    PARTITION p_future VALUES LESS THAN MAXVALUE
-);
-```
-
-### 4.3 Procédures stockées
-```sql
-DELIMITER //
-CREATE PROCEDURE sp_check_slot_availability(
-    IN p_service_id INT,
-    IN p_date DATE
-)
-BEGIN
-    SELECT ts.*
-    FROM time_slots ts
-    WHERE ts.service_id = p_service_id
-    AND DATE(ts.start_time) = p_date
-    AND ts.is_available = true
-    ORDER BY ts.start_time;
-END //
-DELIMITER ;
-```
-
-## 5. Sécurité
-
-### 5.1 Sécurité MySQL
+### 4.1 Sécurité MySQL
 - Utilisation de comptes utilisateurs avec privilèges minimaux
 - Échappement des entrées utilisateur
 - Protection contre les injections SQL via Sequelize
 - Chiffrement des données sensibles
 - Auditing des modifications importantes
 
-### 5.2 Sauvegardes
-```sql
--- Configuration des sauvegardes
-SET GLOBAL event_scheduler = ON;
-
-CREATE EVENT backup_daily
-ON SCHEDULE EVERY 1 DAY
-DO
-BEGIN
-    -- Commande de sauvegarde
-END;
-```
-
-## 6. Tests
-- Tests unitaires avec Jest
-- Tests d'intégration
-- Tests E2E avec Cypress
-- Tests de charge avec k6
-
-## 7. Déploiement
+## 5. Déploiement
 - Conteneurisation avec Docker
 - CI/CD avec GitHub Actions
 - Environnements de développement, staging et production
 - Monitoring et logging
 
-## 8. Documentation
-- Documentation API avec Swagger
-- Documentation technique
-- Guide d'utilisation
-- Documentation de déploiement
-
-## 9. Maintenance
+## 6. Maintenance
 - Sauvegarde quotidienne des données
 - Monitoring des performances
 - Gestion des mises à jour
 - Support technique
 
-## 10. Contraintes techniques
+## 7. Contraintes techniques
 - Compatibilité navigateurs : Chrome, Firefox, Safari, Edge
 - Responsive design
 - Accessibilité WCAG 2.1
