@@ -3,11 +3,14 @@ import axios from "../../services/api";
 import { UserContext } from "../../context/UserContext";
 
 function AppointmentList() {
-    const userContext = useContext(UserContext);
-    const { user, loading } = userContext; // Extraction des valeurs
+    const userContext = useContext(UserContext) || {}; // Sécurisation du contexte
+    const { user, loading } = userContext || { user: null, loading: true };
+
     const [appointments, setAppointments] = useState([]);
     const [fetching, setFetching] = useState(false);
     const [error, setError] = useState(null);
+
+    console.log("📌 UserContext:", userContext); // Debug
 
     useEffect(() => {
         console.log("🔄 useEffect exécuté ! Utilisateur :", user, "Loading:", loading);
@@ -46,33 +49,6 @@ function AppointmentList() {
 
         fetchAppointments();
     }, [user, loading]);
-
-    // Vérification que le contexte est bien chargé
-    if (!userContext) {
-        console.error("⚠️ UserContext est undefined ! Vérifie que UserProvider est bien déclaré.");
-        return (
-            <div className="container mt-4">
-                <div className="alert alert-danger">
-                    <h4>Erreur critique</h4>
-                    <p>Le contexte utilisateur est introuvable. Assurez-vous que `UserProvider` englobe votre application.</p>
-                </div>
-            </div>
-        );
-    }
-
-    const formatDate = (dateString) => {
-        try {
-            return new Date(dateString).toLocaleString("fr-FR", {
-                year: "numeric",
-                month: "long",
-                day: "numeric",
-                hour: "2-digit",
-                minute: "2-digit",
-            });
-        } catch {
-            return "Date invalide";
-        }
-    };
 
     if (loading) {
         return <div className="text-center mt-4">📡 Chargement des informations utilisateur...</div>;
@@ -136,7 +112,10 @@ function AppointmentList() {
                                         </td>
                                     )}
                                     <td>{appt.service?.name || "Service inconnu"}</td>
-                                    <td>{formatDate(appt.appointmentDate)}</td>
+                                    <td>{new Date(appt.appointmentDate).toLocaleString("fr-FR", {
+                                        year: "numeric", month: "long", day: "numeric",
+                                        hour: "2-digit", minute: "2-digit"
+                                    })}</td>
                                     <td>{appt.status}</td>
                                 </tr>
                             ))}

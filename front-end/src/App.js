@@ -23,40 +23,43 @@ import TimeSlotList from './components/TimeSlots/TimeSlotList';
 import TimeSlotForm from './components/TimeSlots/TimeSlotForm';
 import TimeSlotDetails from './components/TimeSlots/TimeSlotDetails';
 import Unauthorized from './pages/Unauthorized';
+import { UserProvider } from './context/UserContext';
 
 function App() {
   return (
-    <Router>
-      <div className="d-flex flex-column min-vh-100">
-        <Navbar />
-        <div className="flex-grow-1">
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/contact" element={<Contact />} />
-            <Route path="/calendar" element={<Calendar />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/logout" element={<Logout />} />
-            <Route path="/services" element={<ServiceList />} />
-            <Route path="/services/:id" element={<ServiceDetails />} />
-            <Route path="/services/edit/:id" element={<ServiceEdit />} />
-            <Route path="/users" element={<UserList />} />
-            <Route path="/appointments" element={<AppointmentList />} />
-            <Route path="/appointments/new" element={<AppointmentForm />} />
-            <Route path="/appointments/:id" element={<AppointmentDetails />} />
-            <Route path="/appointments/edit/:id" element={<AppointmentEdit />} />
-            <Route path="/appointments/my" element={<MyAppointments />} />
-            <Route path="/slots" element={<TimeSlotList />} />
-            <Route path="/slots/new" element={<TimeSlotForm />} />
-            <Route path="/slots/:id" element={<TimeSlotDetails />} />
-            <Route path="/unauthorized" element={<Unauthorized />} />
-          </Routes>
+    <UserProvider>
+      <Router>
+        <div className="d-flex flex-column min-vh-100">
+          <Navbar />
+          <div className="flex-grow-1">
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/contact" element={<Contact />} />
+              <Route path="/calendar" element={<Calendar />} />
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="/logout" element={<Logout />} />
+              <Route path="/services" element={<ServiceList />} />
+              <Route path="/services/:id" element={<ServiceDetails />} />
+              <Route path="/services/edit/:id" element={<ServiceEdit />} />
+              <Route path="/users" element={<UserList />} />
+              <Route path="/appointments" element={<AppointmentList />} />
+              <Route path="/appointments/new" element={<AppointmentForm />} />
+              <Route path="/appointments/:id" element={<AppointmentDetails />} />
+              <Route path="/appointments/edit/:id" element={<AppointmentEdit />} />
+              <Route path="/appointments/my" element={<MyAppointments />} />
+              <Route path="/slots" element={<TimeSlotList />} />
+              <Route path="/slots/new" element={<TimeSlotForm />} />
+              <Route path="/slots/:id" element={<TimeSlotDetails />} />
+              <Route path="/unauthorized" element={<Unauthorized />} />
+            </Routes>
+          </div>
+          <Footer />
         </div>
-        <Footer />
-      </div>
-    </Router>
+      </Router>
+    </UserProvider>
   );
 };
 
