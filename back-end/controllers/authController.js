@@ -38,13 +38,20 @@ exports.login = async (req, res) => {
 
 // Utilisateur actuel
 exports.me = async (req, res) => {
-    const userId = req.user.id;
-    const user = await User.findOne({ 
-        where: { id: userId  }})
-    if (!user) {
-        return res.status(500).json({ error: "Utilisateur introuvable" });
-    } else {
+    if (!req.user || !req.user.id) {
+        return res.status(401).json({ error: "Utilisateur non authentifié." });
+    }
+
+    try {
+        const user = await User.findOne({ where: { id: req.user.id } });
+
+        if (!user) {
+            return res.status(404).json({ error: "Utilisateur introuvable." });
+        }
+
         res.status(200).json({ user });
+    } catch (error) {
+        res.status(500).json({ error: "Erreur lors de la récupération des données utilisateur.", details: error.message });
     }
 };
 
