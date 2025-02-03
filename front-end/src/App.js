@@ -25,7 +25,7 @@ import TimeSlotDetails from './components/TimeSlots/TimeSlotDetails';
 import Unauthorized from './pages/Unauthorized';
 import { UserProvider, UserContext } from './context/UserContext';
 
-// 🔒 **Composant pour protéger les routes**
+// 🔒 **Composant sécurisé pour protéger les routes**
 const ProtectedRoute = ({ element, roles }) => {
   const { user, loading } = useContext(UserContext);
   const navigate = useNavigate();
@@ -33,7 +33,7 @@ const ProtectedRoute = ({ element, roles }) => {
   useEffect(() => {
     if (!loading) {
       if (!user) {
-        navigate("/login"); // Rediriger vers login si non connecté
+        navigate("/login"); // ✅ Attendre que `loading` soit `false` avant de rediriger
       } else if (roles && !roles.includes(user.role)) {
         navigate("/unauthorized"); // Rediriger si l'utilisateur n'a pas le rôle requis
       }

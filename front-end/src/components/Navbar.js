@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { UserContext } from "../context/UserContext";
 
 function Navbar() {
-    const { user, logout } = useContext(UserContext); // 🔥 Utilisation directe du contexte
+    const { user, logout, loading } = useContext(UserContext);
 
     return (
         <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -27,21 +27,25 @@ function Navbar() {
                         <li className="nav-item"><Link className="nav-link" to="/contact">Contact</Link></li>
                         <li className="nav-item"><Link className="nav-link" to="/services">Services</Link></li>
 
-                        {/* ✅ Liens dynamiques après connexion */}
-                        {user && (
-                            <>
-                                <li className="nav-item"><Link className="nav-link" to="/appointments/my">Mes Rendez-vous</Link></li>
-                                <li className="nav-item"><Link className="nav-link" to="/dashboard">Tableau de bord</Link></li>
-                                <li className="nav-item"><Link className="nav-link" to="/slots">Créneaux disponibles</Link></li>
+                        {/* ✅ Affichage temporaire pour éviter un "saut" des éléments */}
+                        {loading ? (
+                            <li className="nav-item text-light mx-2">Chargement...</li>
+                        ) : (
+                            user && (
+                                <>
+                                    <li className="nav-item"><Link className="nav-link" to="/appointments/my">Mes Rendez-vous</Link></li>
+                                    <li className="nav-item"><Link className="nav-link" to="/dashboard">Tableau de bord</Link></li>
+                                    <li className="nav-item"><Link className="nav-link" to="/slots">Créneaux disponibles</Link></li>
 
-                                {/* ✅ Accès supplémentaire pour les admins et agents */}
-                                {["admin", "agent"].includes(user.role) && (
-                                    <>
-                                        <li className="nav-item"><Link className="nav-link" to="/appointments">Tous les Rendez-vous</Link></li>
-                                        <li className="nav-item"><Link className="nav-link" to="/slots/new">Ajouter un créneau</Link></li>
-                                    </>
-                                )}
-                            </>
+                                    {/* ✅ Accès supplémentaire pour les admins et agents */}
+                                    {["admin", "agent"].includes(user.role) && (
+                                        <>
+                                            <li className="nav-item"><Link className="nav-link" to="/appointments">Tous les Rendez-vous</Link></li>
+                                            <li className="nav-item"><Link className="nav-link" to="/slots/new">Ajouter un créneau</Link></li>
+                                        </>
+                                    )}
+                                </>
+                            )
                         )}
                     </ul>
 
