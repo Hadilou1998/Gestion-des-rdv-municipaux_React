@@ -1,4 +1,5 @@
 import React, { createContext, useState, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from '../services/api';
 
 export const UserContext = createContext(null);
@@ -6,19 +7,27 @@ export const UserContext = createContext(null);
 export const UserProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
+    const navigate = useNavigate();
 
     const loadUser = useCallback(async () => {
         setLoading(true);
         try {
             const userData = localStorage.getItem("user");
+
             if (!userData) {
                 setUser(null);
                 setLoading(false);
                 return;
             }
 
-            const parsedUser = JSON.parse(userData);
-            if (!parsedUser.token) {
+            let parsedUser;
+            try {
+                parsedUser = JSON.parse(userData);
+                if (!parsedUser || !parsedUser.token) {
+                    throw new Error("Données utilisateur invalides.");
+                }
+            } catch (err) {
+                console.error("Erreur de parsing JSON:", err);
                 localStorage.removeItem("user");
                 setUser(null);
                 setLoading(false);
@@ -51,10 +60,23 @@ export const UserProvider = ({ children }) => {
     const login = async (credentials) => {
         try {
             const response = await axios.post('/auth/login', credentials);
+
+            if (!response.data.user || !response.data.token) {
+                throw new Error("Réponse invalide du serveur.");
+            }
+
             const userData = { ...response.data.user, token: response.data.token };
             localStorage.setItem("user", JSON.stringify(userData));
             setUser(userData);
             axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
+
+            // ✅ Redirection après connexion en fonction du rôle
+            if (userData.role === "admin" || userData.role === "agent") {
+                navigate("/dashboard");
+            } else {
+                navigate("/appointments/my");
+            }
+
             return { success: true };
         } catch (error) {
             return {
@@ -68,6 +90,7 @@ export const UserProvider = ({ children }) => {
         localStorage.removeItem("user");
         setUser(null);
         delete axios.defaults.headers.common['Authorization'];
+        navigate("/login");
     };
 
     return (

@@ -47,8 +47,8 @@ const ProtectedRoute = ({ element, roles }) => {
 
 function App() {
   return (
-    <UserProvider>
-      <Router>
+    <Router> {/* ✅ Déplacer `UserProvider` à l'intérieur du Router */}
+      <UserProvider>
         <div className="d-flex flex-column min-vh-100">
           <Navbar />
           <div className="flex-grow-1">
@@ -87,8 +87,8 @@ function App() {
           </div>
           <Footer />
         </div>
-      </Router>
-    </UserProvider>
+      </UserProvider>
+    </Router>
   );
 }
 
