@@ -13,7 +13,6 @@ export const UserProvider = ({ children }) => {
         setLoading(true);
         try {
             const userData = localStorage.getItem("user");
-
             if (!userData) {
                 setUser(null);
                 setLoading(false);
@@ -43,7 +42,6 @@ export const UserProvider = ({ children }) => {
 
             const loggedInUser = { ...response.data, token: parsedUser.token };
             setUser(loggedInUser);
-
         } catch (error) {
             console.error("Erreur lors du chargement de l'utilisateur :", error);
             localStorage.removeItem("user");
@@ -60,22 +58,25 @@ export const UserProvider = ({ children }) => {
     const login = async (credentials) => {
         try {
             const response = await axios.post('/auth/login', credentials);
-
             if (!response.data.user || !response.data.token) {
                 throw new Error("Réponse invalide du serveur.");
             }
 
             const userData = { ...response.data.user, token: response.data.token };
             localStorage.setItem("user", JSON.stringify(userData));
-            setUser(userData);
             axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
 
-            // ✅ Redirection après connexion en fonction du rôle
-            if (userData.role === "admin" || userData.role === "agent") {
-                navigate("/dashboard");
-            } else {
-                navigate("/appointments/my");
-            }
+            // ✅ Met à jour immédiatement `user`
+            setUser(userData);
+
+            // ✅ Ajout d'un délai pour laisser React mettre à jour `Navbar`
+            setTimeout(() => {
+                if (userData.role === "admin" || userData.role === "agent") {
+                    navigate("/dashboard");
+                } else {
+                    navigate("/appointments/my");
+                }
+            }, 100);
 
             return { success: true };
         } catch (error) {
