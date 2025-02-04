@@ -1,5 +1,4 @@
 import React, { createContext, useState, useEffect, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
 import axios from "../services/api";
 
 export const UserContext = createContext(null);
@@ -7,7 +6,6 @@ export const UserContext = createContext(null);
 export const UserProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
-    const navigate = useNavigate();
 
     /** ✅ Charger l'utilisateur depuis localStorage */
     const loadUser = useCallback(async () => {
@@ -58,7 +56,7 @@ export const UserProvider = ({ children }) => {
     }, [loadUser]);
 
     /** ✅ Fonction de connexion */
-    const login = async (credentials) => {
+    const login = async (credentials, navigate) => {
         try {
             const response = await axios.post("/auth/login", credentials);
             if (!response.data.user || !response.data.token) {
@@ -91,7 +89,7 @@ export const UserProvider = ({ children }) => {
     };
 
     /** ✅ Fonction de déconnexion */
-    const logout = () => {
+    const logout = (navigate) => {
         localStorage.removeItem("user");
         setUser(null);
         delete axios.defaults.headers.common["Authorization"];

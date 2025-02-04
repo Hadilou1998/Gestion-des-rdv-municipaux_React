@@ -1,9 +1,10 @@
 import React, { useContext } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { UserContext } from "../context/UserContext";
 
 function Navbar() {
     const { user, logout, loading } = useContext(UserContext);
+    const navigate = useNavigate(); // ✅ Utilisation correcte de `navigate`
 
     return (
         <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -27,41 +28,39 @@ function Navbar() {
                         <li className="nav-item"><Link className="nav-link" to="/contact">Contact</Link></li>
                         <li className="nav-item"><Link className="nav-link" to="/services">Services</Link></li>
 
-                        {/* ✅ Affichage temporaire pour éviter un "saut" des éléments */}
-                        {loading ? (
-                            <li className="nav-item text-light mx-2">Chargement...</li>
-                        ) : (
-                            user && (
-                                <>
-                                    <li className="nav-item"><Link className="nav-link" to="/appointments/my">Mes Rendez-vous</Link></li>
-                                    <li className="nav-item"><Link className="nav-link" to="/dashboard">Tableau de bord</Link></li>
-                                    <li className="nav-item"><Link className="nav-link" to="/slots">Créneaux disponibles</Link></li>
+                        {/* ✅ Affichage uniquement après le chargement des données utilisateur */}
+                        {!loading && user && (
+                            <>
+                                <li className="nav-item"><Link className="nav-link" to="/appointments/my">Mes Rendez-vous</Link></li>
+                                <li className="nav-item"><Link className="nav-link" to="/dashboard">Tableau de bord</Link></li>
+                                <li className="nav-item"><Link className="nav-link" to="/slots">Créneaux disponibles</Link></li>
 
-                                    {/* ✅ Accès supplémentaire pour les admins et agents */}
-                                    {["admin", "agent"].includes(user.role) && (
-                                        <>
-                                            <li className="nav-item"><Link className="nav-link" to="/appointments">Tous les Rendez-vous</Link></li>
-                                            <li className="nav-item"><Link className="nav-link" to="/slots/new">Ajouter un créneau</Link></li>
-                                        </>
-                                    )}
-                                </>
-                            )
+                                {/* ✅ Accès supplémentaire pour les admins et agents */}
+                                {["admin", "agent"].includes(user.role) && (
+                                    <>
+                                        <li className="nav-item"><Link className="nav-link" to="/appointments">Tous les Rendez-vous</Link></li>
+                                        <li className="nav-item"><Link className="nav-link" to="/slots/new">Ajouter un créneau</Link></li>
+                                    </>
+                                )}
+                            </>
                         )}
                     </ul>
 
                     {/* ✅ Connexion/Déconnexion dynamique */}
                     <ul className="navbar-nav">
-                        {!user ? (
+                        {!loading && !user ? (
                             <>
                                 <li className="nav-item"><Link className="nav-link" to="/login">Connexion</Link></li>
                                 <li className="nav-item"><Link className="nav-link" to="/register">Inscription</Link></li>
                             </>
                         ) : (
-                            <li className="nav-item">
-                                <button className="btn btn-outline-danger" onClick={logout}>
-                                    Déconnexion
-                                </button>
-                            </li>
+                            !loading && user && (
+                                <li className="nav-item">
+                                    <button className="btn btn-outline-danger" onClick={() => logout(navigate)}>
+                                        Déconnexion
+                                    </button>
+                                </li>
+                            )
                         )}
                     </ul>
                 </div>
