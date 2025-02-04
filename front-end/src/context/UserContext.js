@@ -13,13 +13,13 @@ export const UserProvider = ({ children }) => {
         setLoading(true);
         try {
             const userData = localStorage.getItem("user");
-
+    
             if (!userData) {
                 setUser(null);
                 setLoading(false);
                 return;
             }
-
+    
             let parsedUser;
             try {
                 parsedUser = JSON.parse(userData);
@@ -27,30 +27,45 @@ export const UserProvider = ({ children }) => {
                     throw new Error("Données utilisateur invalides.");
                 }
             } catch (err) {
-                console.error("Erreur de parsing JSON:", err);
+                console.error("⚠️ Erreur de parsing JSON :", err);
                 localStorage.removeItem("user");
                 setUser(null);
                 setLoading(false);
                 return;
             }
-
+    
             axios.defaults.headers.common['Authorization'] = `Bearer ${parsedUser.token}`;
             const response = await axios.get('/auth/me');
-
+    
+            if (response.data.expired) {
+                console.warn("⚠️ Token expiré. Déconnexion...");
+                setUser(null);
+                setLoading(false);
+                return;
+            }
+    
+            if (response.data.invalid) {
+                console.warn("⚠️ Token invalide. Déconnexion...");
+                setUser(null);
+                setLoading(false);
+                return;
+            }
+    
             if (!response.data.role) {
                 throw new Error("Le rôle de l'utilisateur est introuvable.");
             }
-
+    
             const loggedInUser = { ...response.data, token: parsedUser.token };
             setUser(loggedInUser);
-
+    
         } catch (error) {
-            console.error("Erreur lors du chargement de l'utilisateur :", error);
+            console.error("🚨 Erreur lors du chargement de l'utilisateur :", error);
             localStorage.removeItem("user");
             setUser(null);
+        } finally {
             setLoading(false);
         }
-    }, []);
+    }, []);    
 
     useEffect(() => {
         loadUser();
