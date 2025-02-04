@@ -35,12 +35,12 @@ export const UserProvider = ({ children }) => {
                 return;
             }
 
-            // ✅ Mettre à jour Axios avec le token dès que l'utilisateur est chargé
-            axios.defaults.headers.common['Authorization'] = `Bearer ${parsedUser.token}`;
+            // ✅ Mettre à jour Axios avec le token
+            axios.defaults.headers.common["Authorization"] = `Bearer ${parsedUser.token}`;
 
-            const response = await axios.get('/auth/me');
+            const response = await axios.get("/auth/me");
 
-            if (!response.data.role) {
+            if (!response.data || !response.data.role) {
                 throw new Error("Le rôle de l'utilisateur est introuvable.");
             }
 
@@ -62,21 +62,23 @@ export const UserProvider = ({ children }) => {
     /** ✅ Fonction de connexion */
     const login = async (credentials) => {
         try {
-            const response = await axios.post('/auth/login', credentials);
+            const response = await axios.post("/auth/login", credentials);
             if (!response.data.user || !response.data.token) {
                 throw new Error("Réponse invalide du serveur.");
             }
 
             const userData = { ...response.data.user, token: response.data.token };
             localStorage.setItem("user", JSON.stringify(userData));
-            axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
+
+            // ✅ Mettre immédiatement à jour le token pour les requêtes
+            axios.defaults.headers.common["Authorization"] = `Bearer ${response.data.token}`;
 
             setUser(userData);
 
             // ✅ Recharge l'utilisateur immédiatement après connexion
             await loadUser();
 
-            // ✅ Redirection après connexion
+            // ✅ Redirection après connexion selon le rôle
             if (userData.role === "admin" || userData.role === "agent") {
                 navigate("/dashboard");
             } else {
@@ -87,7 +89,7 @@ export const UserProvider = ({ children }) => {
         } catch (error) {
             return {
                 success: false,
-                error: error.response?.data?.message || "Erreur de connexion"
+                error: error.response?.data?.message || "Erreur de connexion",
             };
         }
     };
@@ -96,7 +98,7 @@ export const UserProvider = ({ children }) => {
     const logout = () => {
         localStorage.removeItem("user");
         setUser(null);
-        delete axios.defaults.headers.common['Authorization'];
+        delete axios.defaults.headers.common["Authorization"];
         navigate("/login");
     };
 
