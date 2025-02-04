@@ -1,6 +1,6 @@
-import React, { createContext, useState, useEffect, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
-import axios from "../services/api";
+import React, { createContext, useState, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
+import axios from '../services/api';
 
 export const UserContext = createContext(null);
 
@@ -9,6 +9,7 @@ export const UserProvider = ({ children }) => {
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
 
+    /** ✅ Fonction pour charger l'utilisateur depuis localStorage */
     const loadUser = useCallback(async () => {
         setLoading(true);
         try {
@@ -34,7 +35,9 @@ export const UserProvider = ({ children }) => {
                 return;
             }
 
+            // ✅ Mettre à jour Axios avec le token dès que l'utilisateur est chargé
             axios.defaults.headers.common['Authorization'] = `Bearer ${parsedUser.token}`;
+
             const response = await axios.get('/auth/me');
 
             if (!response.data.role) {
@@ -43,11 +46,11 @@ export const UserProvider = ({ children }) => {
 
             const loggedInUser = { ...response.data, token: parsedUser.token };
             setUser(loggedInUser);
-
         } catch (error) {
             console.error("Erreur lors du chargement de l'utilisateur :", error);
             localStorage.removeItem("user");
             setUser(null);
+        } finally {
             setLoading(false);
         }
     }, []);
@@ -56,6 +59,7 @@ export const UserProvider = ({ children }) => {
         loadUser();
     }, [loadUser]);
 
+    /** ✅ Fonction de connexion */
     const login = async (credentials) => {
         try {
             const response = await axios.post('/auth/login', credentials);
@@ -68,13 +72,16 @@ export const UserProvider = ({ children }) => {
             axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
 
             setUser(userData);
-            setTimeout(() => {
-                if (userData.role === "admin" || userData.role === "agent") {
-                    navigate("/dashboard");
-                } else {
-                    navigate("/appointments/my");
-                }
-            }, 100);
+
+            // ✅ Recharge l'utilisateur immédiatement après connexion
+            await loadUser();
+
+            // ✅ Redirection après connexion
+            if (userData.role === "admin" || userData.role === "agent") {
+                navigate("/dashboard");
+            } else {
+                navigate("/appointments/my");
+            }
 
             return { success: true };
         } catch (error) {
@@ -85,6 +92,7 @@ export const UserProvider = ({ children }) => {
         }
     };
 
+    /** ✅ Fonction de déconnexion */
     const logout = () => {
         localStorage.removeItem("user");
         setUser(null);

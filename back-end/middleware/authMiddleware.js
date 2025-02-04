@@ -29,6 +29,11 @@ module.exports = async (req, res, next) => {
             return res.status(401).json({ message: "Utilisateur introuvable ou supprimé." });
         }
 
+        // ✅ Vérification que le token en base correspond bien à celui reçu
+        if (user.token !== token) {
+            return res.status(401).json({ message: "Authentification invalide." });
+        }
+
         // Ajouter les informations utilisateur dans la requête
         req.user = user.toJSON();
 
