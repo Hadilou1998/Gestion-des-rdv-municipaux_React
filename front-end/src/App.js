@@ -1,5 +1,5 @@
-import React, { useContext } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import React, { useContext, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Home from './pages/Home';
@@ -25,62 +25,72 @@ import TimeSlotDetails from './components/TimeSlots/TimeSlotDetails';
 import Unauthorized from './pages/Unauthorized';
 import { UserProvider, UserContext } from './context/UserContext';
 
-/** ✅ Composant sécurisé pour protéger les routes */
+// 🔒 **Composant pour protéger les routes**
 const ProtectedRoute = ({ element, roles }) => {
-  const { user } = useContext(UserContext);
+    const { user, loading } = useContext(UserContext);
+    const navigate = useNavigate();
 
-  if (!user) return <Navigate to="/login" replace />;
+    useEffect(() => {
+        if (!loading) {
+            if (!user) {
+                navigate("/login");
+            } else if (roles && !roles.includes(user.role)) {
+                navigate("/unauthorized");
+            }
+        }
+    }, [user, loading, navigate, roles]);
 
-  if (roles && !roles.includes(user.role)) return <Navigate to="/unauthorized" replace />;
+    if (loading) return <div className="text-center mt-4">Chargement...</div>;
 
-  return element;
+    return user ? element : null;
 };
 
+// 📌 **Application principale**
 function App() {
-  return (
-    <Router> {/* ✅ Déplacer `UserProvider` à l'intérieur du Router */}
-      <UserProvider>
-        <div className="d-flex flex-column min-vh-100">
-          <Navbar />
-          <div className="flex-grow-1">
-            <Routes>
-              {/* ✅ Routes publiques accessibles à tous */}
-              <Route path="/" element={<Home />} />
-              <Route path="/about" element={<About />} />
-              <Route path="/contact" element={<Contact />} />
-              <Route path="/calendar" element={<Calendar />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
-              <Route path="/logout" element={<Logout />} />
-              <Route path="/unauthorized" element={<Unauthorized />} />
+    return (
+        <UserProvider>
+            <Router>
+                <div className="d-flex flex-column min-vh-100">
+                    <Navbar />
+                    <div className="flex-grow-1">
+                        <Routes>
+                            {/* ✅ Routes publiques */}
+                            <Route path="/" element={<Home />} />
+                            <Route path="/about" element={<About />} />
+                            <Route path="/contact" element={<Contact />} />
+                            <Route path="/calendar" element={<Calendar />} />
+                            <Route path="/login" element={<Login />} />
+                            <Route path="/register" element={<Register />} />
+                            <Route path="/logout" element={<Logout />} />
+                            <Route path="/unauthorized" element={<Unauthorized />} />
 
-              {/* ✅ Routes accessibles uniquement aux utilisateurs connectés */}
-              <Route path="/dashboard" element={<ProtectedRoute element={<Dashboard />} roles={["admin", "agent"]} />} />
-              <Route path="/services" element={<ProtectedRoute element={<ServiceList />} roles={["admin", "agent", "citizen"]} />} />
-              <Route path="/services/:id" element={<ProtectedRoute element={<ServiceDetails />} roles={["admin", "agent", "citizen"]} />} />
-              <Route path="/services/edit/:id" element={<ProtectedRoute element={<ServiceEdit />} roles={["admin", "agent"]} />} />
+                            {/* ✅ Routes sécurisées */}
+                            <Route path="/dashboard" element={<ProtectedRoute element={<Dashboard />} roles={["admin", "agent", "citizen"]} />} />
+                            <Route path="/services" element={<ProtectedRoute element={<ServiceList />} roles={["admin", "agent", "citizen"]} />} />
+                            <Route path="/services/:id" element={<ProtectedRoute element={<ServiceDetails />} roles={["admin", "agent", "citizen"]} />} />
+                            <Route path="/services/edit/:id" element={<ProtectedRoute element={<ServiceEdit />} roles={["admin", "agent"]} />} />
 
-              {/* ✅ Gestion des utilisateurs (admin uniquement) */}
-              <Route path="/users" element={<ProtectedRoute element={<UserList />} roles={["admin"]} />} />
+                            {/* ✅ Gestion des utilisateurs */}
+                            <Route path="/users" element={<ProtectedRoute element={<UserList />} roles={["admin"]} />} />
 
-              {/* ✅ Gestion des rendez-vous */}
-              <Route path="/appointments" element={<ProtectedRoute element={<AppointmentList />} roles={["admin", "agent"]} />} />
-              <Route path="/appointments/new" element={<ProtectedRoute element={<AppointmentForm />} roles={["citizen"]} />} />
-              <Route path="/appointments/:id" element={<ProtectedRoute element={<AppointmentDetails />} roles={["admin", "agent", "citizen"]} />} />
-              <Route path="/appointments/edit/:id" element={<ProtectedRoute element={<AppointmentEdit />} roles={["admin", "agent"]} />} />
-              <Route path="/appointments/my" element={<ProtectedRoute element={<MyAppointments />} roles={["citizen"]} />} />
+                            {/* ✅ Gestion des rendez-vous */}
+                            <Route path="/appointments" element={<ProtectedRoute element={<AppointmentList />} roles={["admin", "agent"]} />} />
+                            <Route path="/appointments/new" element={<ProtectedRoute element={<AppointmentForm />} roles={["citizen"]} />} />
+                            <Route path="/appointments/:id" element={<ProtectedRoute element={<AppointmentDetails />} roles={["admin", "agent", "citizen"]} />} />
+                            <Route path="/appointments/edit/:id" element={<ProtectedRoute element={<AppointmentEdit />} roles={["admin", "agent"]} />} />
+                            <Route path="/appointments/my" element={<ProtectedRoute element={<MyAppointments />} roles={["citizen"]} />} />
 
-              {/* ✅ Gestion des créneaux horaires */}
-              <Route path="/slots" element={<ProtectedRoute element={<TimeSlotList />} roles={["admin", "agent"]} />} />
-              <Route path="/slots/new" element={<ProtectedRoute element={<TimeSlotForm />} roles={["admin", "agent"]} />} />
-              <Route path="/slots/:id" element={<ProtectedRoute element={<TimeSlotDetails />} roles={["admin", "agent"]} />} />
-            </Routes>
-          </div>
-          <Footer />
-        </div>
-      </UserProvider>
-    </Router>
-  );
+                            {/* ✅ Gestion des créneaux horaires */}
+                            <Route path="/slots" element={<ProtectedRoute element={<TimeSlotList />} roles={["admin", "agent", "citizen"]} />} />
+                            <Route path="/slots/new" element={<ProtectedRoute element={<TimeSlotForm />} roles={["admin", "agent"]} />} />
+                            <Route path="/slots/:id" element={<ProtectedRoute element={<TimeSlotDetails />} roles={["admin", "agent"]} />} />
+                        </Routes>
+                    </div>
+                    <Footer />
+                </div>
+            </Router>
+        </UserProvider>
+    );
 }
 
 export default App;

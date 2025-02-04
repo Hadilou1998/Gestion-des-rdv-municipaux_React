@@ -9,7 +9,7 @@ export const UserProvider = ({ children }) => {
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
 
-    /** ✅ Fonction pour charger l'utilisateur depuis localStorage */
+    /** ✅ Charger l'utilisateur depuis localStorage */
     const loadUser = useCallback(async () => {
         setLoading(true);
         try {
@@ -35,17 +35,15 @@ export const UserProvider = ({ children }) => {
                 return;
             }
 
-            // ✅ Mettre à jour Axios avec le token
             axios.defaults.headers.common["Authorization"] = `Bearer ${parsedUser.token}`;
-
             const response = await axios.get("/auth/me");
 
-            if (!response.data || !response.data.role) {
+            if (!response.data.role) {
                 throw new Error("Le rôle de l'utilisateur est introuvable.");
             }
 
-            const loggedInUser = { ...response.data, token: parsedUser.token };
-            setUser(loggedInUser);
+            setUser({ ...response.data, token: parsedUser.token });
+
         } catch (error) {
             console.error("Erreur lors du chargement de l'utilisateur :", error);
             localStorage.removeItem("user");
@@ -70,15 +68,13 @@ export const UserProvider = ({ children }) => {
             const userData = { ...response.data.user, token: response.data.token };
             localStorage.setItem("user", JSON.stringify(userData));
 
-            // ✅ Mettre immédiatement à jour le token pour les requêtes
             axios.defaults.headers.common["Authorization"] = `Bearer ${response.data.token}`;
-
             setUser(userData);
 
-            // ✅ Recharge l'utilisateur immédiatement après connexion
+            // 🔄 Recharge immédiatement l'utilisateur
             await loadUser();
 
-            // ✅ Redirection après connexion selon le rôle
+            // 🚀 Redirection après connexion
             if (userData.role === "admin" || userData.role === "agent") {
                 navigate("/dashboard");
             } else {
