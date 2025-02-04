@@ -1,6 +1,5 @@
 import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "../../services/api";
 import { UserContext } from "../../context/UserContext";
 
 function Login() {
@@ -16,25 +15,14 @@ function Login() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setError(""); // Reset error state before attempting login
+        setError(""); // ✅ Réinitialisation des erreurs avant connexion
 
-        try {
-            const response = await axios.post("/auth/login", formData);
+        const result = await login(formData); // ✅ Utilisation de `login` via UserContext
 
-            if (!response.data.user || !response.data.token) {
-                throw new Error("Réponse invalide du serveur.");
-            }
-
-            const userData = { ...response.data.user, token: response.data.token };
-            
-            // ✅ Stockage des informations complètes de l'utilisateur
-            localStorage.setItem("user", JSON.stringify(userData));
-
-            // ✅ Mise à jour du contexte utilisateur
-            login(userData, navigate);
-
-        } catch (error) {
-            setError(error.response?.data?.message || "Informations d'identification non valides.");
+        if (!result.success) {
+            setError(result.error); // ✅ Affichage des erreurs si connexion échoue
+        } else {
+            navigate('/dashboard'); // Redirect to dashboard on successful login
         }
     };
 
@@ -75,5 +63,4 @@ function Login() {
         </div>
     );
 };
-
 export default Login;
