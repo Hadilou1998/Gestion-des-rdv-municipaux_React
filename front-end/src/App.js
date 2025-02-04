@@ -27,9 +27,7 @@ import { UserProvider, UserContext } from './context/UserContext';
 
 /** ✅ Composant sécurisé pour protéger les routes */
 const ProtectedRoute = ({ element, roles }) => {
-  const { user, loading } = useContext(UserContext);
-
-  if (loading) return <div className="text-center mt-4">Chargement...</div>;
+  const { user } = useContext(UserContext);
 
   if (!user) return <Navigate to="/login" replace />;
 
