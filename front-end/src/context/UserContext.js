@@ -12,7 +12,6 @@ export const UserProvider = ({ children }) => {
         try {
             const userData = localStorage.getItem("user");
 
-            // ✅ Vérifier si userData est valide JSON avant de le parser
             if (!userData) {
                 setUser(null);
                 setLoading(false);
@@ -23,10 +22,10 @@ export const UserProvider = ({ children }) => {
             try {
                 parsedUser = JSON.parse(userData);
                 if (!parsedUser || !parsedUser.token) {
-                    throw new Error("Données utilisateur invalides dans le stockage local.");
+                    throw new Error("Données utilisateur invalides.");
                 }
             } catch (err) {
-                console.error("Erreur de parsing JSON:", err);
+                console.error("Erreur JSON:", err);
                 localStorage.removeItem("user");
                 setUser(null);
                 setLoading(false);
@@ -44,7 +43,7 @@ export const UserProvider = ({ children }) => {
             setUser(loggedInUser);
 
         } catch (error) {
-            console.error("Erreur lors du chargement de l'utilisateur :", error);
+            console.error("Erreur utilisateur:", error);
             localStorage.removeItem("user");
             setUser(null);
         } finally {
@@ -56,36 +55,36 @@ export const UserProvider = ({ children }) => {
         loadUser();
     }, [loadUser]);
 
-    const login = async (credentials) => {
+    const login = async (credentials, navigate) => {  // ✅ Ajouter navigate en argument
         try {
             const response = await axios.post('/auth/login', credentials);
-            
-            // ✅ Vérification de la structure avant stockage
+
             if (!response.data.user || !response.data.token) {
-                throw new Error("Réponse invalide du serveur lors de la connexion.");
+                throw new Error("Réponse invalide du serveur.");
             }
 
             const userData = { ...response.data.user, token: response.data.token };
             localStorage.setItem("user", JSON.stringify(userData));
             setUser(userData);
             axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
+
+            // ✅ Utiliser navigate ici
+            if (navigate) {
+                if (userData.role === "admin" || userData.role === "agent") {
+                    navigate("/dashboard");
+                } else {
+                    navigate("/appointments/my");
+                }
+            }
+
             return { success: true };
         } catch (error) {
-            return {
-                success: false,
-                error: error.response?.data?.message || "Erreur de connexion"
-            };
+            return { success: false, error: error.response?.data?.message || "Erreur de connexion" };
         }
     };
 
-    const logout = () => {
-        localStorage.removeItem("user");
-        setUser(null);
-        delete axios.defaults.headers.common['Authorization'];
-    };
-
     return (
-        <UserContext.Provider value={{ user, loading, login, logout, loadUser }}>
+        <UserContext.Provider value={{ user, loading, login, loadUser }}>
             {children}
         </UserContext.Provider>
     );
