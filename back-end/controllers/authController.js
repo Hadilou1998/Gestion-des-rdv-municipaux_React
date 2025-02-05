@@ -38,20 +38,22 @@ exports.login = async (req, res) => {
 
 // Utilisateur actuel
 exports.me = async (req, res) => {
-    if (!req.user || !req.user.id) {
-        return res.status(401).json({ error: "Utilisateur non authentifié." });
-    }
-
     try {
-        const user = await User.findOne({ where: { id: req.user.id } });
+        if (!req.user || !req.user.id) {
+            return res.status(401).json({ error: "Utilisateur non authentifié." });
+        }
+
+        const user = await User.findByPk(req.user.id, {
+            attributes: ["id", "firstName", "lastName", "email", "role"]
+        });
 
         if (!user) {
             return res.status(404).json({ error: "Utilisateur introuvable." });
         }
 
-        res.status(200).json({ user });
+        res.status(200).json(user);
     } catch (error) {
-        res.status(500).json({ error: "Erreur lors de la récupération des données utilisateur.", details: error.message });
+        res.status(500).json({ error: "Erreur serveur lors de la récupération de l'utilisateur." });
     }
 };
 

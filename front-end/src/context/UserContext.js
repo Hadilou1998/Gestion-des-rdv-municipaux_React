@@ -9,7 +9,7 @@ export const UserProvider = ({ children }) => {
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
 
-    // ✅ Charger l'utilisateur depuis le backend
+    // ✅ Fonction pour charger l'utilisateur depuis localStorage et Backend
     const loadUser = useCallback(async () => {
         setLoading(true);
         try {
@@ -34,8 +34,8 @@ export const UserProvider = ({ children }) => {
                 return;
             }
 
+            // ✅ Vérification du token avec le backend
             axios.defaults.headers.common["Authorization"] = `Bearer ${parsedUser.token}`;
-
             const response = await axios.get("/auth/me");
 
             if (!response.data || !response.data.role) {
@@ -72,7 +72,7 @@ export const UserProvider = ({ children }) => {
 
             setLoading(false);
 
-            // 🚀 Redirection après connexion (peu importe le rôle)
+            // 🚀 Redirection après connexion
             navigate("/dashboard");
 
             return { success: true };
