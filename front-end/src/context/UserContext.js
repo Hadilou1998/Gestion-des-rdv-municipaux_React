@@ -62,21 +62,16 @@ export const UserProvider = ({ children }) => {
     const login = async (credentials) => {
         try {
             const response = await axios.post("/auth/login", credentials);
-
-            if (!response.data.user || !response.data.token) {
+            if (!response.data.token || !response.data.user) {
                 throw new Error("Réponse invalide du serveur.");
             }
-
+    
             const userData = { ...response.data.user, token: response.data.token };
-
-            // ✅ Stockage sécurisé
             localStorage.setItem("user", JSON.stringify(userData));
             axios.defaults.headers.common["Authorization"] = `Bearer ${response.data.token}`;
             setUser(userData);
-
-            setLoading(false);
+    
             navigate("/dashboard");
-
             return { success: true };
         } catch (error) {
             return {
@@ -84,7 +79,7 @@ export const UserProvider = ({ children }) => {
                 error: error.response?.data?.message || "Erreur de connexion",
             };
         }
-    };
+    };    
 
     /** ✅ Fonction de déconnexion */
     const logout = () => {
