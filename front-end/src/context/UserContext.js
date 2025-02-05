@@ -9,6 +9,7 @@ export const UserProvider = ({ children }) => {
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
 
+    /** ✅ Charger l'utilisateur depuis localStorage */
     const loadUser = useCallback(async () => {
         setLoading(true);
         try {
@@ -33,15 +34,18 @@ export const UserProvider = ({ children }) => {
                 return;
             }
 
+            // ✅ On ajoute le token dans chaque requête API
             axios.defaults.headers.common["Authorization"] = `Bearer ${parsedUser.token}`;
 
+            // ✅ Vérifier si le token est valide avec le backend
             const response = await axios.get("/auth/me");
 
-            if (!response.data.role) {
+            if (!response.data.user || !response.data.user.role) {
                 throw new Error("Le rôle de l'utilisateur est introuvable.");
             }
 
-            setUser({ ...response.data, token: parsedUser.token });
+            setUser({ ...response.data.user, token: parsedUser.token });
+
         } catch (error) {
             localStorage.removeItem("user");
             setUser(null);
@@ -54,6 +58,7 @@ export const UserProvider = ({ children }) => {
         loadUser();
     }, [loadUser]);
 
+    /** ✅ Fonction de connexion */
     const login = async (credentials) => {
         try {
             const response = await axios.post("/auth/login", credentials);
@@ -64,10 +69,12 @@ export const UserProvider = ({ children }) => {
 
             const userData = { ...response.data.user, token: response.data.token };
 
+            // ✅ Stockage sécurisé
             localStorage.setItem("user", JSON.stringify(userData));
             axios.defaults.headers.common["Authorization"] = `Bearer ${response.data.token}`;
             setUser(userData);
 
+            setLoading(false);
             navigate("/dashboard");
 
             return { success: true };
@@ -79,6 +86,7 @@ export const UserProvider = ({ children }) => {
         }
     };
 
+    /** ✅ Fonction de déconnexion */
     const logout = () => {
         localStorage.removeItem("user");
         setUser(null);
