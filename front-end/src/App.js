@@ -33,9 +33,9 @@ const ProtectedRoute = ({ element, roles }) => {
     useEffect(() => {
         if (!loading) {
             if (!user) {
-                navigate("/login"); // Rediriger vers login si non connecté
+                setTimeout(() => navigate("/login"), 200);
             } else if (roles && !roles.includes(user.role)) {
-                navigate("/unauthorized"); // Rediriger si l'utilisateur n'a pas le rôle requis
+                setTimeout(() => navigate("/unauthorized"), 200);
             }
         }
     }, [user, loading, navigate, roles]);
