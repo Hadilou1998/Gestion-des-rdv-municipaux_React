@@ -9,7 +9,6 @@ export const UserProvider = ({ children }) => {
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
 
-    // ✅ Fonction pour charger l'utilisateur depuis localStorage et Backend
     const loadUser = useCallback(async () => {
         setLoading(true);
         try {
@@ -34,11 +33,11 @@ export const UserProvider = ({ children }) => {
                 return;
             }
 
-            // ✅ Vérification du token avec le backend
             axios.defaults.headers.common["Authorization"] = `Bearer ${parsedUser.token}`;
+
             const response = await axios.get("/auth/me");
 
-            if (!response.data || !response.data.role) {
+            if (!response.data.role) {
                 throw new Error("Le rôle de l'utilisateur est introuvable.");
             }
 
@@ -55,7 +54,6 @@ export const UserProvider = ({ children }) => {
         loadUser();
     }, [loadUser]);
 
-    // ✅ Fonction de connexion
     const login = async (credentials) => {
         try {
             const response = await axios.post("/auth/login", credentials);
@@ -70,9 +68,6 @@ export const UserProvider = ({ children }) => {
             axios.defaults.headers.common["Authorization"] = `Bearer ${response.data.token}`;
             setUser(userData);
 
-            setLoading(false);
-
-            // 🚀 Redirection après connexion
             navigate("/dashboard");
 
             return { success: true };
@@ -84,7 +79,6 @@ export const UserProvider = ({ children }) => {
         }
     };
 
-    // ✅ Fonction de déconnexion
     const logout = () => {
         localStorage.removeItem("user");
         setUser(null);
