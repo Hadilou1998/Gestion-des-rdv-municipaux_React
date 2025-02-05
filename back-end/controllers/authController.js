@@ -20,18 +20,36 @@ exports.login = async (req, res) => {
     try {  
         console.log("Email:", email);  
         console.log("Password:", password);  
+
+        // Vérification si l'utilisateur existe
         const user = await User.findOne({ where: { email } });  
         if (!user) {
             return res.status(404).json({ error: "Utilisateur introuvable" });
         }
 
-        // Vérifiez que JWT_SECRET est défini  
-        console.log("JWT Secret:", process.env.JWT_SECRET);  
+        // Vérification que JWT_SECRET est bien défini  
+        if (!process.env.JWT_SECRET) {
+            console.error("❌ ERREUR: Clé JWT_SECRET non définie !");
+            return res.status(500).json({ error: "Erreur serveur : clé JWT manquante" });
+        }
 
-        const token = jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET, { expiresIn: "1h" });  
-        res.status(200).json({ message: "Connexion réussie", token, user });  
+        // ✅ Génération du token JWT sécurisé
+        const token = jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET, { expiresIn: "1h" });
+
+        console.log("🔑 Token généré avec succès:", token);
+
+        // ✅ Ne pas renvoyer le mot de passe dans la réponse
+        const userData = {
+            id: user.id,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            email: user.email,
+            role: user.role
+        };
+
+        res.status(200).json({ message: "Connexion réussie", token, user: userData });  
     } catch (error) {  
-        console.error("Erreur de connexion:", error);  
+        console.error("❌ Erreur de connexion:", error);  
         res.status(500).json({ error: "Erreur lors de la connexion", details: error.message });  
     }  
 };

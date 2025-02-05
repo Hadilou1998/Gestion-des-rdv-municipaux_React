@@ -4,13 +4,14 @@ const { User } = require("../models");
 module.exports = async (req, res, next) => {
     try {
         const authHeader = req.header("Authorization");
+
         if (!authHeader || !authHeader.startsWith("Bearer ")) {
             return res.status(401).json({ message: "Accès refusé. Token manquant ou malformé." });
         }
 
         const token = authHeader.split(" ")[1];
 
-        console.log("📡 Token reçu:", token);
+        console.log("📡 Token reçu:", token); // Vérification du token reçu
 
         let decoded;
         try {
@@ -20,7 +21,10 @@ module.exports = async (req, res, next) => {
             return res.status(401).json({ message: "Token invalide ou expiré." });
         }
 
-        const user = await User.findByPk(decoded.id, { attributes: { exclude: ["password"] } });
+        const user = await User.findByPk(decoded.id, {
+            attributes: ["id", "firstName", "lastName", "email", "role"]
+        });
+
         if (!user) {
             return res.status(401).json({ message: "Utilisateur introuvable." });
         }
