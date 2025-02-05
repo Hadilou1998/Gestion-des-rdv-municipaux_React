@@ -18,7 +18,7 @@ module.exports = async (req, res, next) => {
         }
 
         const user = await User.findByPk(decoded.id);
-        if (!user || user.token !== token) { // Vérification en base
+        if (!user || user.token !== token) {
             return res.status(401).json({ message: "Utilisateur introuvable ou token non valide." });
         }
 
