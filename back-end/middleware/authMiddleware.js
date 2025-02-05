@@ -10,8 +10,6 @@ module.exports = async (req, res, next) => {
 
         const token = authHeader.split(" ")[1];
 
-        console.log("📡 Token reçu par le middleware:", token); // Debug Backend
-
         let decoded;
         try {
             decoded = jwt.verify(token, process.env.JWT_SECRET);
@@ -21,8 +19,8 @@ module.exports = async (req, res, next) => {
         }
 
         const user = await User.findByPk(decoded.id);
-        if (!user) {
-            return res.status(401).json({ message: "Utilisateur introuvable." });
+        if (!user || user.token !== token) { // Vérifie que le token correspond bien à celui en base
+            return res.status(401).json({ message: "Utilisateur introuvable ou token non valide." });
         }
 
         req.user = user.toJSON();
