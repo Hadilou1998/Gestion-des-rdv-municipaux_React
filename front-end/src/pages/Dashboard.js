@@ -24,10 +24,9 @@ function Dashboard() {
                         <div className="card-body">
                             <h5 className="card-title">Rendez-vous</h5>
                             <p className="card-text">Prenez ou gérez des rendez-vous.</p>
-                            <Link to="/appointments" className="btn btn-primary">Voir les rendez-vous</Link>
                             {(user?.role === "admin" || user?.role === "agent") && (
                                 <div className="mt-3">
-                                    <Link to="/appointments/manage" className="btn btn-secondary">Gérer les rendez-vous</Link>
+                                    <Link to="/appointments" className="btn btn-primary">Voir les rendez-vous</Link>
                                 </div>
                             )}
                         </div>
