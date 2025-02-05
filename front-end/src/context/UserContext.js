@@ -16,7 +16,6 @@ export const UserProvider = ({ children }) => {
             const userData = localStorage.getItem("user");
 
             if (!userData) {
-                console.warn("⚠️ Aucun utilisateur trouvé en localStorage.");
                 setUser(null);
                 setLoading(false);
                 return;
@@ -80,13 +79,6 @@ export const UserProvider = ({ children }) => {
             axios.defaults.headers.common["Authorization"] = `Bearer ${response.data.token}`;
             setUser(userData);
             console.log("🔹 Utilisateur défini après connexion:", userData);
-
-            // 🚀 Redirection après connexion
-            if (userData.role === "admin" || userData.role === "agent") {
-                navigate("/dashboard");
-            } else {
-                navigate("/dashboard"); // Temporairement vers `/dashboard`
-            }
 
             return { success: true };
         } catch (error) {
