@@ -5,7 +5,6 @@ import "react-datepicker/dist/react-datepicker.css";
 
 function AppointmentForm() {
     const [services, setServices] = useState([]);
-    const [appointments, setAppointments] = useState([]);
     const [selectedService, setSelectedService] = useState("");
     const [date, setDate] = useState(null);
     const [timeSlot, setTimeSlot] = useState("");
@@ -30,8 +29,7 @@ function AppointmentForm() {
     // Récupération des rendez-vous
     const fetchAppointments = async () => {
         try {
-            const response = await axios.get("/appointments/all");
-            setAppointments(response.data);
+            await axios.get("/appointments/all");
         } catch (error) {
             console.error("Erreur lors de la récupération des rendez-vous :", error);
             setError("Une erreur est survenue lors de la récupération des rendez-vous.");
@@ -152,30 +150,7 @@ function AppointmentForm() {
                     Confirmer
                 </button>
             </form>
-
-            <h3 className="mt-5">Liste des rendez-vous</h3>
-            <table className="table table-striped mt-3">
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Service</th>
-                        <th>Date</th>
-                        <th>Créneau horaire</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {appointments.map((appointment, index) => (
-                        <tr key={appointment.id}>
-                            <td>{index + 1}</td>
-                            <td>{appointment.service_name}</td>
-                            <td>{appointment.appointmentDate}</td>
-                            <td>{appointment.time_slot}</td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
         </div>
     );
 }
-
 export default AppointmentForm;
