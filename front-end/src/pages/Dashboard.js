@@ -3,7 +3,9 @@ import { Link } from "react-router-dom";
 import { UserContext } from "../context/UserContext"; // Contexte utilisateur
 
 function Dashboard() {
-    const { user } = useContext(UserContext) || {}; // Récupérer les informations utilisateur
+    const { user, loading } = useContext(UserContext) || {}; // Récupérer les informations utilisateur
+
+    if (loading) return <div className="text-center mt-4">Chargement du tableau de bord...</div>; // ✅ Gestion du chargement
 
     return (
         <div className="container mt-4">
