@@ -64,7 +64,7 @@ function App() {
                         <Route path="/unauthorized" element={<Unauthorized />} />
 
                         {/* Routes accessibles uniquement aux utilisateurs connectés */}
-                        <Route path="/dashboard" element={<ProtectedRoute element={<Dashboard />} roles={["admin", "agent"]} />} />
+                        <Route path="/dashboard" element={<ProtectedRoute element={<Dashboard />} roles={["admin", "agent", "citizen"]} />} />
                         <Route path="/services" element={<ProtectedRoute element={<ServiceList />} roles={["admin", "agent", "citizen"]} />} />
                         <Route path="/services/:id" element={<ProtectedRoute element={<ServiceDetails />} roles={["admin", "agent", "citizen"]} />} />
                         <Route path="/services/edit/:id" element={<ProtectedRoute element={<ServiceEdit />} roles={["admin", "agent"]} />} />
