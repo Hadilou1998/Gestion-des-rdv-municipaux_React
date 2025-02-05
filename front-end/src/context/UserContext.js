@@ -25,31 +25,24 @@ export const UserProvider = ({ children }) => {
             try {
                 parsedUser = JSON.parse(userData);
                 if (!parsedUser || !parsedUser.token) {
-                    throw new Error("❌ Données utilisateur invalides.");
+                    throw new Error("Données utilisateur invalides.");
                 }
             } catch (err) {
-                console.error("❌ Erreur JSON:", err);
                 localStorage.removeItem("user");
                 setUser(null);
                 setLoading(false);
                 return;
             }
 
-            console.log("📡 Token envoyé à /auth/me:", parsedUser.token);
             axios.defaults.headers.common["Authorization"] = `Bearer ${parsedUser.token}`;
 
             const response = await axios.get("/auth/me");
-
-            if (!response.data.role) {
-                console.error("❌ ERREUR: Le rôle de l'utilisateur n'est pas défini !");
-                throw new Error("Rôle utilisateur introuvable.");
+            if (!response.data || !response.data.role) {
+                throw new Error("Le rôle de l'utilisateur est introuvable.");
             }
 
-            console.log("✅ Utilisateur chargé:", response.data);
             setUser({ ...response.data, token: parsedUser.token });
-
         } catch (error) {
-            console.error("❌ Erreur utilisateur:", error);
             localStorage.removeItem("user");
             setUser(null);
         } finally {
@@ -67,22 +60,19 @@ export const UserProvider = ({ children }) => {
             const response = await axios.post("/auth/login", credentials);
 
             if (!response.data.user || !response.data.token) {
-                throw new Error("❌ Réponse invalide du serveur.");
+                throw new Error("Réponse invalide du serveur.");
             }
-
-            console.log("✅ Token reçu après connexion:", response.data.token);
 
             const userData = { ...response.data.user, token: response.data.token };
 
-            // ✅ Stockage sécurisé
             localStorage.setItem("user", JSON.stringify(userData));
             axios.defaults.headers.common["Authorization"] = `Bearer ${response.data.token}`;
             setUser(userData);
-            console.log("🔹 Utilisateur défini après connexion:", userData);
+
+            navigate("/dashboard");
 
             return { success: true };
         } catch (error) {
-            console.error("❌ Erreur lors de la connexion:", error);
             return {
                 success: false,
                 error: error.response?.data?.message || "Erreur de connexion",
@@ -92,13 +82,10 @@ export const UserProvider = ({ children }) => {
 
     /** ✅ Fonction de déconnexion */
     const logout = () => {
-        console.log("🚪 Déconnexion en cours...");
         localStorage.removeItem("user");
         setUser(null);
         delete axios.defaults.headers.common["Authorization"];
-
-        // ✅ Attendre que `user` soit bien null avant de rediriger
-        setTimeout(() => navigate("/login"), 1000);
+        navigate("/login");
     };
 
     return (
