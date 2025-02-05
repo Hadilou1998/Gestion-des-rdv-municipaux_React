@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { UserContext } from "../context/UserContext";
 
 function Navbar() {
-    const { user, logout, loading } = useContext(UserContext);
+    const { user, logout } = useContext(UserContext);
     const navigate = useNavigate(); // ✅ Utilisation correcte de `navigate`
 
     return (
@@ -29,7 +29,7 @@ function Navbar() {
                         <li className="nav-item"><Link className="nav-link" to="/services">Services</Link></li>
 
                         {/* ✅ Affichage uniquement après le chargement des données utilisateur */}
-                        {!loading && user && (
+                        {user && (
                             <>
                                 <li className="nav-item"><Link className="nav-link" to="/appointments/my">Mes Rendez-vous</Link></li>
                                 <li className="nav-item"><Link className="nav-link" to="/dashboard">Tableau de bord</Link></li>
@@ -48,13 +48,13 @@ function Navbar() {
 
                     {/* ✅ Connexion/Déconnexion dynamique */}
                     <ul className="navbar-nav">
-                        {!loading && !user ? (
+                        {!user ? (
                             <>
                                 <li className="nav-item"><Link className="nav-link" to="/login">Connexion</Link></li>
                                 <li className="nav-item"><Link className="nav-link" to="/register">Inscription</Link></li>
                             </>
                         ) : (
-                            !loading && user && (
+                            user && (
                                 <li className="nav-item">
                                     <button className="btn btn-outline-danger" onClick={() => logout(navigate)}>
                                         Déconnexion
