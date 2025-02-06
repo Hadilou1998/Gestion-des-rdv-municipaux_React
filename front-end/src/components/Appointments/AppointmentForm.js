@@ -29,7 +29,7 @@ function AppointmentForm() {
     // Récupération des rendez-vous
     const fetchAppointments = async () => {
         try {
-            await axios.get("/appointments/all");
+            await axios.get("/appointments");
         } catch (error) {
             console.error("Erreur lors de la récupération des rendez-vous :", error);
             setError("Une erreur est survenue lors de la récupération des rendez-vous.");
