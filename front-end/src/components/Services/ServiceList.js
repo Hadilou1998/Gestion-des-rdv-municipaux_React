@@ -18,7 +18,7 @@ function ServiceList() {
                 // ✅ Vérification et affichage du token avant l'appel API
                 console.log("📡 Token JWT utilisé :", axios.defaults.headers.common["Authorization"]);
 
-                const response = await axios.get("/api/services");
+                const response = await axios.get("/services");
                 setServices(response.data);
             } catch (err) {
                 console.error("❌ Erreur lors de la récupération des services :", err);
@@ -47,7 +47,7 @@ function ServiceList() {
     const handleDelete = async (serviceId) => {
         if (user?.role === "admin" && window.confirm("Êtes-vous sûr de vouloir supprimer ce service ?")) {
             try {
-                await axios.delete(`/api/services/${serviceId}`);
+                await axios.delete(`/services/${serviceId}`);
                 setServices(services.filter((s) => s.id !== serviceId));
             } catch (err) {
                 console.error("❌ Erreur lors de la suppression du service :", err);
