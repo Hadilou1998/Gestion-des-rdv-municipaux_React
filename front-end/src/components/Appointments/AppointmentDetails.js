@@ -1,20 +1,29 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import axios from "../../services/api";
+import axios from "../services/api";
 
 function AppointmentDetails() {
     const { id } = useParams();
     const [appointment, setAppointment] = useState(null);
+    const [error, setError] = useState(null);
 
     useEffect(() => {
-        axios.get(`/appointments/${id}`)
-        .then(response => setAppointment(response.data))
-        .catch(error => {
-            console.error("Erreur lors de la récupération du rendez-vous:", error.response ? error.response.data : error.message);
-        });
+        const fetchAppointment = async () => {
+            try {
+                const response = await axios.get(`/appointments/${id}`); // ✅ Vérifie que l'ID est bien utilisé ici
+                setAppointment(response.data);
+            } catch (err) {
+                console.error("❌ Erreur lors de la récupération du rendez-vous:", err);
+                setError("Rendez-vous introuvable.");
+            }
+        };
+
+        fetchAppointment();
     }, [id]);
 
-    if (!appointment) return <div>Chargement...</div>;
+    if (error) {
+        return <p style={{ color: "red" }}>{error}</p>;
+    }
 
     return (
         <div className="container mt-4">
