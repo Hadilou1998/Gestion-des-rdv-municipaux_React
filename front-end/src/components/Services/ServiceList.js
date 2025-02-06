@@ -11,12 +11,31 @@ function ServiceList() {
 
     useEffect(() => {
         const fetchServices = async () => {
+            setLoading(true);
+            setError(null);
+
             try {
-                const response = await axios.get("/services");
+                // ✅ Vérification et affichage du token avant l'appel API
+                console.log("📡 Token JWT utilisé :", axios.defaults.headers.common["Authorization"]);
+
+                const response = await axios.get("/api/services");
                 setServices(response.data);
             } catch (err) {
-                console.error("Erreur lors de la récupération des services :", err);
-                setError("Impossible de charger les services. Veuillez réessayer plus tard.");
+                console.error("❌ Erreur lors de la récupération des services :", err);
+
+                if (err.response) {
+                    // Erreur côté serveur (API)
+                    if (err.response.status === 401) {
+                        setError("Accès non autorisé. Veuillez vous reconnecter.");
+                    } else if (err.response.status === 403) {
+                        setError("Vous n'avez pas les permissions nécessaires pour voir les services.");
+                    } else {
+                        setError("Impossible de charger les services. Veuillez réessayer plus tard.");
+                    }
+                } else {
+                    // Erreur réseau
+                    setError("Erreur réseau. Vérifiez votre connexion.");
+                }
             } finally {
                 setLoading(false);
             }
@@ -28,10 +47,10 @@ function ServiceList() {
     const handleDelete = async (serviceId) => {
         if (user?.role === "admin" && window.confirm("Êtes-vous sûr de vouloir supprimer ce service ?")) {
             try {
-                await axios.delete(`/services/${serviceId}`);
+                await axios.delete(`/api/services/${serviceId}`);
                 setServices(services.filter((s) => s.id !== serviceId));
             } catch (err) {
-                console.error("Erreur lors de la suppression du service :", err);
+                console.error("❌ Erreur lors de la suppression du service :", err);
                 setError("Échec de la suppression du service. Veuillez réessayer.");
             }
         }
