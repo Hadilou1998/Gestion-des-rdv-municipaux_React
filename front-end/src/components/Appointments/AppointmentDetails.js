@@ -6,23 +6,35 @@ function AppointmentDetails() {
     const { id } = useParams();
     const [appointment, setAppointment] = useState(null);
     const [error, setError] = useState(null);
+    const [loading, setLoading] = useState(true); // ✅ Ajout d'un état de chargement
 
     useEffect(() => {
         const fetchAppointment = async () => {
             try {
-                const response = await axios.get(`/appointments/${id}`); // ✅ Vérifie que l'ID est bien utilisé ici
+                const response = await axios.get(`/appointments/${id}`);
                 setAppointment(response.data);
             } catch (err) {
                 console.error("❌ Erreur lors de la récupération du rendez-vous:", err);
                 setError("Rendez-vous introuvable.");
+            } finally {
+                setLoading(false); // ✅ Fin du chargement
             }
         };
 
         fetchAppointment();
     }, [id]);
 
+    if (loading) {
+        return <p>⏳ Chargement en cours...</p>;
+    }
+
     if (error) {
         return <p style={{ color: "red" }}>{error}</p>;
+    }
+
+    // ✅ Vérification si `appointment` est null AVANT d'afficher les détails
+    if (!appointment) {
+        return <p style={{ color: "red" }}>⛔ Aucune donnée de rendez-vous disponible.</p>;
     }
 
     return (
