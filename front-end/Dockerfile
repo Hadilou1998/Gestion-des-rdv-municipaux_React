@@ -26,4 +26,4 @@ COPY --from=build /app/build /usr/local/apache2/htdocs
 EXPOSE 80
 
 # Démarrer le serveur web Apache
-CMD ["apache2-foreground"]
+CMD ["httpd-foreground"]
