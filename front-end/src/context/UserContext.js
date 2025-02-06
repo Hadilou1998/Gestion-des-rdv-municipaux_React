@@ -79,7 +79,7 @@ export const UserProvider = ({ children }) => {
                 error: error.response?.data?.message || "Erreur de connexion",
             };
         }
-    };    
+    };        
 
     /** ✅ Fonction de déconnexion */
     const logout = () => {

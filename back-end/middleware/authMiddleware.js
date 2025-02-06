@@ -10,8 +10,12 @@ module.exports = async (req, res, next) => {
         }
 
         const token = authHeader.split(" ")[1];
+        console.log("📡 Token reçu dans le middleware:", `"${token}"`);
 
-        console.log("📡 Token reçu:", token); // Vérification du token reçu
+        if (!process.env.JWT_SECRET) {
+            console.error("🚨 ERREUR: Clé JWT_SECRET manquante !");
+            return res.status(500).json({ message: "Erreur serveur : clé JWT manquante" });
+        }
 
         let decoded;
         try {
