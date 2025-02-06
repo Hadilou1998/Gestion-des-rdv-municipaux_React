@@ -9,24 +9,24 @@ module.exports = async (req, res, next) => {
             return res.status(401).json({ message: "Accès refusé. Token manquant ou malformé." });
         }
 
-        // ✅ Extraire uniquement la chaîne de caractères du token
-        const token = authHeader.split(" ")[1].trim();
+        // ✅ Extraire uniquement le token et s'assurer qu'il est une chaîne
+        let token = authHeader.split(" ")[1]?.trim();
 
-        console.log("📡 Token reçu dans le middleware:", token);
+        console.log("📡 Token brut reçu dans le middleware:", token);
 
-        // ✅ Vérifier que le token est bien une chaîne et non un objet JSON
-        if (!token || typeof token !== "string") {
-            return res.status(400).json({ message: "Format du token invalide." });
+        if (!token || typeof token !== "string" || token.includes("{")) {
+            return res.status(400).json({ message: "Token invalide ou corrompu." });
         }
 
         let decoded;
         try {
             decoded = jwt.verify(token, process.env.JWT_SECRET);
         } catch (err) {
-            console.error("❌ Erreur JWT:", err);
+            console.error("❌ Erreur JWT lors de la vérification:", err);
             return res.status(401).json({ message: "Token invalide ou expiré." });
         }
 
+        // ✅ Vérification si l'utilisateur existe
         const user = await User.findByPk(decoded.id, {
             attributes: ["id", "firstName", "lastName", "email", "role"]
         });
