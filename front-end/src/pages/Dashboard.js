@@ -44,15 +44,6 @@ function Dashboard() {
                     </div>
                 </div>
             </div>
-
-            {/* Si l'utilisateur est admin ou agent, afficher une section dédiée aux rendez-vous */}
-            {(user?.role === "admin" || user?.role === "agent") && (
-                <div className="mt-4">
-                    <h5>Rendez-vous Citoyens</h5>
-                    <p>En tant qu'administrateur ou agent, vous pouvez accéder à tous les rendez-vous des citoyens pour les gérer.</p>
-                    <Link to="/appointments/citizens" className="btn btn-warning">Voir les rendez-vous des citoyens</Link>
-                </div>
-            )}
         </div>
     );
 };
