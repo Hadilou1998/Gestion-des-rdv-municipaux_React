@@ -36,30 +36,6 @@ exports.getMyAppointments = async (req, res) => {
     }
 };
 
-// Obtenir les rendez-vous d'un citoyen connecté
-exports.getCitizenAppointments = async (req, res) => {
-    try {
-        if (req.user.role !== "citizen") {
-            return res.status(403).json({ message: "Accès interdit. Seuls les citoyens peuvent voir leurs rendez-vous." });
-        }
-
-        const appointments = await Appointment.findAll({
-            where: { userId: req.user.id },
-            include: [{ model: Service, attributes: ["id", "name"] }],
-            order: [["date", "ASC"]]
-        });
-
-        if (!appointments.length) {
-            return res.status(404).json({ message: "Aucun rendez-vous trouvé." });
-        }
-
-        res.status(200).json(appointments);
-    } catch (error) {
-        console.error("❌ Erreur lors de la récupération des rendez-vous :", error);
-        res.status(500).json({ message: "Erreur serveur." });
-    }
-};
-
 // Obtenir tous les rendez-vous (pour admin et agent)
 exports.getAllAppointments = async (req, res) => {
     try {
