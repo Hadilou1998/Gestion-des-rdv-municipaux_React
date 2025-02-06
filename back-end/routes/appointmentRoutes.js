@@ -13,6 +13,9 @@ router.get('/', authMiddleware, appointmentController.getAllAppointments);
 // Obtenir les rendez-vous de l'utilisateur connecté
 router.get('/my', authMiddleware, appointmentController.getMyAppointments);
 
+// Obtenir les rendez-vous d'un citoyen connecté
+router.get('/citizens', authMiddleware, appointmentController.getCitizenAppointments);
+
 // Consulter un rendez-vous
 router.get('/:id', authMiddleware, appointmentController.getAppointmentById);
 
