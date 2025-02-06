@@ -1,0 +1,50 @@
+version: "3.8"
+
+services:
+  backend:
+    build: ../back-end
+    container_name: backend
+    ports:
+      - "5000:5000"
+    depends_on:
+      - db
+    env_file:
+      - ../.env # Charger les variables d'environnement depuis le fichier .env
+    volumes:
+      - ../back-end:/app
+      - /app/node_modules # Eviter les conflits avec les modules locaux
+    networks:
+      - mynetwork
+    
+  frontend:
+    build: ../front-end
+    container_name: frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    volumes:
+      - ../front-end:/app
+      - /app/node_modules # Eviter les conflits avec les modules locaux  
+    networks:
+      - mynetwork
+  
+  db:
+    image: mysql:8.0
+    container_name: mysql_db
+    restart: always
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: supersaiyan
+      MYSQL_DATABASE: base_mairie
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - mynetwork
+  
+volumes:
+  db_data:
+
+networks:
+  mynetwork:
