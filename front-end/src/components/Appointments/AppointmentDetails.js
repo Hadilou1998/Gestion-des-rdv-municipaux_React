@@ -18,7 +18,7 @@ function AppointmentDetails() {
                     throw new Error("⛔ Accès interdit. Seuls les citoyens peuvent voir leurs rendez-vous.");
                 }
 
-                const response = await axios.get(`/appointments/citizens`);
+                const response = await axios.get(`/appointments/my`);
                 setAppointment(response.data);
             } catch (err) {
                 console.error("❌ Erreur lors de la récupération du rendez-vous:", err);
