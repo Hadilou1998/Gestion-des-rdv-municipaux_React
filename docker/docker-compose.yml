@@ -1,52 +1,47 @@
+version: '3.8'
+
 services:
+  mysql_db:
+    image: mysql:8
+    restart: always
+    environment:
+      MYSQL_DATABASE: base_mairie
+      MYSQL_USER: root
+      MYSQL_PASSWORD: supersaiyan
+      MYSQL_ROOT_PASSWORD: supersaiyan
+    ports:
+      - "3306:3306"
+    networks:
+      - mynetwork
+
   backend:
-    build: ../back-end
-    container_name: backend
+    build:
+      context: ../back-end
+      dockerfile: Dockerfile
+    restart: always
+    depends_on:
+      - mysql_db
+    environment:
+      - DB_NAME=base_mairie
+      - DB_USER=root
+      - DB_PASSWORD=supersaiyan
+      - DB_HOST=mysql_db
     ports:
       - "5000:5000"
-    depends_on:
-      - db
-    environment:
-      DB_NAME: base_mairie
-      DB_USER: root
-      DB_PASSWORD: supersaiyan
-      DB_HOST: db
-      JWT_SECRET: supersecretkey
-    volumes:
-      - ../back-end:/app
-      - /app/node_modules
     networks:
       - mynetwork
 
   frontend:
-    build: ../front-end
-    container_name: frontend
+    build:
+      context: ../front-end
+      dockerfile: Dockerfile
+    restart: always
     ports:
       - "3000:80"
     depends_on:
       - backend
-    volumes:
-      - ../front-end:/app
-      - /app/node_modules
     networks:
       - mynetwork
-
-  db:
-    image: mysql:latest
-    container_name: mysql_db
-    restart: always
-    ports:
-      - "3307:3306"
-    environment:
-      MYSQL_ROOT_PASSWORD: supersaiyan
-      MYSQL_DATABASE: base_mairie
-    volumes:
-      - db_data:/var/lib/mysql
-    networks:
-      - mynetwork
-
-volumes:
-  db_data:
 
 networks:
   mynetwork:
