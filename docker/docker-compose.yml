@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   mysql_db:
-    image: mysql:8
+    image: mysql:8.0
     restart: always
     environment:
       MYSQL_DATABASE: base_mairie
