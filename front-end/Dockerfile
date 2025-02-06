@@ -17,7 +17,7 @@ COPY . .
 RUN npm run build
 
 # Utiliser une image officielle d'Apache comme serveur web
-FROM apache:2.4
+FROM httpd:2.4
 
 # Copier les fichiers de build de l'application React dans le conteneur Apache
 COPY --from=build /app/build /usr/local/apache2/htdocs
