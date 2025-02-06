@@ -1,5 +1,3 @@
-version: "3.8"
-
 services:
   backend:
     build: ../back-end
@@ -8,14 +6,18 @@ services:
       - "5000:5000"
     depends_on:
       - db
-    env_file:
-      - ../.env # Charger les variables d'environnement depuis le fichier .env
+    environment:
+      DB_NAME: base_mairie
+      DB_USER: root
+      DB_PASSWORD: supersaiyan
+      DB_HOST: db
+      JWT_SECRET: supersecretkey
     volumes:
       - ../back-end:/app
-      - /app/node_modules # Eviter les conflits avec les modules locaux
+      - /app/node_modules
     networks:
       - mynetwork
-    
+
   frontend:
     build: ../front-end
     container_name: frontend
@@ -25,12 +27,12 @@ services:
       - backend
     volumes:
       - ../front-end:/app
-      - /app/node_modules # Eviter les conflits avec les modules locaux  
+      - /app/node_modules
     networks:
       - mynetwork
-  
+
   db:
-    image: mysql:8.0
+    image: mysql:latest
     container_name: mysql_db
     restart: always
     ports:
@@ -42,7 +44,7 @@ services:
       - db_data:/var/lib/mysql
     networks:
       - mynetwork
-  
+
 volumes:
   db_data:
 
