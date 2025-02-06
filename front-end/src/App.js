@@ -80,7 +80,7 @@ function App() {
                         <Route path="/appointments/my" element={<ProtectedRoute element={<MyAppointments />} roles={["citizen"]} />} />
 
                         {/* Gestion des créneaux horaires */}
-                        <Route path="/slots" element={<ProtectedRoute element={<TimeSlotList />} roles={["admin", "agent"]} />} />
+                        <Route path="/slots" element={<ProtectedRoute element={<TimeSlotList />} roles={["admin", "agent", "citizen"]} />} />
                         <Route path="/slots/new" element={<ProtectedRoute element={<TimeSlotForm />} roles={["admin", "agent"]} />} />
                         <Route path="/slots/:id" element={<ProtectedRoute element={<TimeSlotDetails />} roles={["admin", "agent"]} />} />
                     </Routes>
