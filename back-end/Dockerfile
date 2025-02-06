@@ -7,8 +7,10 @@ WORKDIR /app
 # Copier le fichier package.json et package-lock.json dans le conteneur
 COPY package*.json ./
 
-# Installer les dépendances
-RUN npm install --legacy-peer-deps
+# ✅ Installation propre des dépendances
+RUN npm install --legacy-peer-deps \
+    && npm rebuild bcrypt --build-from-source \
+    && npm cache clean --force
 
 # Copier le reste du code source dans le conteneur
 COPY . .
