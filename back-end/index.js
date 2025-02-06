@@ -9,10 +9,17 @@ const serviceRoutes = require("./routes/serviceRoutes");
 const slotRoutes = require("./routes/slotRoutes");
 const db = require("./models");
 
-// Initialisation
+// 🔧 Charger les variables d'environnement
 dotenv.config();
+
 const app = express();
 const PORT = process.env.PORT || 5000;
+
+// ✅ Vérification du JWT_SECRET chargé
+if (!process.env.JWT_SECRET) {
+    console.error("❌ ERREUR: JWT_SECRET est introuvable dans .env !");
+    process.exit(1);
+}
 
 // Middlewares
 app.use(cors({
@@ -31,12 +38,12 @@ app.use("/api/slots", slotRoutes);
 
 // Connexion à la base de données
 db.sequelize.sync({ alter: true }).then(() => {
-    console.log("Connexion à la base de données réussie.");
+    console.log("✅ Connexion à la base de données réussie.");
 }).catch((error) => {
-    console.error("Erreur de connexion à la base de données :", error);
+    console.error("❌ Erreur de connexion à la base de données :", error);
 });
 
 // Lancement du serveur
 app.listen(PORT, () => {
-    console.log(`Serveur en écoute sur le port ${PORT}`);
+    console.log(`🚀 Serveur en écoute sur le port ${PORT}`);
 });

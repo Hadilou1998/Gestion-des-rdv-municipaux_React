@@ -9,12 +9,14 @@ module.exports = async (req, res, next) => {
             return res.status(401).json({ message: "Accès refusé. Token manquant ou malformé." });
         }
 
-        const token = authHeader.split(" ")[1];
-        console.log("📡 Token reçu dans le middleware:", `"${token}"`);
+        // ✅ Extraire uniquement la chaîne de caractères du token
+        const token = authHeader.split(" ")[1].trim();
 
-        if (!process.env.JWT_SECRET) {
-            console.error("🚨 ERREUR: Clé JWT_SECRET manquante !");
-            return res.status(500).json({ message: "Erreur serveur : clé JWT manquante" });
+        console.log("📡 Token reçu dans le middleware:", token);
+
+        // ✅ Vérifier que le token est bien une chaîne et non un objet JSON
+        if (!token || typeof token !== "string") {
+            return res.status(400).json({ message: "Format du token invalide." });
         }
 
         let decoded;

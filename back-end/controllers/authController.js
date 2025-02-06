@@ -2,40 +2,42 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { User } = require("../models");
 
-// ✅ Inscription
+// Inscription
 exports.register = async (req, res) => {
     const { firstName, lastName, email, password, role } = req.body;
     try {
         const hashedPassword = await bcrypt.hash(password, 10);
         const user = await User.create({ firstName, lastName, email, password: hashedPassword, role });
-
         res.status(201).json({ message: "Utilisateur créé avec succès", user });
     } catch (error) {
         res.status(400).json({ error: "Erreur lors de l'inscription", details: error.message });
     }
 };
 
-// ✅ Connexion
+// Connexion
 exports.login = async (req, res) => {
     const { email, password } = req.body;
     try {
         console.log("📩 Email reçu:", email);
 
+        // Vérification si l'utilisateur existe
         const user = await User.findOne({ where: { email } });
         if (!user) {
             return res.status(404).json({ error: "Utilisateur introuvable" });
         }
 
+        // 🔥 Vérification que JWT_SECRET est défini
         if (!process.env.JWT_SECRET) {
-            console.error("🚨 ERREUR: Clé JWT_SECRET manquante !");
+            console.error("❌ ERREUR: Clé JWT_SECRET non définie !");
             return res.status(500).json({ error: "Erreur serveur : clé JWT manquante" });
         }
 
-        // ✅ Génération du token JWT
+        // ✅ Génération du token JWT sécurisé
         const token = jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET, { expiresIn: "1h" });
+
         console.log("🔑 Token généré:", token);
 
-        // ✅ Ne pas renvoyer le mot de passe
+        // ✅ Ne pas renvoyer le mot de passe dans la réponse
         const userData = {
             id: user.id,
             firstName: user.firstName,
@@ -51,7 +53,7 @@ exports.login = async (req, res) => {
     }
 };
 
-// ✅ Récupération de l'utilisateur actuel
+// Utilisateur actuel
 exports.me = async (req, res) => {
     try {
         if (!req.user || !req.user.id) {
