@@ -17,7 +17,7 @@ RUN npm install --legacy-peer-deps && npm rebuild bcrypt --build-from-source
 COPY . .
 
 # Exposer le port du backend
-EXPOSE 5000
+EXPOSE 5001
 
 # Démarrer l'application
 CMD ["npm", "start"]
