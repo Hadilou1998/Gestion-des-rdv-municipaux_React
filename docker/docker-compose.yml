@@ -1,24 +1,27 @@
 services:
   mysql_db:
     image: mysql:8.0
-    restart: always
     environment:
       MYSQL_DATABASE: base_mairie
-      MYSQL_USER: root
-      MYSQL_PASSWORD: supersaiyan
       MYSQL_ROOT_PASSWORD: supersaiyan
     ports:
       - "3307:3306"
     networks:
       - mynetwork
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p$$MYSQL_ROOT_PASSWORD"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
 
   backend:
     build:
       context: ../back-end
       dockerfile: Dockerfile
-    restart: always
     depends_on:
-      - mysql_db
+      mysql_db:
+        condition: service_healthy
     environment:
       - DB_NAME=base_mairie
       - DB_USER=root
@@ -33,9 +36,8 @@ services:
     build:
       context: ../front-end
       dockerfile: Dockerfile
-    restart: always
     ports:
-      - "3000:80"
+      - "3001:80"
     depends_on:
       - backend
     networks:
