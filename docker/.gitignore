@@ -1,0 +1,15 @@
+# Exclure les fichiers d'environnement sensibles
+config/*.env
+
+# Exclure les fichiers de logs Docker
+*.log
+docker-compose.override.yml
+
+# Exclure les fichiers de cache Docker
+docker.sock
+docker.pid
+
+# Exclure les fichiers temporaires
+tmp/
+*.tmp
+.DS_Store
