@@ -1,9 +1,8 @@
 services:
   mysql_db:
     image: mysql:8.0
-    environment:
-      MYSQL_DATABASE: base_mairie
-      MYSQL_ROOT_PASSWORD: supersaiyan
+    env_file:
+      - ./config/mysql.env
     ports:
       - "3307:3306"
     networks:
@@ -18,15 +17,12 @@ services:
   backend:
     build:
       context: ../back-end
-      dockerfile: Dockerfile
+      dockerfile: ../docker/Dockerfile.backend
     depends_on:
       mysql_db:
         condition: service_healthy
-    environment:
-      - DB_NAME=base_mairie
-      - DB_USER=root
-      - DB_PASSWORD=supersaiyan
-      - DB_HOST=mysql_db
+    env_file:
+      - ./config/backend.env
     ports:
       - "5001:5000"
     networks:
@@ -35,7 +31,9 @@ services:
   frontend:
     build:
       context: ../front-end
-      dockerfile: Dockerfile
+      dockerfile: ../docker/Dockerfile.frontend
+    env_file:
+      - ./config/frontend.env
     ports:
       - "3001:80"
     depends_on:
