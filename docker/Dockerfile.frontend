@@ -1,0 +1,29 @@
+# Utiliser Node.js pour la construction
+FROM node:20 AS build
+
+# Définir le répertoire de travail
+WORKDIR /app
+
+# Copier uniquement le package.json et le package-lock.json
+COPY package*.json ./
+
+# Installer les dépendances
+RUN npm install
+
+# Copier les fichiers de l'application dans le conteneur
+COPY . .
+
+# Construire l'application React
+RUN npm run build
+
+# Utiliser Apache pour servir les fichiers de l'application
+FROM httpd:2.4
+
+# Copier les fichiers de l'application depuis la phase de construction
+COPY --from=build /app/build /usr/local/apache2/htdocs/
+
+# Exposer le port 80 de l'application
+EXPOSE 80
+
+# Démarrer le serveur Apache
+CMD ["httpd", "-D", "FOREGROUND"]
