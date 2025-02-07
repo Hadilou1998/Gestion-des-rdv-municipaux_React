@@ -1,23 +1,27 @@
 services:
   mysql_db:
     image: mysql:8.0
+    container_name: mysql_db
     env_file:
       - ./config/mysql.env
     ports:
-      - "3307:3306"
+      - "3307:3306"  # ⚠️ Ce port est pour l'accès depuis l'hôte, pas depuis les conteneurs.
     networks:
       - mynetwork
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p$$MYSQL_ROOT_PASSWORD"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "$$MYSQL_USER", "-p$$MYSQL_PASSWORD"]
       interval: 10s
       timeout: 5s
       retries: 5
       start_period: 30s
+    volumes:
+      - mysql_data:/var/lib/mysql  # ✅ Persistance des données
 
   backend:
     build:
       context: ../back-end
       dockerfile: ../docker/Dockerfile.backend
+    container_name: backend
     depends_on:
       mysql_db:
         condition: service_healthy
@@ -27,11 +31,14 @@ services:
       - "5001:5000"
     networks:
       - mynetwork
+    volumes:
+      - ../back-end:/app  # ✅ Montre le code pour le hot-reload (si Nodemon est utilisé)
 
   frontend:
     build:
       context: ../front-end
       dockerfile: ../docker/Dockerfile.frontend
+    container_name: frontend
     env_file:
       - ./config/frontend.env
     ports:
@@ -40,6 +47,11 @@ services:
       - backend
     networks:
       - mynetwork
+    volumes:
+      - ../front-end:/usr/local/apache2/htdocs/  # ✅ Permet le hot-reload pour React/Vue
 
 networks:
   mynetwork:
+
+volumes:
+  mysql_data:  # ✅ Volume persistant pour MySQL
