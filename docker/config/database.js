@@ -8,7 +8,6 @@ const sequelize = new Sequelize(
     host: process.env.DB_HOST || 'mysql_db',  // ✅ Utilisation de mysql_db
     dialect: 'mysql',
     port: process.env.DB_PORT || 3306,  // ✅ Correction du port MySQL
-    logging: false
   }
 );
 
