@@ -46,11 +46,6 @@ services:
       - backend
     networks:
       - mynetwork
-    volumes:
-      - ../front-end:/usr/local/apache2/htdocs/  # ✅ Permet le hot-reload pour React/Vue
 
 networks:
   mynetwork:
-
-volumes:
-  mysql_data:  # ✅ Volume persistant pour MySQL
