@@ -5,7 +5,7 @@ services:
     env_file:
       - ./config/mysql.env
     ports:
-      - "3307:3306"  # ⚠️ Ce port est pour l'accès depuis l'hôte, pas depuis les conteneurs.
+      - "3306:3306"  # ⚠️ Ce port est pour l'accès depuis l'hôte, pas depuis les conteneurs.
     networks:
       - mynetwork
     healthcheck:

@@ -29,7 +29,7 @@ RUN echo "CustomLog /dev/null common" >> /usr/local/apache2/conf/httpd.conf
 COPY --from=build /app/build /usr/local/apache2/htdocs
 
 # Exposition du port HTTP
-EXPOSE 80
+EXPOSE 3000
 
 # Démarrage du serveur Apache
 CMD ["httpd", "-D", "FOREGROUND"]
