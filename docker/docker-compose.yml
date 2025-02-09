@@ -7,8 +7,8 @@ services:
     container_name: mysql_db  
     env_file:  
       - ./config/mysql.env  
-    ports:  
-      - "3307:3307"  # Exposer le port 3306 de MySQL sur le port 3307 de l'hôte  
+    ports:
+      - "3306:3306"
     networks:  
       - mynetwork  
     healthcheck:  
