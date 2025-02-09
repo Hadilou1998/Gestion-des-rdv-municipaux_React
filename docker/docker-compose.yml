@@ -5,11 +5,11 @@ services:
     env_file:
       - ./config/mysql.env
     ports:
-      - "3306:3306"  # ⚠️ Ce port est pour l'accès depuis l'hôte, pas depuis les conteneurs.
+      - "3307:3306"
     networks:
       - mynetwork
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "$$MYSQL_USER", "-p$$MYSQL_PASSWORD"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -31,7 +31,7 @@ services:
       - mynetwork
     volumes:
       - ../back-end:/app
-      - /app/node_modules  # Éviter les conflits de node_modules entre hôte et conteneur
+      - /app/node_modules
 
   frontend:
     build:
