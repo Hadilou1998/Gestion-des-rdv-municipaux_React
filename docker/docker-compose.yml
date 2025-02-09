@@ -17,7 +17,8 @@ services:
 
   backend:
     build:
-      context: ./back-end
+      context: ./back-end  # ✅ Doit pointer vers `back-end/`
+      dockerfile: Dockerfile  # ✅ Le Dockerfile doit être dans `back-end/`
     container_name: backend
     depends_on:
       mysql_db:
@@ -25,16 +26,18 @@ services:
     env_file:
       - ./config/backend.env
     ports:
-      - "5001:5000" # Port exposé pour le backend
+      - "5001:5000"
     networks:
       - mynetwork
     volumes:
       - ./back-end:/app
-      - /app/node_modules # Évite les conflits avec les dépendances locales
+      - /app/node_modules  # ✅ Éviter les conflits des dépendances
+
 
   frontend:
     build:
       context: ./front-end
+      dockerfile: Dockerfile
     container_name: frontend
     env_file:
       - ./config/frontend.env
