@@ -18,7 +18,6 @@ services:
   backend:
     build:
       context: ./back-end
-      dockerfile: ../docker/Dockerfile.backend
     container_name: backend
     depends_on:
       mysql_db:
@@ -36,7 +35,6 @@ services:
   frontend:
     build:
       context: ./front-end
-      dockerfile: ../docker/Dockerfile.frontend
     container_name: frontend
     env_file:
       - ./config/frontend.env
