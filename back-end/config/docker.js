@@ -1,32 +1,15 @@
-require("dotenv").config({ path: "../../docker/config/backend.env" }); // Charger les variables depuis Docker
+const { Sequelize } = require('sequelize');  
 
-module.exports = {
-    development: {
-        username: process.env.DB_USER,
-        password: process.env.DB_PASSWORD,
-        database: process.env.DB_NAME,
-        host: process.env.DB_HOST || "mysql_db", // ✅ Utilisation du service MySQL de Docker
-        dialect: "mysql",
-        pool: {
-            max: 5,
-            min: 0,
-            acquire: 30000,
-            idle: 10000,
-        },
-        timezone: "+01:00",
-    },
-    production: {
-        username: process.env.DB_USER,
-        password: process.env.DB_PASSWORD,
-        database: process.env.DB_NAME,
-        host: process.env.DB_HOST,
-        dialect: "mysql",
-        pool: {
-            max: 10,
-            min: 2,
-            acquire: 30000,
-            idle: 10000,
-        },
-        timezone: "+01:00",
-    },
-};
+const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER, process.env.DB_PASSWORD, {  
+    host: process.env.DB_HOST || 'mysql_db',  
+    dialect: 'mysql',  
+});  
+
+// Test de la connexion
+sequelize.authenticate()  
+    .then(() => {  
+        console.log('Connexion à MySQL réussie!');  
+    })  
+    .catch(err => {  
+        console.error('Erreur durant la connexion à la base de données:', err);  
+    });

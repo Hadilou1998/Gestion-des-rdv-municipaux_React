@@ -1,51 +1,64 @@
-services:
-  mysql_db:
-    image: mysql:8.0
-    container_name: mysql_db
-    env_file:
-      - ./config/mysql.env
-    ports:
-      - "3307:3306"
-    networks:
-      - mynetwork
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 30s
+services:  
+  # ----------------------------------  
+  # 1. Service MySQL  
+  # ----------------------------------  
+  mysql_db:  
+    image: mysql:8.0  
+    container_name: mysql_db  
+    env_file:  
+      - ./config/mysql.env  
+    ports:  
+      - "3307:3307"  # Exposer le port 3306 de MySQL sur le port 3307 de l'hôte  
+    networks:  
+      - mynetwork  
+    healthcheck:  
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]  
+      interval: 10s  
+      timeout: 5s  
+      retries: 5  
+      start_period: 30s  
 
-  backend:
-    build:
-      context: ../back-end  # ✅ Chemin correct
-      dockerfile: Dockerfile
-    container_name: backend
-    depends_on:
-      mysql_db:
-        condition: service_healthy
-    env_file:
-      - ./config/backend.env
-    ports:
-      - "5001:5000"
-    networks:
-      - mynetwork
-    volumes:
-      - ../back-end:/app
-      - /app/node_modules  # ✅ Éviter les conflits des dépendances
+  # ----------------------------------  
+  # 2. Service Back-end (Node/Sequelize)  
+  # ----------------------------------  
+  backend:  
+    container_name: backend  
+    build:  
+      context: ../back-end  
+      dockerfile: Dockerfile  
+    depends_on:  
+      mysql_db:  
+        condition: service_healthy  
+    env_file:  
+      - ./config/backend.env  # Vérifiez que ce chemin est correct  
+    networks:  
+      - mynetwork  
+    ports:  
+      - "5001:5000"  
+    volumes:  
+      - ../back-end:/app  
+      - /app/node_modules  
+    command: npm start  
 
-  frontend:
-    build:
-      context: ../front-end  # ✅ Chemin correct
-      dockerfile: Dockerfile
-    container_name: frontend
-    env_file:
-      - ./config/frontend.env
-    ports:
-      - "3001:3000"
-    depends_on:
-      - backend
-    networks:
-      - mynetwork
+  # ----------------------------------  
+  # 3. Service Front-end (React, Vue, etc.)  
+  # ----------------------------------  
+  frontend:  
+    container_name: frontend  
+    build:  
+      context: ../front-end  
+      dockerfile: Dockerfile  
+    depends_on:  
+      - backend  
+    env_file:  
+      - ./config/frontend.env  
+    networks:  
+      - mynetwork  
+    ports:  
+      - "3001:3000"  
 
-networks:
+# ----------------------------------  
+# Réseau Docker partagé : mynetwork  
+# ----------------------------------  
+networks:  
   mynetwork:
