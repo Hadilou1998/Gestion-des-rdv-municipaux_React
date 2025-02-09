@@ -30,9 +30,8 @@ services:
     networks:
       - mynetwork
     volumes:
-      - ./back-end:/app
-      - /app/node_modules  # ✅ Éviter les conflits des dépendances
-
+      - ./back-end:/app:delegated  # ✅ Corrige les permissions
+      - /app/node_modules
 
   frontend:
     build:

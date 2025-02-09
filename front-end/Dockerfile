@@ -1,35 +1,29 @@
-# Étape 1 : Construction du projet React
+# Utiliser l'image officielle de Node.js
 FROM node:20 AS build
 
-# Définition du répertoire de travail dans le conteneur
+# Définir le répertoire de travail
 WORKDIR /app
 
-# Copie des fichiers package.json et package-lock.json pour installer les dépendances
+# Copier les fichiers de configuration
 COPY package*.json ./
 
-# Installation des dépendances
-RUN npm install --legacy-peer-deps
+# Installer les dépendances
+RUN npm install
 
-# Copie des fichiers sources du projet
+# Copier les fichiers du projet
 COPY . .
 
-# Construction du projet React
+# Construire l'application React
 RUN npm run build
 
-# Étape 2 : Serveur Apache pour servir le frontend
+# Utiliser l'image officielle Apache pour servir les fichiers
 FROM httpd:2.4
 
-# Définition du ServerName pour éviter l'avertissement
-RUN echo "ServerName localhost" >> /usr/local/apache2/conf/httpd.conf
+# Copier les fichiers build dans Apache
+COPY --from=build /app/build /usr/local/apache2/htdocs/
 
-# Suppression de l'affichage des logs d'accès pour alléger les logs
-RUN echo "CustomLog /dev/null common" >> /usr/local/apache2/conf/httpd.conf
-
-# Copie des fichiers construits dans le dossier du serveur Apache
-COPY --from=build /app/build /usr/local/apache2/htdocs
-
-# Exposition du port HTTP
+# Exposer le port 3000
 EXPOSE 3000
 
-# Démarrage du serveur Apache
+# Lancer Apache
 CMD ["httpd", "-D", "FOREGROUND"]
