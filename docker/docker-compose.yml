@@ -5,7 +5,7 @@ services:
     env_file:
       - ./config/mysql.env
     ports:
-      - "3307:3306" # Port exposé pour l'hôte (3307), interne (3306)
+      - "3307:3306"
     networks:
       - mynetwork
     healthcheck:
@@ -17,8 +17,8 @@ services:
 
   backend:
     build:
-      context: ../back-end  # ✅ Doit pointer vers `back-end/`
-      dockerfile: Dockerfile  # ✅ Le Dockerfile doit être dans `back-end/`
+      context: ../back-end  # ✅ Chemin correct
+      dockerfile: Dockerfile
     container_name: backend
     depends_on:
       mysql_db:
@@ -30,18 +30,18 @@ services:
     networks:
       - mynetwork
     volumes:
-      - ./back-end:/app:delegated  # ✅ Corrige les permissions
-      - /app/node_modules
+      - ../back-end:/app
+      - /app/node_modules  # ✅ Éviter les conflits des dépendances
 
   frontend:
     build:
-      context: ../front-end
+      context: ../front-end  # ✅ Chemin correct
       dockerfile: Dockerfile
     container_name: frontend
     env_file:
       - ./config/frontend.env
     ports:
-      - "3001:3000" # Port exposé pour le frontend
+      - "3001:3000"
     depends_on:
       - backend
     networks:
