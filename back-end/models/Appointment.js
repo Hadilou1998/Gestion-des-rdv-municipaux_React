@@ -1,5 +1,5 @@
-module.exports = (sequelizeInstance, DataTypes) => {
-    const Appointment = sequelizeInstance.define('Appointment', {
+module.exports = (sequelize, DataTypes) => {
+    const Appointment = sequelize.define('Appointment', {
         id: {
             type: DataTypes.INTEGER,
             primaryKey: true,
