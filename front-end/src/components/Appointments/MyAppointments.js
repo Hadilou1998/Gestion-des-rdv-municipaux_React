@@ -5,6 +5,8 @@ function MyAppointments() {
     const [appointments, setAppointments] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [editingAppointment, setEditingAppointment] = useState(null);
+    const [newDate, setNewDate] = useState("");
 
     // Fonction pour récupérer les rendez-vous de l'utilisateur
     useEffect(() => {
@@ -32,8 +34,7 @@ function MyAppointments() {
         if (!window.confirm("Êtes-vous sûr de vouloir annuler ce rendez-vous ?")) return;
 
         try {
-            await axios.delete(`/appointments/${appointmentId}`); // Requête DELETE pour annuler
-            // Met à jour la liste des rendez-vous localement en retirant le rendez-vous annulé
+            await axios.delete(`/appointments/${appointmentId}`);
             setAppointments((prevAppointments) =>
                 prevAppointments.filter((appt) => appt.id !== appointmentId)
             );
@@ -47,6 +48,45 @@ function MyAppointments() {
         }
     };
 
+    // Fonction pour ouvrir le formulaire de modification
+    const startEditing = (appointment) => {
+        setEditingAppointment(appointment);
+        setNewDate(appointment.appointmentDate);
+    };
+
+    // Fonction pour modifier un rendez-vous
+    const updateAppointment = async () => {
+        if (!newDate) {
+            alert("Veuillez sélectionner une nouvelle date.");
+            return;
+        }
+
+        try {
+            await axios.put(`/appointments/${editingAppointment.id}`, {
+                appointmentDate: newDate,
+            });
+
+            // Mettre à jour localement la liste des rendez-vous
+            setAppointments((prevAppointments) =>
+                prevAppointments.map((appt) =>
+                    appt.id === editingAppointment.id
+                        ? { ...appt, appointmentDate: newDate }
+                        : appt
+                )
+            );
+
+            setEditingAppointment(null);
+            setNewDate("");
+            alert("Rendez-vous modifié avec succès !");
+        } catch (err) {
+            console.error("Erreur lors de la modification:", err);
+            setError(
+                `Impossible de modifier le rendez-vous: ${
+                    err.response?.data?.message || err.message
+                }`
+            );
+        }
+    };
     // Affichage pendant le chargement
     if (loading) return <div>Chargement...</div>;
     // Affichage en cas d'erreur
@@ -64,6 +104,12 @@ function MyAppointments() {
                                 {new Date(appt.appointmentDate).toLocaleString("fr-FR")}
                             </div>
                             <button
+                                className="btn btn-warning btn-sm"
+                                onClick={() => startEditing(appt)}
+                            >
+                                Modifier
+                            </button>
+                            <button
                                 className="btn btn-danger btn-sm"
                                 onClick={() => cancelAppointment(appt.id)}
                             >
@@ -74,6 +120,27 @@ function MyAppointments() {
                 </ul>
             ) : (
                 <p>Aucun rendez-vous trouvé.</p>
+            )}
+
+            {/* Formulaire de modification */}
+            {editingAppointment && (
+                <div>
+                    <h3>Modifier le rendez-vous</h3>
+                    <label>
+                        Nouvelle date et heure :
+                        <input
+                            type="datetime-local"
+                            value={newDate}
+                            onChange={(e) => setNewDate(e.target.value)}
+                        />
+                    </label>
+                    <button className="btn btn-success btn-sm" onClick={updateAppointment}>
+                        Enregistrer
+                    </button>
+                    <button className="btn btn-secondary btn-sm" onClick={() => setEditingAppointment(null)}>
+                        Annuler
+                    </button>
+                </div>
             )}
         </div>
     );
