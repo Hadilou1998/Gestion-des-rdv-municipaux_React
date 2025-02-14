@@ -1,29 +1,31 @@
+require("dotenv").config();
 const nodemailer = require("nodemailer");
 
-// Configurer le transporteur SMTP
+// Création du transporteur SMTP
 const transporter = nodemailer.createTransport({
-    host: "sandbox.smtp.mailtrap.io",
-    port: 587,
-    secure: false, // set to true for 465 port
+    host: process.env.MAIL_HOST,
+    port: process.env.MAIL_PORT,
+    secure: false, // false pour le port 587
     auth: {
         user: process.env.MAIL_USERNAME,
         pass: process.env.MAIL_PASSWORD,
     },
 });
 
-// Envoyer un email
-exports.sendEmail = async (to, subject, text) => {
+// Fonction pour envoyer un email
+exports.sendEmail = async (to, subject, text, html) => {
     try {
         const info = await transporter.sendMail({
-            from: `"Service Municipal" <${process.env.MAIL_USERNAME}>`, // Expediteur
+            from: process.env.MAIL_FROM, // Expéditeur
             to,
-            subject: "Hello", // Sujet
-            text: "Hello world?", // Contenu texte du email
-            html: "<b>Hello World?</b>", // Contenu HTML du email
+            subject,
+            text,
+            html,
         });
-        console.log("Email envoyé avec succès:", info.messageId);
+        console.log("✅ Email envoyé avec succès:", info.messageId);
         return { success: true, message: info.messageId };
     } catch (error) {
-        console.error("Erreur lors de l'envoi de l'email:", error);
+        console.error("❌ Erreur lors de l'envoi de l'email:", error);
+        return { success: false, error };
     }
 };
