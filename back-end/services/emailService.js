@@ -1,16 +1,10 @@
 const nodemailer = require("nodemailer");
 require("dotenv").config();
 
-// Vérification des variables
-if (!process.env.MAIL_HOST || !process.env.MAIL_USERNAME || !process.env.MAIL_PASSWORD) {
-    console.error("❌ Erreur : Les variables d'environnement Mailtrap ne sont pas définies !");
-    process.exit(1);
-}
-
-// Looking to send emails in production? Check out our Email API/SMTP product!
+// Création du transporteur SMTP
 const transporter = nodemailer.createTransport({
     host: process.env.MAIL_HOST,
-    port: process.env.MAIL_PORT,  // ✅ Assurer que le port est un nombre
+    port: process.env.MAIL_PORT,
     auth: {
         user: process.env.MAIL_USERNAME,
         pass: process.env.MAIL_PASSWORD,
@@ -27,24 +21,29 @@ transporter.verify((error, success) => {
 });
 
 /**
- * Envoie un email de test.
+ * Fonction pour envoyer un email
+ * @param {string} to - Adresse email du destinataire
+ * @param {string} subject - Sujet de l'email
+ * @param {string} text - Contenu texte brut
+ * @param {string} html - Contenu HTML facultatif
  */
-async function sendTestEmail() {
+async function sendEmail(to, subject, text, html = "") {
     try {
         const info = await transporter.sendMail({
             from: process.env.MAIL_FROM || `"Service Municipal" <${process.env.MAIL_USERNAME}>`,
-            to: "test@example.com",
-            subject: "Test Email via Nodemailer",
-            text: "Ceci est un test d'envoi d'email via Mailtrap.",
+            to,
+            subject,
+            text,
+            html: html || `<p>${text}</p>`,
         });
 
         console.log("✅ Email envoyé avec succès:", info.messageId);
+        return { success: true, messageId: info.messageId };
     } catch (error) {
         console.error("❌ Erreur lors de l'envoi de l'email:", error);
+        return { success: false, error: error.message };
     }
 }
 
-// Exécuter l'envoi de l'email uniquement si ce fichier est lancé directement
-if (require.main === module) {
-    sendTestEmail();
-}
+// ✅ Vérifier que l'export est bien fait sous forme d'objet
+module.exports = { sendEmail };
