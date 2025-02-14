@@ -5,6 +5,7 @@ const cors = require("cors");
 const sequelize = require("./config/database");
 const authRoutes = require("./routes/authRoutes");
 const appointmentRoutes = require("./routes/appointmentRoutes");
+const emailRoutes = require("./routes/emailRoutes");
 const serviceRoutes = require("./routes/serviceRoutes");
 const slotRoutes = require("./routes/slotRoutes");
 const db = require("./models");
@@ -33,6 +34,7 @@ app.use(bodyParser.json());
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/appointments", appointmentRoutes);
+app.use("/api/email", emailRoutes);
 app.use("/api/services", serviceRoutes);
 app.use("/api/slots", slotRoutes);
 
