@@ -2,7 +2,7 @@ const nodemailer = require("nodemailer");
 
 // Configurer le transporteur SMTP
 const transporter = nodemailer.createTransport({
-    host: "smtp.example.com",
+    host: "sandbox.smtp.mailtrap.io",
     port: 587,
     secure: false, // set to true for 465 port
     auth: {
