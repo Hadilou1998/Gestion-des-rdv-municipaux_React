@@ -17,8 +17,9 @@ exports.sendEmail = async (to, subject, text) => {
         const info = await transporter.sendMail({
             from: `"Service Municipal" <${process.env.MAIL_USERNAME}>`, // Expediteur
             to,
-            subject,
-            html: htmlContent, // Contenu HTML du email
+            subject: "Hello", // Sujet
+            text: "Hello world?", // Contenu texte du email
+            html: "<b>Hello World?</b>", // Contenu HTML du email
         });
         console.log("Email envoyé avec succès:", info.messageId);
         return { success: true, message: info.messageId };
