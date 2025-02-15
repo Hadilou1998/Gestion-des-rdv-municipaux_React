@@ -11,7 +11,6 @@ export const UserProvider = ({ children }) => {
 
     /** ✅ Déconnexion sécurisée */
     const logout = useCallback(() => {
-        console.warn("🚪 Déconnexion automatique...");
         localStorage.removeItem("user");
         setUser(null);
         delete axios.defaults.headers.common["Authorization"];
