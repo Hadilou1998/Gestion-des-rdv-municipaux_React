@@ -34,6 +34,7 @@ function Navbar() {
                                 <li className="nav-item"><Link className="nav-link" to="/appointments/my">Mes Rendez-vous</Link></li>
                                 <li className="nav-item"><Link className="nav-link" to="/dashboard">Tableau de bord</Link></li>
                                 <li className="nav-item"><Link className="nav-link" to="/slots">Créneaux disponibles</Link></li>
+                                <li className="nav-item"><Link className="nav-link" to="/profile">Profil</Link></li>
 
                                 {/* ✅ Accès supplémentaire pour les admins et agents */}
                                 {["admin", "agent"].includes(user.role) && (

@@ -7,6 +7,7 @@ import About from './pages/About';
 import Contact from './pages/Contact';
 import Calendar from './pages/Calendar';
 import Dashboard from './pages/Dashboard';
+import Profile from './pages/Profile';
 import Login from './components/Auth/Login';
 import Register from './components/Auth/Register';
 import Logout from './components/Auth/Logout';
@@ -65,6 +66,7 @@ function App() {
 
                         {/* Routes accessibles uniquement aux utilisateurs connectés */}
                         <Route path="/dashboard" element={<ProtectedRoute element={<Dashboard />} roles={["admin", "agent", "citizen"]} />} />
+                        <Route path="/profile" element={<ProtectedRoute element={<Profile />} roles={["admin", "agent", "citizen"]} />} />
                         <Route path="/services" element={<ProtectedRoute element={<ServiceList />} roles={["admin", "agent", "citizen"]} />} />
                         <Route path="/services/:id" element={<ProtectedRoute element={<ServiceDetails />} roles={["admin", "agent", "citizen"]} />} />
                         <Route path="/services/edit/:id" element={<ProtectedRoute element={<ServiceEdit />} roles={["admin", "agent"]} />} />
