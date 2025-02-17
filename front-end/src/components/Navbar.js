@@ -43,6 +43,11 @@ function Navbar() {
                                         <li className="nav-item"><Link className="nav-link" to="/slots/new">Ajouter un créneau</Link></li>
                                     </>
                                 )}
+
+                                {/* ✅ Accès exclusif pour l'admin : Gestion des utilisateurs */}
+                                {user.role === "admin" && (
+                                    <li className="nav-item"><Link className="nav-link" to="/users">Gestion des utilisateurs</Link></li>
+                                )}
                             </>
                         )}
                     </ul>
