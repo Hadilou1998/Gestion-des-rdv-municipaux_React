@@ -4,8 +4,8 @@ import axios from "../../services/api";
 
 function Register() {
     const [formData, setFormData] = useState({
-        first_name: "",
-        last_name: "",
+        firstName: "",
+        lastName: "",
         email: "",
         password: "",
         role: "",
@@ -32,11 +32,11 @@ function Register() {
             <form onSubmit={handleSubmit}>
                 <div className="mb-3">
                     <label htmlFor="first_name" className="form-label">Prénom</label>
-                    <input type="text" id="first_name" name="first_name" className="form-control" value={formData.first_name} onChange={handleChange} required />
+                    <input type="text" id="first_name" name="first_name" className="form-control" value={formData.firstName} onChange={handleChange} required />
                 </div>
                 <div className="mb-3">
                     <label htmlFor="last_name" className="form-label">Nom</label>
-                    <input type="text" id="last_name" name="last_name" className="form-control" value={formData.last_name} onChange={handleChange} required />
+                    <input type="text" id="last_name" name="last_name" className="form-control" value={formData.lastName} onChange={handleChange} required />
                 </div>
                 <div className="mb-3">
                     <label htmlFor="email" className="form-label">Email</label>
