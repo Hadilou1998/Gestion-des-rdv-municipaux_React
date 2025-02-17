@@ -1,15 +1,47 @@
-import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState, useContext } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "../../services/api";
+import { UserContext } from "../../context/UserContext";
 
 function UserList() {
+    const { user, loading } = useContext(UserContext);
+    const navigate = useNavigate();
     const [users, setUsers] = useState([]);
+    const [error, setError] = useState(null);
 
     useEffect(() => {
-        axios.get("/users")
-        .then(response => setUsers(response.data))
-        .catch(error => console.error(error));
-    }, []);
+        if (!loading) {
+            // 🔒 Vérifier que seul l'admin a accès à cette page
+            if (!user || user.role !== "admin") {
+                navigate("/unauthorized");
+                return;
+            }
+
+            // Récupérer les utilisateurs
+            axios.get("/users")
+                .then(response => setUsers(response.data))
+                .catch(error => {
+                    console.error("Erreur lors du chargement des utilisateurs :", error);
+                    setError("Impossible de charger la liste des utilisateurs.");
+                });
+        }
+    }, [user, loading, navigate]);
+
+    // Fonction pour supprimer un utilisateur
+    const deleteUser = async (userId) => {
+        if (!window.confirm("Êtes-vous sûr de vouloir supprimer cet utilisateur ?")) return;
+
+        try {
+            await axios.delete(`/users/${userId}`);
+            setUsers(users.filter(u => u.id !== userId)); // Mettre à jour la liste sans recharger la page
+        } catch (error) {
+            console.error("Erreur lors de la suppression :", error);
+            setError("Impossible de supprimer cet utilisateur.");
+        }
+    };
+
+    if (loading) return <div>Chargement...</div>;
+    if (error) return <div className="alert alert-danger">{error}</div>;
 
     return (
         <div className="container mt-4">
@@ -20,19 +52,25 @@ function UserList() {
                         <th>Nom</th>
                         <th>Email</th>
                         <th>Rôle</th>
-                        <th>Actions</th>
+                        {user.role === "admin" && <th>Actions</th>} {/* 🔒 Affiché uniquement pour l'admin */}
                     </tr>
                 </thead>
                 <tbody>
-                    {users.map(user => (
-                        <tr key={user.id}>
-                            <td>{user.last_name}, {user.first_name}</td>
-                            <td>{user.email}</td>
-                            <td>{user.role}</td>
-                            <td>
-                                <Link to={`/users/${user.id}`} className="btn btn-primary btn-sm me-2">Voir</Link>
-                                <Link to={`/users/edit/${user.id}`} className="btn btn-warning btn-sm">Modifier</Link>
-                            </td>
+                    {users.map(userItem => (
+                        <tr key={userItem.id}>
+                            <td>{userItem.last_name}, {userItem.first_name}</td>
+                            <td>{userItem.email}</td>
+                            <td>{userItem.role}</td>
+                            {user.role === "admin" && (
+                                <td>
+                                    <Link to={`/users/edit/${userItem.id}`} className="btn btn-warning btn-sm me-2">
+                                        Modifier
+                                    </Link>
+                                    <button className="btn btn-danger btn-sm" onClick={() => deleteUser(userItem.id)}>
+                                        Supprimer
+                                    </button>
+                                </td>
+                            )}
                         </tr>
                     ))}
                 </tbody>
