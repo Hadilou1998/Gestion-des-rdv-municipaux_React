@@ -4,8 +4,8 @@ import axios from "../../services/api";
 
 function Register() {
     const [formData, setFormData] = useState({
-        firstName: "",
-        lastName: "",
+        first_name: "",
+        last_name: "",
         email: "",
         password: "",
         role: "",
@@ -20,10 +20,19 @@ function Register() {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        axios.post("/auth/register", formData)
-       .then(() => navigate("/login"))
-       .catch(error => setError("Une erreur est survenue lors de l'inscription."));
-    };
+    
+        const formattedData = {
+            firstName: formData.first_name, // Changer `first_name` en `firstName`
+            lastName: formData.last_name,   // Changer `last_name` en `lastName`
+            email: formData.email,
+            password: formData.password,
+            role: formData.role
+        };
+    
+        axios.post("/auth/register", formattedData) // Envoyer l'objet avec les bons noms de champs
+           .then(() => navigate("/login"))
+           .catch(error => setError(error.response?.data?.error || "Une erreur est survenue lors de l'inscription."));
+    };    
 
     return (
         <div className="container mt-4">
@@ -32,11 +41,11 @@ function Register() {
             <form onSubmit={handleSubmit}>
                 <div className="mb-3">
                     <label htmlFor="first_name" className="form-label">Prénom</label>
-                    <input type="text" id="first_name" name="first_name" className="form-control" value={formData.firstName} onChange={handleChange} required />
+                    <input type="text" id="first_name" name="first_name" className="form-control" value={formData.first_name} onChange={handleChange} required />
                 </div>
                 <div className="mb-3">
                     <label htmlFor="last_name" className="form-label">Nom</label>
-                    <input type="text" id="last_name" name="last_name" className="form-control" value={formData.lastName} onChange={handleChange} required />
+                    <input type="text" id="last_name" name="last_name" className="form-control" value={formData.last_name} onChange={handleChange} required />
                 </div>
                 <div className="mb-3">
                     <label htmlFor="email" className="form-label">Email</label>
