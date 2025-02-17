@@ -15,6 +15,8 @@ import ServiceList from './components/Services/ServiceList';
 import ServiceDetails from './components/Services/ServiceDetails';
 import ServiceEdit from './components/Services/ServiceEdit';
 import UserList from './components/Users/UserList';
+import UserDetails from './components/Users/UserDetails';
+import UserEdit from './components/Users/UserEdit';
 import AppointmentList from './components/Appointments/AppointmentList';
 import AppointmentForm from './components/Appointments/AppointmentForm';
 import AppointmentDetails from './components/Appointments/AppointmentDetails';
@@ -23,6 +25,7 @@ import MyAppointments from './components/Appointments/MyAppointments';
 import TimeSlotList from './components/TimeSlots/TimeSlotList';
 import TimeSlotForm from './components/TimeSlots/TimeSlotForm';
 import TimeSlotDetails from './components/TimeSlots/TimeSlotDetails';
+import TimeSlotEdit from './components/TimeSlots/TimeSlotEdit';
 import Unauthorized from './pages/Unauthorized';
 import { UserProvider, UserContext } from './context/UserContext';
 
@@ -48,7 +51,7 @@ const ProtectedRoute = ({ element, roles }) => {
 
 function App() {
     return (
-        <Router> {/* ✅ Déplacer `UserProvider` à l'intérieur du Router */}
+        <Router>
         <UserProvider>
             <div className="d-flex flex-column min-vh-100">
                 <Navbar />
@@ -73,6 +76,8 @@ function App() {
 
                         {/* Gestion des utilisateurs (admin uniquement) */}
                         <Route path="/users" element={<ProtectedRoute element={<UserList />} roles={["admin"]} />} />
+                        <Route path="/users/:id" element={<ProtectedRoute element={<UserDetails />} roles={["admin"]} />} />
+                        <Route path="/users/edit/:id" element={<ProtectedRoute element={<UserEdit />} roles={["admin"]} />} />
 
                         {/* Gestion des rendez-vous */}
                         <Route path="/appointments" element={<ProtectedRoute element={<AppointmentList />} roles={["admin", "agent"]} />} />
@@ -85,6 +90,7 @@ function App() {
                         <Route path="/slots" element={<ProtectedRoute element={<TimeSlotList />} roles={["admin", "agent", "citizen"]} />} />
                         <Route path="/slots/new" element={<ProtectedRoute element={<TimeSlotForm />} roles={["admin", "agent"]} />} />
                         <Route path="/slots/:id" element={<ProtectedRoute element={<TimeSlotDetails />} roles={["admin", "agent"]} />} />
+                        <Route path="/slots/edit/:id" element={<ProtectedRoute element={<TimeSlotEdit />} roles={["admin", "agent"]} />} />
                     </Routes>
                 </div>
                 <Footer />
