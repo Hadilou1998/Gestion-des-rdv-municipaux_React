@@ -8,6 +8,7 @@ const appointmentRoutes = require("./routes/appointmentRoutes");
 const emailRoutes = require("./routes/emailRoutes");
 const serviceRoutes = require("./routes/serviceRoutes");
 const slotRoutes = require("./routes/slotRoutes");
+const userRoutes = require("./routes/userRoutes");
 const db = require("./models");
 
 // 🔧 Charger les variables d'environnement
@@ -37,6 +38,7 @@ app.use("/api/appointments", appointmentRoutes);
 app.use("/api/email", emailRoutes);
 app.use("/api/services", serviceRoutes);
 app.use("/api/slots", slotRoutes);
+app.use("/api/users", userRoutes);
 
 // Connexion à la base de données
 db.sequelize.sync({ alter: true }).then(() => {

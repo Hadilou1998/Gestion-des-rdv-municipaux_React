@@ -1,18 +1,19 @@
 const express = require("express");
 const router = express.Router();
 const userController = require("../controllers/userController");
-const { authenticate, authorize } = require("../middleware/authMiddleware"); // Middleware de protection
+const authMiddleware = require("../middleware/authMiddleware");
+const roleMiddleware = require("../middleware/roleMiddleware");
 
 // ✅ Récupérer tous les utilisateurs (ADMIN uniquement)
-router.get("/", authenticate, authorize(["admin"]), userController.getAllUsers);
+router.get("/", authMiddleware, roleMiddleware(["admin"]), userController.getAllUsers);
 
 // ✅ Récupérer un utilisateur par ID (ADMIN uniquement)
-router.get("/:id", authenticate, authorize(["admin"]), userController.getUserById);
+router.get("/:id", authMiddleware, roleMiddleware(["admin"]), userController.getUserById);
 
 // ✅ Mettre à jour un utilisateur (ADMIN uniquement)
-router.put("/:id", authenticate, authorize(["admin"]), userController.updateUser);
+router.put("/:id", authMiddleware, roleMiddleware(["admin"]), userController.updateUser);
 
 // ✅ Supprimer un utilisateur (ADMIN uniquement)
-router.delete("/:id", authenticate, authorize(["admin"]), userController.deleteUser);
+router.delete("/:id", authMiddleware, roleMiddleware(["admin"]), userController.deleteUser);
 
 module.exports = router;
