@@ -11,29 +11,27 @@ function UserList() {
 
     useEffect(() => {
         if (!loading) {
-            // 🔒 Vérifier que seul l'admin a accès à cette page
             if (!user || user.role !== "admin") {
                 navigate("/unauthorized");
                 return;
             }
 
-            // Récupérer les utilisateurs
-            axios.get("/users")
-                .then(response => setUsers(response.data))
-                .catch(error => {
+            axios
+                .get("/users")
+                .then((response) => setUsers(response.data))
+                .catch((error) => {
                     console.error("Erreur lors du chargement des utilisateurs :", error);
                     setError("Impossible de charger la liste des utilisateurs.");
                 });
         }
     }, [user, loading, navigate]);
 
-    // Fonction pour supprimer un utilisateur
     const deleteUser = async (userId) => {
         if (!window.confirm("Êtes-vous sûr de vouloir supprimer cet utilisateur ?")) return;
 
         try {
             await axios.delete(`/users/${userId}`);
-            setUsers(users.filter(u => u.id !== userId)); // Mettre à jour la liste sans recharger la page
+            setUsers((prevUsers) => prevUsers.filter((u) => u.id !== userId));
         } catch (error) {
             console.error("Erreur lors de la suppression :", error);
             setError("Impossible de supprimer cet utilisateur.");
@@ -52,27 +50,20 @@ function UserList() {
                         <th>Nom</th>
                         <th>Email</th>
                         <th>Rôle</th>
-                        {user.role === "admin" && <th>Actions</th>} {/* 🔒 Affiché uniquement pour l'admin */}
+                        {user.role === "admin" && <th>Actions</th>}
                     </tr>
                 </thead>
                 <tbody>
-                    {users.map(userItem => (
+                    {users.map((userItem) => (
                         <tr key={userItem.id}>
                             <td>{userItem.lastName}, {userItem.firstName}</td>
                             <td>{userItem.email}</td>
                             <td>{userItem.role}</td>
                             {user.role === "admin" && (
                                 <td>
-                                    {/* 🔗 Ajout du lien vers les détails de l'utilisateur */}
-                                    <Link to={`/users/${userItem.id}`} className="btn btn-info btn-sm me-2">
-                                        Détails
-                                    </Link>
-                                    <Link to={`/users/edit/${userItem.id}`} className="btn btn-warning btn-sm me-2">
-                                        Modifier
-                                    </Link>
-                                    <button className="btn btn-danger btn-sm" onClick={() => deleteUser(userItem.id)}>
-                                        Supprimer
-                                    </button>
+                                    <Link to={`/users/${userItem.id}`} className="btn btn-info btn-sm me-2">Détails</Link>
+                                    <Link to={`/users/edit/${userItem.id}`} className="btn btn-warning btn-sm me-2">Modifier</Link>
+                                    <button className="btn btn-danger btn-sm" onClick={() => deleteUser(userItem.id)}>Supprimer</button>
                                 </td>
                             )}
                         </tr>
@@ -81,6 +72,6 @@ function UserList() {
             </table>
         </div>
     );
-};
+}
 
 export default UserList;
