@@ -53,8 +53,8 @@ function UserEdit() {
                 <input
                     type="text"
                     className="form-control"
-                    value={userData.last_name}
-                    onChange={(e) => setUserData({...userData, last_name: e.target.value })}
+                    value={userData.lastName}
+                    onChange={(e) => setUserData({...userData, lastName: e.target.value })}
                 />
             </div>
             <div className="mb-3">
@@ -62,8 +62,8 @@ function UserEdit() {
                 <input
                     type="text"
                     className="form-control"
-                    value={userData.first_name}
-                    onChange={(e) => setUserData({...userData, first_name: e.target.value })}
+                    value={userData.firstName}
+                    onChange={(e) => setUserData({...userData, firstName: e.target.value })}
                 />
             </div>
             <div className="mb-3">

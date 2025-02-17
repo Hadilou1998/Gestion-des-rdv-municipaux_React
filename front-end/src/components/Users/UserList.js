@@ -58,7 +58,7 @@ function UserList() {
                 <tbody>
                     {users.map(userItem => (
                         <tr key={userItem.id}>
-                            <td>{userItem.last_name}, {userItem.first_name}</td>
+                            <td>{userItem.lastName}, {userItem.firstName}</td>
                             <td>{userItem.email}</td>
                             <td>{userItem.role}</td>
                             {user.role === "admin" && (

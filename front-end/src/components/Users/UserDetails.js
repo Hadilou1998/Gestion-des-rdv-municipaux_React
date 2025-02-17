@@ -18,8 +18,8 @@ function UserDetails() {
         <div className="container mt-4">
             <h2>Détails de l'utilisateur</h2>
             <ul className="list-group">
-                <li className="list-group-item"><strong>Prénom :</strong> {user.first_name}</li>
-                <li className="list-group-item"><strong>Nom :</strong> {user.last_name}</li>
+                <li className="list-group-item"><strong>Prénom :</strong> {user.firstName}</li>
+                <li className="list-group-item"><strong>Nom :</strong> {user.lastName}</li>
                 <li className="list-group-item"><strong>Email :</strong> {user.email}</li>
                 <li className="list-group-item"><strong>Rôle :</strong> {user.role}</li>
             </ul>
