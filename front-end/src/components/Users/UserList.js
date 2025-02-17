@@ -63,6 +63,10 @@ function UserList() {
                             <td>{userItem.role}</td>
                             {user.role === "admin" && (
                                 <td>
+                                    {/* 🔗 Ajout du lien vers les détails de l'utilisateur */}
+                                    <Link to={`/users/${userItem.id}`} className="btn btn-info btn-sm me-2">
+                                        Détails
+                                    </Link>
                                     <Link to={`/users/edit/${userItem.id}`} className="btn btn-warning btn-sm me-2">
                                         Modifier
                                     </Link>
