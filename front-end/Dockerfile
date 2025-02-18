@@ -25,6 +25,9 @@ FROM httpd:2.4
 # Définir ServerName pour éviter l'erreur "Could not reliably determine the server's fully qualified domain name"
 RUN echo "ServerName localhost" >> /usr/local/apache2/conf/httpd.conf
 
+# Désactiver les logs Apache dans httpd.conf
+RUN echo "LogLevel emerg" >> /usr/local/apache2/conf/httpd.conf
+
 # Désactiver les logs Apache
 RUN ln -sf /dev/null /usr/local/apache2/logs/access_log && \
     ln -sf /dev/null /usr/local/apache2/logs/error_log
@@ -35,5 +38,5 @@ COPY --from=build /app/build /usr/local/apache2/htdocs/
 # Exposer le port HTTP par défaut d'Apache (80)
 EXPOSE 80
 
-# Lancer Apache en mode foreground
-CMD ["httpd", "-D", "FOREGROUND"]
+# Commande pour démarrer Apache en arrière-plan avec les logs en mode émergence
+CMD ["httpd", "-D", "FOREGROUND", "-e", "emerg"]

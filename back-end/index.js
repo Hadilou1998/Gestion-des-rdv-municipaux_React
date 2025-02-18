@@ -24,11 +24,7 @@ if (!process.env.JWT_SECRET) {
 }
 
 // Middlewares
-app.use(cors({
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    credentials: true,
-    allowedHeaders: ["Content-Type", "Authorization"]
-}));
+app.use(cors());
 app.use(bodyParser.json());
 
 // Routes
