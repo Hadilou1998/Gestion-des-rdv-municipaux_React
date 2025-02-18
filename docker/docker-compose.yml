@@ -64,7 +64,9 @@ services:
       interval: 10s
       timeout: 5s
       retries: 3
-    restart: unless-stopped  
+    restart: unless-stopped
+    volumes:
+      - ./docker-entrypoint.sh:/usr/local/bin/docker-entrypoint.sh
 
 # ----------------------------------  
 # Réseau Docker partagé : mynetwork  
