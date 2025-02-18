@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:  
   # ----------------------------------  
   # 1. Service MySQL  
@@ -17,6 +19,8 @@ services:
       timeout: 5s  
       retries: 5  
       start_period: 30s  
+    volumes:
+      - mysql_data:/var/lib/mysql
 
   # ----------------------------------  
   # 2. Service Back-end (Node/Sequelize)  
@@ -30,7 +34,7 @@ services:
       mysql_db:  
         condition: service_healthy  
     env_file:  
-      - ./config/backend.env  # Vérifiez que ce chemin est correct  
+      - ./config/backend.env  
     networks:  
       - mynetwork  
     ports:  
@@ -39,9 +43,10 @@ services:
       - ../back-end:/app  
       - /app/node_modules  
     command: npm start  
+    restart: unless-stopped  
 
   # ----------------------------------  
-  # 3. Service Front-end (React, Vue, etc.)  
+  # 3. Service Front-end (React)  
   # ----------------------------------  
   frontend:  
     container_name: frontend  
@@ -55,10 +60,22 @@ services:
     networks:  
       - mynetwork  
     ports:  
-      - "3001:3000"  
+      - "3001:80"  
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    restart: unless-stopped  
 
 # ----------------------------------  
 # Réseau Docker partagé : mynetwork  
 # ----------------------------------  
 networks:  
   mynetwork:
+
+# ----------------------------------  
+# Volumes persistants  
+# ----------------------------------  
+volumes:
+  mysql_data:
