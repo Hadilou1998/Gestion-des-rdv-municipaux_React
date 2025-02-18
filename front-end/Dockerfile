@@ -34,5 +34,9 @@ COPY --from=build /app/build /usr/local/apache2/htdocs/
 # Exposer le port HTTP d'Apache (80 au lieu de 3000)
 EXPOSE 80
 
-# Lancer Apache en mode foreground en **supprimant totalement** les logs
-CMD ["httpd", "-D", "FOREGROUND", "-e", "crit"] > /dev/null 2>&1
+# Ajouter un script d'initialisation pour afficher le message de succès
+COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+
+# Lancer Apache avec le message de succès
+CMD ["/usr/local/bin/docker-entrypoint.sh"]
