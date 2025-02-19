@@ -1,5 +1,12 @@
 {
-    "buildCommand": "npm install && npm run build",
-    "installCommand": "npm install",
-    "outputDirectory": "build"
+    "builds": [
+        {
+            "src": "front-end/package.json",
+            "use": "@vercel/static-build",
+            "config": { "distDir": "front-end/build" }
+        }
+    ],
+    "buildCommand": "cd front-end && npm install && npm run build",
+    "installCommand": "cd front-end && npm install",
+    "outputDirectory": "front-end/build"
 }
