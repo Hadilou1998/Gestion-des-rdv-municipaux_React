@@ -7,3 +7,6 @@ if [ ! -f "$STATUS_FILE" ]; then
     echo "🚀 Frontend lancé avec succès ! Accédez à 👉 http://localhost:3001/"
     touch "$STATUS_FILE"
 fi
+
+# Lancement du serveur Apache
+exec httpd-foreground
