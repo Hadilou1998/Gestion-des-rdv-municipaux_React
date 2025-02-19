@@ -8,6 +8,3 @@ sleep 2
 
 # Afficher le message de succès
 echo "🚀 Frontend lancé avec succès ! Accédez à 👉 http://localhost:3001/"
-
-# Garder le conteneur en vie
-wait
