@@ -28,15 +28,15 @@ RUN echo "ServerName localhost" >> /usr/local/apache2/conf/httpd.conf
 # Activer mod_rewrite pour gérer React Router et les SPA (évite les erreurs 404)
 RUN sed -i '/LoadModule rewrite_module/s/^#//g' /usr/local/apache2/conf/httpd.conf
 
-# Ajouter la configuration pour gérer React Router
-RUN echo '<Directory "/usr/local/apache2/htdocs">' \
-    '    AllowOverride All' \
-    '    Require all granted' \
-    '    RewriteEngine On' \
-    '    RewriteCond %{REQUEST_FILENAME} !-f' \
-    '    RewriteCond %{REQUEST_FILENAME} !-d' \
-    '    RewriteRule ^ index.html [QSA,L]' \
-    '</Directory>' > /usr/local/apache2/conf/extra/react-app.conf \
+# Ajouter la configuration pour gérer React Router (Format Correct)
+RUN echo '<Directory "/usr/local/apache2/htdocs/">' > /usr/local/apache2/conf/extra/react-app.conf \
+    && echo '    AllowOverride All' >> /usr/local/apache2/conf/extra/react-app.conf \
+    && echo '    Require all granted' >> /usr/local/apache2/conf/extra/react-app.conf \
+    && echo '    RewriteEngine On' >> /usr/local/apache2/conf/extra/react-app.conf \
+    && echo '    RewriteCond %{REQUEST_FILENAME} !-f' >> /usr/local/apache2/conf/extra/react-app.conf \
+    && echo '    RewriteCond %{REQUEST_FILENAME} !-d' >> /usr/local/apache2/conf/extra/react-app.conf \
+    && echo '    RewriteRule ^ /index.html [QSA,L]' >> /usr/local/apache2/conf/extra/react-app.conf \
+    && echo '</Directory>' >> /usr/local/apache2/conf/extra/react-app.conf \
     && echo "Include conf/extra/react-app.conf" >> /usr/local/apache2/conf/httpd.conf
 
 # Copier les fichiers build générés vers le dossier de service Apache
