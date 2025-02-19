@@ -8,5 +8,5 @@ if [ ! -f "$STATUS_FILE" ]; then
     touch "$STATUS_FILE"
 fi
 
-# Lancement du serveur Apache
-exec httpd-foreground
+# Démarrer Apache en mode foreground et supprimer tous les logs
+exec httpd -D FOREGROUND > /dev/null 2>&1
