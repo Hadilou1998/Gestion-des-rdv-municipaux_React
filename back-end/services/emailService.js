@@ -14,9 +14,9 @@ const transporter = nodemailer.createTransport({
 // Vérifier la connexion SMTP
 transporter.verify((error, success) => {
     if (error) {
-        console.error("❌ Erreur de connexion SMTP:", error);
+        console.error("Erreur de connexion SMTP:", error);
     } else {
-        console.log("✅ Connexion SMTP réussie, prêt à envoyer des emails !");
+        console.log("Connexion SMTP réussie, prêt à envoyer des emails !");
     }
 });
 
@@ -37,13 +37,13 @@ async function sendEmail(to, subject, text, html = "") {
             html: html || `<p>${text}</p>`,
         });
 
-        console.log("✅ Email envoyé avec succès:", info.messageId);
+        console.log("Email envoyé avec succès:", info.messageId);
         return { success: true, messageId: info.messageId };
     } catch (error) {
-        console.error("❌ Erreur lors de l'envoi de l'email:", error);
+        console.error("Erreur lors de l'envoi de l'email:", error);
         return { success: false, error: error.message };
     }
 }
 
-// ✅ Vérifier que l'export est bien fait sous forme d'objet
+// Vérifier que l'export est bien fait sous forme d'objet
 module.exports = { sendEmail };
