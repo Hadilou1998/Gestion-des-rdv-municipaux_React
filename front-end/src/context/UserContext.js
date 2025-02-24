@@ -54,7 +54,7 @@ export const UserProvider = ({ children }) => {
             }
 
             // Ajouter le token dans Axios **via `api.js`**
-            console.log("📡 Token envoyé à `/auth/me` :", token);
+            console.log("Token envoyé à `/auth/me` :", token);
 
             // Vérifier la validité du token avec le backend
             const response = await axios.get("/auth/me");
@@ -71,9 +71,9 @@ export const UserProvider = ({ children }) => {
             console.error("Erreur lors du chargement de l'utilisateur :", error);
 
             if (error.response?.status === 400) {
-                console.warn("⏳ Requête mal formée. Vérifie l'envoi du token !");
+                console.warn("Requête mal formée. Vérifie l'envoi du token !");
             } else if (error.response?.status === 401) {
-                console.warn("⏳ Token expiré ou invalide. Déconnexion automatique.");
+                console.warn("Token expiré ou invalide. Déconnexion automatique.");
                 logout();
             } else {
                 localStorage.removeItem("user");
