@@ -9,7 +9,7 @@ export const UserProvider = ({ children }) => {
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
 
-    /** ✅ Déconnexion sécurisée */
+    /** Déconnexion sécurisée */
     const logout = useCallback(() => {
         localStorage.removeItem("user");
         setUser(null);
@@ -17,7 +17,7 @@ export const UserProvider = ({ children }) => {
         navigate("/login");
     }, [navigate]);
 
-    /** ✅ Chargement de l'utilisateur */
+    /** Chargement de l'utilisateur */
     const loadUser = useCallback(async () => {
         setLoading(true);
         try {
@@ -33,42 +33,42 @@ export const UserProvider = ({ children }) => {
             try {
                 parsedUser = JSON.parse(userData);
                 if (!parsedUser || !parsedUser.token || typeof parsedUser.token !== "string") {
-                    throw new Error("❌ Données utilisateur invalides.");
+                    throw new Error("Données utilisateur invalides.");
                 }
             } catch (err) {
-                console.error("❌ Erreur JSON userData :", err);
+                console.error("Erreur JSON userData :", err);
                 localStorage.removeItem("user");
                 setUser(null);
                 setLoading(false);
                 return;
             }
 
-            // ✅ Vérification du token avant d'envoyer la requête
+            // Vérification du token avant d'envoyer la requête
             const token = parsedUser.token.trim();
             if (!token || token.length < 20) {
-                console.error("❌ Token JWT absent ou mal formé !");
+                console.error("Token JWT absent ou mal formé !");
                 localStorage.removeItem("user");
                 setUser(null);
                 setLoading(false);
                 return;
             }
 
-            // ✅ Ajouter le token dans Axios **via `api.js`**
+            // Ajouter le token dans Axios **via `api.js`**
             console.log("📡 Token envoyé à `/auth/me` :", token);
 
-            // ✅ Vérifier la validité du token avec le backend
+            // Vérifier la validité du token avec le backend
             const response = await axios.get("/auth/me");
 
-            console.log("✅ Réponse API `/auth/me` :", response.data);
+            console.log("Réponse API `/auth/me` :", response.data);
 
             if (!response.data || !response.data.role) {
-                throw new Error("❌ Le rôle de l'utilisateur est introuvable.");
+                throw new Error("Le rôle de l'utilisateur est introuvable.");
             }
 
             setUser({ ...response.data, token });
 
         } catch (error) {
-            console.error("❌ Erreur lors du chargement de l'utilisateur :", error);
+            console.error("Erreur lors du chargement de l'utilisateur :", error);
 
             if (error.response?.status === 400) {
                 console.warn("⏳ Requête mal formée. Vérifie l'envoi du token !");
@@ -88,16 +88,16 @@ export const UserProvider = ({ children }) => {
         loadUser();
     }, [loadUser]);
 
-    /** ✅ Fonction de connexion */
+    /** Fonction de connexion */
     const login = async (credentials) => {
         try {
             const response = await axios.post("/auth/login", credentials);
 
             if (!response.data.user || !response.data.token) {
-                throw new Error("❌ Réponse invalide du serveur.");
+                throw new Error("Réponse invalide du serveur.");
             }
 
-            // ✅ Nettoyage de l'ancien token
+            // Nettoyage de l'ancien token
             localStorage.removeItem("user");
 
             const userData = { ...response.data.user, token: response.data.token };
@@ -105,14 +105,14 @@ export const UserProvider = ({ children }) => {
             axios.defaults.headers.common["Authorization"] = `Bearer ${response.data.token}`;
             setUser(userData);
 
-            console.log("✅ Connexion réussie. Token stocké :", userData.token);
+            console.log("Connexion réussie. Token stocké :", userData.token);
 
-            // 🚀 Redirection après connexion
+            // Redirection après connexion
             navigate("/dashboard");
 
             return { success: true };
         } catch (error) {
-            console.error("❌ Erreur lors de la connexion :", error);
+            console.error("Erreur lors de la connexion :", error);
             return {
                 success: false,
                 error: error.response?.data?.message || "Erreur de connexion",
