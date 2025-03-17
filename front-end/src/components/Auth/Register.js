@@ -25,8 +25,7 @@ function Register() {
             firstName: formData.first_name, // Changer `first_name` en `firstName`
             lastName: formData.last_name,   // Changer `last_name` en `lastName`
             email: formData.email,
-            password: formData.password,
-            role: formData.role
+            password: formData.password
         };
     
         axios.post("/auth/register", formattedData) // Envoyer l'objet avec les bons noms de champs
@@ -54,15 +53,6 @@ function Register() {
                 <div className="mb-3">
                     <label htmlFor="password" className="form-label">Mot de passe</label>
                     <input type="password" id="password" name="password" className="form-control" value={formData.password} onChange={handleChange} required />
-                </div>
-                <div className="mb-3">
-                    <label htmlFor="role" className="form-label">Rôle</label>
-                    <select id="role" name="role" className="form-control" value={formData.role} onChange={handleChange} required>
-                        <option value="">-- Sélectionner un rôle --</option>
-                        <option value="admin">Administrateur</option>
-                        <option value="citizen">Citoyen</option>
-                        <option value="agent">Agent</option>
-                    </select>
                 </div>
                 <button type="submit" className="btn btn-primary">S'inscrire</button>
                 <p className="mt-3">Déjà inscrit? <a href="/login">Connectez-vous</a></p>

@@ -15,7 +15,7 @@ exports.register = async (req, res) => {
             lastName, 
             email, 
             password: hashedPassword, 
-            role 
+            role: "citizen" // Par défaut, le rôle est "citizen"
         });
 
         res.status(201).json({ message: "Utilisateur créé avec succès", user });
