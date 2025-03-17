@@ -19,7 +19,7 @@ function TimeSlotEdit() {
 
         const fetchTimeSlot = async () => {
             try {
-                const response = await axios.get(`/timeslots/${id}`);
+                const response = await axios.get(`/slots/${id}`);
                 setTimeSlot(response.data);
             } catch (error) {
                 console.error("Erreur lors de la récupération du créneau :", error);
@@ -34,7 +34,7 @@ function TimeSlotEdit() {
 
     const handleSave = async () => {
         try {
-            await axios.put(`/timeslots/${id}`, timeSlot);
+            await axios.put(`/slots/${id}`, timeSlot);
             navigate("/slots");
         } catch (error) {
             console.error("Erreur lors de la mise à jour du créneau :", error);
