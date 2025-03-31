@@ -36,7 +36,7 @@ services:
     networks:  
       - mynetwork  
     ports:  
-      - "5000:5000"  
+      - "5001:5000"  
     volumes:  
       - ../back-end:/app  
       - /app/node_modules  
