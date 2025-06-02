@@ -17,7 +17,7 @@ function Login() {
         e.preventDefault();
         setError("");
 
-        const result = await login(formData, navigate); // ✅ Attente de la mise à jour de `user`
+        const result = await login(formData, navigate); // Attente de la mise à jour de `user`
 
         if (!result.success) {
             setError(result.error);
