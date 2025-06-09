@@ -29,14 +29,23 @@ RUN echo "ServerName localhost" >> /usr/local/apache2/conf/httpd.conf
 RUN sed -i '/LoadModule rewrite_module/s/^#//g' /usr/local/apache2/conf/httpd.conf
 
 # Ajouter la configuration pour gérer React Router (Format Correct)
+# Crée un nouveau fichier de configuration et ajoute la balise d'ouverture Directory
 RUN echo '<Directory "/usr/local/apache2/htdocs/">' > /usr/local/apache2/conf/extra/react-app.conf \
+    # Permet la surcharge de toutes les directives Apache dans ce répertoire
     && echo '    AllowOverride All' >> /usr/local/apache2/conf/extra/react-app.conf \
+    # Autorise l'accès à tous les utilisateurs pour ce répertoire
     && echo '    Require all granted' >> /usr/local/apache2/conf/extra/react-app.conf \
+    # Active le moteur de réécriture d'URL pour ce répertoire
     && echo '    RewriteEngine On' >> /usr/local/apache2/conf/extra/react-app.conf \
+    # Condition : applique la règle seulement si le répertoire demandé n'existe pas
     && echo '    RewriteCond %{REQUEST_FILENAME} !-f' >> /usr/local/apache2/conf/extra/react-app.conf \
+    # Condition : applique la règle seulement si le répertoire demandé n'existe pas
     && echo '    RewriteCond %{REQUEST_FILENAME} !-d' >> /usr/local/apache2/conf/extra/react-app.conf \
+    # Règle : redirige toutes les requêtes vers index.html en préservant les paramètres de requête
     && echo '    RewriteRule ^ /index.html [QSA,L]' >> /usr/local/apache2/conf/extra/react-app.conf \
+    # Ferme la balise Directory
     && echo '</Directory>' >> /usr/local/apache2/conf/extra/react-app.conf \
+    # Inclure le nouveau fichier de configuration dans la configuration principale d'Apache
     && echo "Include conf/extra/react-app.conf" >> /usr/local/apache2/conf/httpd.conf
 
 # Copier les fichiers build générés vers le dossier de service Apache
