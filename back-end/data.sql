@@ -49,6 +49,7 @@ CREATE TABLE IF NOT EXISTS appointments (
 CREATE TABLE IF NOT EXISTS time_slots (
     id INT PRIMARY KEY AUTO_INCREMENT,
     service_id INT,
+    appointment_id INT,
     start_time DATETIME NOT NULL,
     end_time DATETIME NOT NULL,
     is_available BOOLEAN DEFAULT true,
