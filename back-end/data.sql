@@ -57,7 +57,7 @@ CREATE TABLE IF NOT EXISTS time_slots (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (service_id) REFERENCES services(id) ON DELETE CASCADE,
     FOREIGN KEY (appointment_id) REFERENCES appointments(id) ON DELETE CASCADE
-) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 
 --  -----------------------
 --  INSERTION DE DONNEES
@@ -77,7 +77,7 @@ INSERT INTO users (first_name, last_name, email, password, role) VALUES
 ('Karen', 'Moreau', 'karen.moreau@example.com', 'agent123', 'agent'),
 ('Laurent', 'Lefebvre', 'laurent.lefebvre@example.com', 'agent123', 'agent'),
 ('Marie', 'Roux', 'marie.roux@example.com', 'password123', 'citizen'),
-('Nicolas', 'Lefèvre', 'nicolas.lefevre@example.com', 'password123', 'citizen');
+('Nicolas', 'Lefevre', 'nicolas.lefevre@example.com', 'password123', 'citizen');
 
 
 INSERT INTO services (name, description, duration, department, is_active) VALUES
