@@ -139,7 +139,7 @@ function AppointmentForm() {
                         required
                     >
                         <option value="">-- Choisissez une heure --</option>
-                        {["9h-10h", "10h-11h", "11h-12h", "14h-15h", "15h-16h", "16h-17h"].map((slot) => (
+                        {["9h-10h", "10h-11h", "11h-12h", "14h-15h", "15h-16h", "16h-17h", "17h-18h"].map((slot) => (
                             <option key={slot} value={slot}>
                                 {slot}
                             </option>
