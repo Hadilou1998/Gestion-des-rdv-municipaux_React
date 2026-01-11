@@ -4,7 +4,7 @@ import { UserContext } from "../context/UserContext";
 
 function Navbar() {
     const { user, logout } = useContext(UserContext);
-    const navigate = useNavigate(); // ✅ Utilisation correcte de `navigate`
+    const navigate = useNavigate(); // Utilisation correcte de `navigate`
 
     return (
         <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -28,7 +28,7 @@ function Navbar() {
                         <li className="nav-item"><Link className="nav-link" to="/contact">Contact</Link></li>
                         <li className="nav-item"><Link className="nav-link" to="/services">Services</Link></li>
 
-                        {/* ✅ Affichage uniquement après le chargement des données utilisateur */}
+                        {/* Affichage uniquement après le chargement des données utilisateur */}
                         {user && (
                             <>
                                 <li className="nav-item"><Link className="nav-link" to="/appointments/my">Mes Rendez-vous</Link></li>
@@ -36,7 +36,7 @@ function Navbar() {
                                 <li className="nav-item"><Link className="nav-link" to="/slots">Créneaux disponibles</Link></li>
                                 <li className="nav-item"><Link className="nav-link" to="/profile">Profil</Link></li>
 
-                                {/* ✅ Accès supplémentaire pour les admins et agents */}
+                                {/* Accès supplémentaire pour les admins et agents */}
                                 {["admin", "agent"].includes(user.role) && (
                                     <>
                                         <li className="nav-item"><Link className="nav-link" to="/appointments">Tous les Rendez-vous</Link></li>
@@ -44,7 +44,7 @@ function Navbar() {
                                     </>
                                 )}
 
-                                {/* ✅ Accès exclusif pour l'admin : Gestion des utilisateurs */}
+                                {/* Accès exclusif pour l'admin : Gestion des utilisateurs */}
                                 {user.role === "admin" && (
                                     <li className="nav-item"><Link className="nav-link" to="/users">Gestion des utilisateurs</Link></li>
                                 )}
@@ -52,7 +52,7 @@ function Navbar() {
                         )}
                     </ul>
 
-                    {/* ✅ Connexion/Déconnexion dynamique */}
+                    {/* Connexion/Déconnexion dynamique */}
                     <ul className="navbar-nav">
                         {!user ? (
                             <>

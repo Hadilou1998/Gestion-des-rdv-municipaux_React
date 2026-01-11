@@ -15,13 +15,13 @@ function ServiceList() {
             setError(null);
 
             try {
-                // ✅ Vérification et affichage du token avant l'appel API
-                console.log("📡 Token JWT utilisé :", axios.defaults.headers.common["Authorization"]);
+                // Vérification et affichage du token avant l'appel API
+                console.log("Token JWT utilisé :", axios.defaults.headers.common["Authorization"]);
 
                 const response = await axios.get("/services");
                 setServices(response.data);
             } catch (err) {
-                console.error("❌ Erreur lors de la récupération des services :", err);
+                console.error("Erreur lors de la récupération des services :", err);
 
                 if (err.response) {
                     // Erreur côté serveur (API)
@@ -50,7 +50,7 @@ function ServiceList() {
                 await axios.delete(`/services/${serviceId}`);
                 setServices(services.filter((s) => s.id !== serviceId));
             } catch (err) {
-                console.error("❌ Erreur lors de la suppression du service :", err);
+                console.error("Erreur lors de la suppression du service :", err);
                 setError("Échec de la suppression du service. Veuillez réessayer.");
             }
         }

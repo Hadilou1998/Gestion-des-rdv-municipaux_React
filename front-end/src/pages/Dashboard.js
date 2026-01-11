@@ -5,7 +5,7 @@ import { UserContext } from "../context/UserContext"; // Contexte utilisateur
 function Dashboard() {
     const { user, loading } = useContext(UserContext) || {}; // Récupérer les informations utilisateur
 
-    if (loading) return <div className="text-center mt-4">Chargement du tableau de bord...</div>; // ✅ Gestion du chargement
+    if (loading) return <div className="text-center mt-4">Chargement du tableau de bord...</div>; // Gestion du chargement
 
     return (
         <div className="container mt-4">

@@ -1,11 +1,11 @@
 import React, { useEffect, useState, useContext } from "react";
 import { useParams } from "react-router-dom";
 import axios from "../../services/api";
-import { UserContext } from "../../context/UserContext"; // ✅ Importer le contexte utilisateur
+import { UserContext } from "../../context/UserContext"; // Importer le contexte utilisateur
 
 function AppointmentDetails() {
     const { id } = useParams();
-    const { user } = useContext(UserContext); // ✅ Récupérer l'utilisateur connecté
+    const { user } = useContext(UserContext); // Récupérer l'utilisateur connecté
     const [appointment, setAppointment] = useState(null);
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -13,15 +13,15 @@ function AppointmentDetails() {
     useEffect(() => {
         const fetchAppointment = async () => {
             try {
-                // ✅ Vérifier le rôle AVANT d'envoyer la requête
+                // Vérifier le rôle AVANT d'envoyer la requête
                 if (user.role !== "citizen") {
-                    throw new Error("⛔ Accès interdit. Seuls les citoyens peuvent voir leurs rendez-vous.");
+                    throw new Error("Accès interdit. Seuls les citoyens peuvent voir leurs rendez-vous.");
                 }
 
                 const response = await axios.get(`/appointments/my`);
                 setAppointment(response.data);
             } catch (err) {
-                console.error("❌ Erreur lors de la récupération du rendez-vous:", err);
+                console.error("Erreur lors de la récupération du rendez-vous:", err);
                 setError(err.message);
             } finally {
                 setLoading(false);
@@ -32,7 +32,7 @@ function AppointmentDetails() {
     }, [id, user.role]);
 
     if (loading) {
-        return <p>⏳ Chargement en cours...</p>;
+        return <p>Chargement en cours...</p>;
     }
 
     if (error) {
@@ -40,7 +40,7 @@ function AppointmentDetails() {
     }
 
     if (!appointment) {
-        return <p style={{ color: "red" }}>⛔ Aucune donnée de rendez-vous disponible.</p>;
+        return <p style={{ color: "red" }}>Aucune donnée de rendez-vous disponible.</p>;
     }
 
     return (
