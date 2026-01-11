@@ -11,13 +11,13 @@ const slotRoutes = require("./routes/slotRoutes");
 const userRoutes = require("./routes/userRoutes");
 const db = require("./models");
 
-// 🔧 Charger les variables d'environnement
+// Charger les variables d'environnement
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// ✅ Vérification du JWT_SECRET chargé
+// Vérification du JWT_SECRET chargé
 if (!process.env.JWT_SECRET) {
     console.error("ERREUR: JWT_SECRET est introuvable dans .env !");
     process.exit(1);
